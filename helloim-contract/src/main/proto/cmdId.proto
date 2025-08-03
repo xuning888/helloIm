@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package helloim.protocol;
+
+
+option java_package = "com.github.xuning888.helloim.contract.protobuf";
+option java_outer_classname = "MsgCmd";
+
+enum CmdId {
+  CMD_ID_DEFAULT = 0;
+  CMD_ID_C2CSEND = 1006; // 单聊上行
+  CMD_ID_C2CPUSH = 1007; // 单聊下行
+  CMD_ID_C2CPUSTH = 1008; // 群聊上行
+  CMD_ID_C2GPUSH = 1009; // 群聊下行
+}
