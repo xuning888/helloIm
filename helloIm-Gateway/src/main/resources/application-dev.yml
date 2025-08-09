@@ -2,7 +2,7 @@ dubbo:
   config:
     multiple: true
   protocols:
-    dubbo:
+    tri:
       name: tri
       threadpool: fixed
       threads: 200
@@ -10,3 +10,8 @@ dubbo:
 logging:
   level:
     root: info
+im:
+  gate:
+    port: 9300
+    max-frame-size: 8192
+    read-timeout-seconds: 630

@@ -10,7 +10,7 @@ import java.nio.ByteOrder;
  */
 public class Header implements Serializable {
     // 固定消息头的长度
-    public static int DEFAULT_HEADER_LENGTH = 20;
+    public static final int DEFAULT_HEADER_LENGTH = 20;
 
     /**
      * 固定消息头的长度
@@ -123,5 +123,15 @@ public class Header implements Serializable {
 
     public Header copy() {
         return Header.create(this.headerLength, this.clientVersion, this.seq, this.cmdId, this.bodyLength);
+    }
+
+    public ByteBuffer toByteBuffer() {
+        ByteBuffer buffer = ByteBuffer.allocate(DEFAULT_HEADER_LENGTH).order(ByteOrder.BIG_ENDIAN);
+        buffer.putInt(this.headerLength);
+        buffer.putInt(this.clientVersion);
+        buffer.putInt(this.seq);
+        buffer.putInt(this.cmdId);
+        buffer.putInt(this.bodyLength);
+        return buffer;
     }
 }
