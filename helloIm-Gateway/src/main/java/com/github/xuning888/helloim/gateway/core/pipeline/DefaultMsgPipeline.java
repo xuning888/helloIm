@@ -22,7 +22,6 @@ public class DefaultMsgPipeline implements MsgPipeline {
     private volatile PipelineContext tail;
 
     public DefaultMsgPipeline() {
-
     }
 
     @Override

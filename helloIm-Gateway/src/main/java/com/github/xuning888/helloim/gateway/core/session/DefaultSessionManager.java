@@ -2,9 +2,9 @@ package com.github.xuning888.helloim.gateway.core.session;
 
 import com.github.xuning888.helloim.contract.api.request.LogoutRequest;
 import com.github.xuning888.helloim.contract.api.response.LogoutResponse;
-import com.github.xuning888.helloim.contract.api.service.gate.UpMsgService;
 import com.github.xuning888.helloim.contract.contant.GateSessionEvent;
 import com.github.xuning888.helloim.contract.contant.GateSessionState;
+import com.github.xuning888.helloim.contract.meta.GateUser;
 import com.github.xuning888.helloim.gateway.adapter.UpMsgServiceAdapter;
 import com.github.xuning888.helloim.gateway.core.conn.Conn;
 import com.github.xuning888.helloim.gateway.core.conn.event.ConnStateEvent;
@@ -23,6 +23,8 @@ public class DefaultSessionManager implements SessionManager {
     private static final Logger logger = LoggerFactory.getLogger(DefaultSessionManager.class);
 
     private final Map<String, Session> sessionMap = new ConcurrentHashMap<>();
+
+    private final Map<GateUser, Session> userSessionMap = new ConcurrentHashMap<>();
 
     private final ExecutorService executorService = Executors.newCachedThreadPool();
 
@@ -44,6 +46,7 @@ public class DefaultSessionManager implements SessionManager {
             checkAndDeleteOldDSession(session, oldSession, traceId);
         }
         sessionMap.put(session.getId(), session);
+        userSessionMap.put(session.getUser(), session);
     }
 
     /**
@@ -87,6 +90,17 @@ public class DefaultSessionManager implements SessionManager {
     }
 
     @Override
+    public Session getSessionByUser(GateUser user, String traceId) {
+        Session session = userSessionMap.get(user);
+        if (session == null) {
+            if (logger.isDebugEnabled()) {
+                logger.debug("getSessionByUser, user: {}, traceId: {}", user, traceId);
+            }
+        }
+        return session;
+    }
+
+    @Override
     public void logout(String sessionId, String traceId) {
         Session session = sessionMap.get(sessionId);
         if (session != null) {
@@ -99,6 +113,8 @@ public class DefaultSessionManager implements SessionManager {
         if (session != null) {
             logger.info("closeSession, session: {}, state: {}, traceId: {}", session, sessionState, traceId);
             asyncCloseSession(session, new GateSessionEvent(sessionState, session.getUser(), traceId));
+            GateUser user = session.getUser();
+            userSessionMap.remove(user);
         } else {
             logger.info("closeSession, session is null, sessionId: {}, traceId: {}", sessionId, traceId);
             // 确保长连接也被关闭

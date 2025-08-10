@@ -26,5 +26,6 @@ public class HeadMsgHandler implements DownMsgHandler {
         } catch (Exception ex) {
             logger.error("Write message to peer failed, traceId:  {}", event.getTraceId(), ex);
         }
+        ctx.sendDown(event);
     }
 }

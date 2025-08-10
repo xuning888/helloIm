@@ -2,6 +2,7 @@ package com.github.xuning888.helloim.gateway.core.conn;
 
 
 import com.github.xuning888.helloim.contract.frame.Frame;
+import com.github.xuning888.helloim.gateway.core.pipeline.MsgPipeline;
 import org.jboss.netty.channel.Channel;
 
 /**
@@ -40,4 +41,9 @@ public interface Conn {
      * @param traceId traceId
      */
     void write(Frame frame, String traceId);
+
+    /**
+     * 获取channel关联的pipeline
+     */
+    MsgPipeline getMsgPipeline();
 }

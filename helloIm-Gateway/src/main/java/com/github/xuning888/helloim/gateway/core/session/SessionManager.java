@@ -1,5 +1,6 @@
 package com.github.xuning888.helloim.gateway.core.session;
 
+import com.github.xuning888.helloim.contract.meta.GateUser;
 import com.github.xuning888.helloim.gateway.core.conn.event.ConnStateEvent;
 
 /**
@@ -23,6 +24,8 @@ public interface SessionManager {
      * 通过sessionId 获取session
      */
     Session getSession(String sessionId, String traceId);
+
+    Session getSessionByUser(GateUser user, String traceId);
 
     /**
      * 登出并传递事件

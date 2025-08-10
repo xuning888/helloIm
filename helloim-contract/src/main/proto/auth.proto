@@ -8,4 +8,6 @@ option java_outer_classname = "Auth";
 
 
 message AuthRequest {
+  string uid = 1;
+  int32 userType = 2;
 }

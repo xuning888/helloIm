@@ -16,6 +16,7 @@
         <module>helloIm-Gateway</module>
         <module>helloIm-delivery</module>
         <module>helloIm-WebApi</module>
+        <module>helloIm-user</module>
     </modules>
 
     <properties>

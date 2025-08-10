@@ -18,6 +18,24 @@ public final class Auth {
   public interface AuthRequestOrBuilder extends
       // @@protoc_insertion_point(interface_extends:helloim.protocol.AuthRequest)
       com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <code>string uid = 1;</code>
+     * @return The uid.
+     */
+    java.lang.String getUid();
+    /**
+     * <code>string uid = 1;</code>
+     * @return The bytes for uid.
+     */
+    com.google.protobuf.ByteString
+        getUidBytes();
+
+    /**
+     * <code>int32 userType = 2;</code>
+     * @return The userType.
+     */
+    int getUserType();
   }
   /**
    * Protobuf type {@code helloim.protocol.AuthRequest}
@@ -32,6 +50,7 @@ public final class Auth {
       super(builder);
     }
     private AuthRequest() {
+      uid_ = "";
     }
 
     @java.lang.Override
@@ -54,6 +73,56 @@ public final class Auth {
               com.github.xuning888.helloim.contract.protobuf.Auth.AuthRequest.class, com.github.xuning888.helloim.contract.protobuf.Auth.AuthRequest.Builder.class);
     }
 
+    public static final int UID_FIELD_NUMBER = 1;
+    @SuppressWarnings("serial")
+    private volatile java.lang.Object uid_ = "";
+    /**
+     * <code>string uid = 1;</code>
+     * @return The uid.
+     */
+    @java.lang.Override
+    public java.lang.String getUid() {
+      java.lang.Object ref = uid_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        uid_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string uid = 1;</code>
+     * @return The bytes for uid.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getUidBytes() {
+      java.lang.Object ref = uid_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        uid_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int USERTYPE_FIELD_NUMBER = 2;
+    private int userType_ = 0;
+    /**
+     * <code>int32 userType = 2;</code>
+     * @return The userType.
+     */
+    @java.lang.Override
+    public int getUserType() {
+      return userType_;
+    }
+
     private byte memoizedIsInitialized = -1;
     @java.lang.Override
     public final boolean isInitialized() {
@@ -68,6 +137,12 @@ public final class Auth {
     @java.lang.Override
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(uid_)) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 1, uid_);
+      }
+      if (userType_ != 0) {
+        output.writeInt32(2, userType_);
+      }
       getUnknownFields().writeTo(output);
     }
 
@@ -77,6 +152,13 @@ public final class Auth {
       if (size != -1) return size;
 
       size = 0;
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(uid_)) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, uid_);
+      }
+      if (userType_ != 0) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt32Size(2, userType_);
+      }
       size += getUnknownFields().getSerializedSize();
       memoizedSize = size;
       return size;
@@ -92,6 +174,10 @@ public final class Auth {
       }
       com.github.xuning888.helloim.contract.protobuf.Auth.AuthRequest other = (com.github.xuning888.helloim.contract.protobuf.Auth.AuthRequest) obj;
 
+      if (!getUid()
+          .equals(other.getUid())) return false;
+      if (getUserType()
+          != other.getUserType()) return false;
       if (!getUnknownFields().equals(other.getUnknownFields())) return false;
       return true;
     }
@@ -103,6 +189,10 @@ public final class Auth {
       }
       int hash = 41;
       hash = (19 * hash) + getDescriptor().hashCode();
+      hash = (37 * hash) + UID_FIELD_NUMBER;
+      hash = (53 * hash) + getUid().hashCode();
+      hash = (37 * hash) + USERTYPE_FIELD_NUMBER;
+      hash = (53 * hash) + getUserType();
       hash = (29 * hash) + getUnknownFields().hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -233,6 +323,9 @@ public final class Auth {
       @java.lang.Override
       public Builder clear() {
         super.clear();
+        bitField0_ = 0;
+        uid_ = "";
+        userType_ = 0;
         return this;
       }
 
@@ -259,8 +352,19 @@ public final class Auth {
       @java.lang.Override
       public com.github.xuning888.helloim.contract.protobuf.Auth.AuthRequest buildPartial() {
         com.github.xuning888.helloim.contract.protobuf.Auth.AuthRequest result = new com.github.xuning888.helloim.contract.protobuf.Auth.AuthRequest(this);
+        if (bitField0_ != 0) { buildPartial0(result); }
         onBuilt();
         return result;
+      }
+
+      private void buildPartial0(com.github.xuning888.helloim.contract.protobuf.Auth.AuthRequest result) {
+        int from_bitField0_ = bitField0_;
+        if (((from_bitField0_ & 0x00000001) != 0)) {
+          result.uid_ = uid_;
+        }
+        if (((from_bitField0_ & 0x00000002) != 0)) {
+          result.userType_ = userType_;
+        }
       }
 
       @java.lang.Override
@@ -307,6 +411,14 @@ public final class Auth {
 
       public Builder mergeFrom(com.github.xuning888.helloim.contract.protobuf.Auth.AuthRequest other) {
         if (other == com.github.xuning888.helloim.contract.protobuf.Auth.AuthRequest.getDefaultInstance()) return this;
+        if (!other.getUid().isEmpty()) {
+          uid_ = other.uid_;
+          bitField0_ |= 0x00000001;
+          onChanged();
+        }
+        if (other.getUserType() != 0) {
+          setUserType(other.getUserType());
+        }
         this.mergeUnknownFields(other.getUnknownFields());
         onChanged();
         return this;
@@ -333,6 +445,16 @@ public final class Auth {
               case 0:
                 done = true;
                 break;
+              case 10: {
+                uid_ = input.readStringRequireUtf8();
+                bitField0_ |= 0x00000001;
+                break;
+              } // case 10
+              case 16: {
+                userType_ = input.readInt32();
+                bitField0_ |= 0x00000002;
+                break;
+              } // case 16
               default: {
                 if (!super.parseUnknownField(input, extensionRegistry, tag)) {
                   done = true; // was an endgroup tag
@@ -346,6 +468,111 @@ public final class Auth {
         } finally {
           onChanged();
         } // finally
+        return this;
+      }
+      private int bitField0_;
+
+      private java.lang.Object uid_ = "";
+      /**
+       * <code>string uid = 1;</code>
+       * @return The uid.
+       */
+      public java.lang.String getUid() {
+        java.lang.Object ref = uid_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          uid_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string uid = 1;</code>
+       * @return The bytes for uid.
+       */
+      public com.google.protobuf.ByteString
+          getUidBytes() {
+        java.lang.Object ref = uid_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          uid_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string uid = 1;</code>
+       * @param value The uid to set.
+       * @return This builder for chaining.
+       */
+      public Builder setUid(
+          java.lang.String value) {
+        if (value == null) { throw new NullPointerException(); }
+        uid_ = value;
+        bitField0_ |= 0x00000001;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string uid = 1;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearUid() {
+        uid_ = getDefaultInstance().getUid();
+        bitField0_ = (bitField0_ & ~0x00000001);
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string uid = 1;</code>
+       * @param value The bytes for uid to set.
+       * @return This builder for chaining.
+       */
+      public Builder setUidBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) { throw new NullPointerException(); }
+        checkByteStringIsUtf8(value);
+        uid_ = value;
+        bitField0_ |= 0x00000001;
+        onChanged();
+        return this;
+      }
+
+      private int userType_ ;
+      /**
+       * <code>int32 userType = 2;</code>
+       * @return The userType.
+       */
+      @java.lang.Override
+      public int getUserType() {
+        return userType_;
+      }
+      /**
+       * <code>int32 userType = 2;</code>
+       * @param value The userType to set.
+       * @return This builder for chaining.
+       */
+      public Builder setUserType(int value) {
+
+        userType_ = value;
+        bitField0_ |= 0x00000002;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>int32 userType = 2;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearUserType() {
+        bitField0_ = (bitField0_ & ~0x00000002);
+        userType_ = 0;
+        onChanged();
         return this;
       }
       @java.lang.Override
@@ -426,9 +653,10 @@ public final class Auth {
       descriptor;
   static {
     java.lang.String[] descriptorData = {
-      "\n\nauth.proto\022\020helloim.protocol\"\r\n\013AuthRe" +
-      "questB6\n.com.github.xuning888.helloim.co" +
-      "ntract.protobufB\004Authb\006proto3"
+      "\n\nauth.proto\022\020helloim.protocol\",\n\013AuthRe" +
+      "quest\022\013\n\003uid\030\001 \001(\t\022\020\n\010userType\030\002 \001(\005B6\n." +
+      "com.github.xuning888.helloim.contract.pr" +
+      "otobufB\004Authb\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -439,7 +667,7 @@ public final class Auth {
     internal_static_helloim_protocol_AuthRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_helloim_protocol_AuthRequest_descriptor,
-        new java.lang.String[] { });
+        new java.lang.String[] { "Uid", "UserType", });
   }
 
   // @@protoc_insertion_point(outer_class_scope)

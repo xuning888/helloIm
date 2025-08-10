@@ -5,7 +5,8 @@ import org.jboss.netty.channel.ChannelPipeline;
 import org.jboss.netty.channel.ChannelPipelineFactory;
 import org.jboss.netty.channel.DefaultChannelPipeline;
 import org.jboss.netty.handler.codec.frame.LengthFieldBasedFrameDecoder;
-import org.springframework.stereotype.Component;
+import org.jboss.netty.handler.timeout.IdleStateHandler;
+import org.jboss.netty.util.HashedWheelTimer;
 
 /**
  * @author xuning
@@ -22,13 +23,16 @@ public class ImChannelPipeFactory implements ChannelPipelineFactory {
         this.imChannelUpStreamHandler = imChannelUpStreamHandler;
     }
 
-
     @Override
     public ChannelPipeline getPipeline() throws Exception {
         ChannelPipeline channelPipeline = new DefaultChannelPipeline();
+        channelPipeline.addLast("idle",
+                new IdleStateHandler(new HashedWheelTimer(), gateServerProperties.getReadTimeoutSeconds(),
+                        0, 0));
         // 解码器
         channelPipeline.addLast("decoder",
-                new LengthFieldBasedFrameDecoder(gateServerProperties.getMaxFrameSize(), 16, 4));
+                new LengthFieldBasedFrameDecoder(gateServerProperties.getMaxFrameSize(), 16, 4,
+                        0, 0, true));
         // 添加业务处理器
         channelPipeline.addLast("imBiz", imChannelUpStreamHandler);
         return channelPipeline;

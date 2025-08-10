@@ -46,7 +46,7 @@ public class TcpChannelUpStreamHandler extends ImChannelUpStreamHandler {
             if (conn != null) {
                 return conn;
             }
-            conn = new TcpConn(channel);
+            conn = new TcpConn(channel, processor.msgPipeline());
             connMap.put(channel, conn);
         }
         return conn;

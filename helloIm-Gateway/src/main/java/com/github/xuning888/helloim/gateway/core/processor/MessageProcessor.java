@@ -5,7 +5,6 @@ import com.github.xuning888.helloim.gateway.core.cmd.DownCmdEvent;
 import com.github.xuning888.helloim.gateway.core.cmd.UpCmdEvent;
 import com.github.xuning888.helloim.gateway.core.conn.event.ConnEvent;
 import com.github.xuning888.helloim.gateway.core.conn.event.ConnStateEvent;
-import com.github.xuning888.helloim.gateway.core.pipeline.DefaultMsgPipeline;
 import com.github.xuning888.helloim.gateway.core.pipeline.MsgPipeline;
 import com.github.xuning888.helloim.gateway.core.session.SessionManager;
 import org.slf4j.Logger;
@@ -51,6 +50,11 @@ public class MessageProcessor implements Processor {
         } catch (Exception ex) {
             logger.error("handleConnEvent failed traceId: {}", traceId, ex);
         }
+    }
+
+    @Override
+    public MsgPipeline msgPipeline() {
+        return this.msgPipeline;
     }
 
     private void sendUp(UpCmdEvent upCmdEvent) {

@@ -28,5 +28,6 @@ public class TailMsgHandler implements UpMsgHandler {
         } catch (Exception ex) {
             logger.error("TailMsgHandler, 上行事件处理失败, traceId: {}", event.getTraceId(), ex);
         }
+        ctx.sendUp(event);
     }
 }

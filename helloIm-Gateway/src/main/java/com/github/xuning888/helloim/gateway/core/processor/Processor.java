@@ -3,6 +3,7 @@ package com.github.xuning888.helloim.gateway.core.processor;
 
 
 import com.github.xuning888.helloim.gateway.core.conn.event.ConnEvent;
+import com.github.xuning888.helloim.gateway.core.pipeline.MsgPipeline;
 
 /**
  * @author xuning
@@ -11,4 +12,6 @@ import com.github.xuning888.helloim.gateway.core.conn.event.ConnEvent;
 public interface Processor {
 
     void handleConnEvent(ConnEvent connEvent);
+
+    MsgPipeline msgPipeline();
 }
