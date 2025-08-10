@@ -15,7 +15,7 @@ public interface Conn {
      * 长连接的ID
      * @return id
      */
-    String id();
+    String getId();
 
     /**
      * 获取连接关联的channel
@@ -28,6 +28,11 @@ public interface Conn {
      * @return ok
      */
     boolean isOk();
+
+    /**
+     * 关闭长连接
+     */
+    void close();
 
     /**
      * 写出数据到peer

@@ -13,15 +13,26 @@ public class ConnStateEvent implements ConnEvent {
 
     private final Conn conn;
     private final State state;
+    private final String traceId;
 
-    public ConnStateEvent(Conn conn, State state) {
+    public ConnStateEvent(Conn conn, State state, String traceId) {
         this.conn = conn;
         this.state = state;
+        this.traceId =traceId;
     }
 
     @Override
     public Conn getConn() {
         return conn;
+    }
+
+    public State getState() {
+        return this.state;
+    }
+
+    @Override
+    public String getTraceId() {
+        return this.traceId;
     }
 
     public State state() {

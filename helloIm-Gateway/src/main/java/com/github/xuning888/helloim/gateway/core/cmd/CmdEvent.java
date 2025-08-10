@@ -15,10 +15,4 @@ public interface CmdEvent extends ConnEvent {
      * @return frame
      */
     Frame getFrame();
-
-    /**
-     * 获取traceId
-     * @return traceId
-     */
-    String getTraceId();
 }

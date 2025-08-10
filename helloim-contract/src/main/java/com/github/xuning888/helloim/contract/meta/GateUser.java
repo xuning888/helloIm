@@ -1,6 +1,7 @@
 package com.github.xuning888.helloim.contract.meta;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 /**
  * @author xuning
@@ -41,6 +42,18 @@ public class GateUser implements Serializable {
 
     public void setUserType(Integer userType) {
         this.userType = userType;
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (object == null || getClass() != object.getClass()) return false;
+        GateUser gateUser = (GateUser) object;
+        return Objects.equals(uid, gateUser.uid) && Objects.equals(userType, gateUser.userType);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(uid, userType);
     }
 
     @Override

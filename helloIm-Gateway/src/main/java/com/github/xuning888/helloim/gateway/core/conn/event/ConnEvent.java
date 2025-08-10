@@ -16,4 +16,10 @@ public interface ConnEvent extends Serializable {
      * @return conn
      */
     Conn getConn();
+
+    /**
+     * 获取traceId
+     * @return traceId
+     */
+    String getTraceId();
 }

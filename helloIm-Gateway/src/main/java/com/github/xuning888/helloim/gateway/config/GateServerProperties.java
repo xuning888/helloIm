@@ -6,9 +6,21 @@ package com.github.xuning888.helloim.gateway.config;
  */
 public class GateServerProperties {
 
+    private String protocol;
     private int port;
     private int maxFrameSize;
     private int readTimeoutSeconds;
+    private int coreSize;
+    private int maxPoolSize;
+    private int queueSize;
+
+    public String getProtocol() {
+        return protocol;
+    }
+
+    public void setProtocol(String protocol) {
+        this.protocol = protocol;
+    }
 
     public int getPort() {
         return port;
@@ -34,12 +46,40 @@ public class GateServerProperties {
         this.readTimeoutSeconds = readTimeoutSeconds;
     }
 
+    public int getCoreSize() {
+        return coreSize;
+    }
+
+    public void setCoreSize(int coreSize) {
+        this.coreSize = coreSize;
+    }
+
+    public int getMaxPoolSize() {
+        return maxPoolSize;
+    }
+
+    public void setMaxPoolSize(int maxPoolSize) {
+        this.maxPoolSize = maxPoolSize;
+    }
+
+    public int getQueueSize() {
+        return queueSize;
+    }
+
+    public void setQueueSize(int queueSize) {
+        this.queueSize = queueSize;
+    }
+
     @Override
     public String toString() {
         return "GateServerProperties{" +
-                "port=" + port +
+                "protocol='" + protocol + '\'' +
+                ", port=" + port +
                 ", maxFrameSize=" + maxFrameSize +
                 ", readTimeoutSeconds=" + readTimeoutSeconds +
+                ", coreSize=" + coreSize +
+                ", maxPoolSize=" + maxPoolSize +
+                ", queueSize=" + queueSize +
                 '}';
     }
 }

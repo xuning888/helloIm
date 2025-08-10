@@ -11,7 +11,6 @@ import org.springframework.stereotype.Component;
  * @author xuning
  * @date 2025/8/10 1:07
  */
-@Component
 public class ImChannelPipeFactory implements ChannelPipelineFactory {
 
     private final GateServerProperties gateServerProperties;

@@ -1,10 +1,13 @@
 package com.github.xuning888.helloim.dispatch.service;
 
+import com.github.xuning888.helloim.contract.api.request.AuthRequest;
+import com.github.xuning888.helloim.contract.api.request.LogoutRequest;
 import com.github.xuning888.helloim.contract.api.request.UpMessageReq;
+import com.github.xuning888.helloim.contract.api.response.AuthResponse;
+import com.github.xuning888.helloim.contract.api.response.LogoutResponse;
 import com.github.xuning888.helloim.contract.api.service.gate.UpMsgService;
 import com.github.xuning888.helloim.contract.dto.MsgContext;
 import com.github.xuning888.helloim.contract.frame.Frame;
-import com.github.xuning888.helloim.contract.frame.Header;
 import com.github.xuning888.helloim.contract.meta.Endpoint;
 import com.github.xuning888.helloim.contract.meta.GateUser;
 import com.github.xuning888.helloim.contract.util.GatewayUtils;
@@ -14,9 +17,7 @@ import org.apache.dubbo.config.annotation.DubboService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.core.script.DefaultRedisScript;
 
-import java.util.Collections;
 import java.util.Objects;
 
 /**
@@ -27,15 +28,6 @@ import java.util.Objects;
 public class UpMessageServiceImpl implements UpMsgService {
 
     private static final Logger logger = LoggerFactory.getLogger(UpMessageServiceImpl.class);
-
-    private static final String MSGID_SCRIPT =
-            "if redis.call('exists', KEYS[1]) == 1 then\n" +
-            "    return redis.call('get', KEYS[1])\n" +
-            "else\n" +
-            "    redis.call('set', KEYS[1], ARGV[1])\n" +
-            "    redis.call('expire', KEYS[1], ARGV[2])\n" +
-            "    return redis.call('get', KEYS[1])\n" +
-            "end";
 
     private final DispatchService dispatchService;
     private final IdGenerator idGenerator;
@@ -50,8 +42,8 @@ public class UpMessageServiceImpl implements UpMsgService {
     }
 
     @Override
-    public String sayHello(String name) {
-        return name;
+    public AuthResponse auth(AuthRequest authRequest) {
+        return new AuthResponse();
     }
 
     @Override
@@ -90,29 +82,18 @@ public class UpMessageServiceImpl implements UpMsgService {
         dispatchService.dispatch(msgContext, traceId);
     }
 
+    @Override
+    public LogoutResponse logout(LogoutRequest logoutRequest) {
+        logger.info("logout request: {}", logoutRequest);
+        return new LogoutResponse(logoutRequest.getTraceId(), true, logoutRequest.getGateUser());
+    }
+
 
     private Long getMsgId(MsgContext msgContext) {
-        String msgKey = msgIdKey(msgContext);
         Long msgId = idGenerator.nextId();
-        DefaultRedisScript<String> script = new DefaultRedisScript<>();
-        script.setScriptText(MSGID_SCRIPT);
-        script.setResultType(String.class);
-        try {
-            String msgIdStr = this.redisTemplate.execute(script, Collections.singletonList(msgKey),
-                    String.valueOf(msgId), 120);
-            msgId = Long.parseLong(msgIdStr);
-        } catch (Exception ex) {
-            logger.error("getMsgId error, traceId: {}", msgContext.getTraceId(), ex);
-        }
-        return msgId;
+        return UpMessageUtils.getMsgId(this.redisTemplate, msgContext, msgId);
     }
 
-    private String msgIdKey(MsgContext msgContext) {
-        Header header = msgContext.getFrame().getHeader();
-        int seq = header.getSeq(), cmdId = header.getCmdId();
-        String from = msgContext.getMsgFrom();
-        return "dispatch_up_message_msgId_" + from + "_" + cmdId + "_" + seq;
-    }
 
     private void validParams(UpMessageReq upMessageReq, String traceId) {
         Frame frame = upMessageReq.getFrame();
