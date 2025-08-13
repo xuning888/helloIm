@@ -654,9 +654,11 @@ public final class Auth {
   static {
     java.lang.String[] descriptorData = {
       "\n\nauth.proto\022\020helloim.protocol\",\n\013AuthRe" +
-      "quest\022\013\n\003uid\030\001 \001(\t\022\020\n\010userType\030\002 \001(\005B6\n." +
+      "quest\022\013\n\003uid\030\001 \001(\t\022\020\n\010userType\030\002 \001(\005Bw\n." +
       "com.github.xuning888.helloim.contract.pr" +
-      "otobufB\004Authb\006proto3"
+      "otobufB\004AuthZ?github.com/xuning888/hello" +
+      "IMClient/internal/proto;helloim_protob\006p" +
+      "roto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,

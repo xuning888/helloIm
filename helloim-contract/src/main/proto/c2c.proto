@@ -5,6 +5,8 @@ package helloim.protocol;
 
 option java_package = "com.github.xuning888.helloim.contract.protobuf";
 option java_outer_classname = "C2cMessage";
+option go_package = "github.com/xuning888/helloIMClient/internal/proto;helloim_proto";
+
 
 
 // 单聊上行消息

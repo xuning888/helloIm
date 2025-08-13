@@ -2606,9 +2606,10 @@ public final class C2cMessage {
       "tent\030\003 \001(\t\022\023\n\013contentType\030\004 \001(\005\"F\n\017C2cSe" +
       "ndResponse\022\r\n\005msgId\030\001 \001(\003\022\021\n\ttimestamp\030\002" +
       " \001(\003\022\021\n\tserverSeq\030\003 \001(\003\"\020\n\016C2cPushReques" +
-      "t\"\021\n\017C2cPushResponseB<\n.com.github.xunin" +
+      "t\"\021\n\017C2cPushResponseB}\n.com.github.xunin" +
       "g888.helloim.contract.protobufB\nC2cMessa" +
-      "geb\006proto3"
+      "geZ?github.com/xuning888/helloIMClient/i" +
+      "nternal/proto;helloim_protob\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,

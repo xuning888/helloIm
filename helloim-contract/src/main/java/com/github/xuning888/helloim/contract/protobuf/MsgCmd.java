@@ -212,8 +212,10 @@ public final class MsgCmd {
       "d\022\022\n\016CMD_ID_DEFAULT\020\000\022\017\n\013CMD_ID_ECHO\020\001\022\023" +
       "\n\016CMD_ID_C2CSEND\020\356\007\022\023\n\016CMD_ID_C2CPUSH\020\357\007" +
       "\022\024\n\017CMD_ID_C2CPUSTH\020\360\007\022\023\n\016CMD_ID_C2GPUSH" +
-      "\020\361\007B8\n.com.github.xuning888.helloim.cont" +
-      "ract.protobufB\006MsgCmdb\006proto3"
+      "\020\361\007By\n.com.github.xuning888.helloim.cont" +
+      "ract.protobufB\006MsgCmdZ?github.com/xuning" +
+      "888/helloIMClient/internal/proto;helloim" +
+      "_protob\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
