@@ -5,9 +5,9 @@ import com.github.xuning888.helloim.gateway.core.cmd.UpCmdEvent;
 import com.github.xuning888.helloim.gateway.core.conn.Conn;
 import com.github.xuning888.helloim.gateway.core.conn.TcpConn;
 import com.github.xuning888.helloim.gateway.core.processor.Processor;
+import org.jboss.netty.buffer.BigEndianHeapChannelBuffer;
 import org.jboss.netty.channel.Channel;
 import org.jboss.netty.channel.ChannelHandlerContext;
-import org.jboss.netty.channel.ChannelStateEvent;
 import org.jboss.netty.channel.MessageEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -69,6 +69,10 @@ public class TcpChannelUpStreamHandler extends ImChannelUpStreamHandler {
         if (message instanceof ByteBuffer) {
             ByteBuffer buffer = (ByteBuffer) message;
             frame = createFrame(conn, buffer);
+        } else if (message instanceof BigEndianHeapChannelBuffer) {
+            BigEndianHeapChannelBuffer buffer = (BigEndianHeapChannelBuffer) message;
+            ByteBuffer byteBuffer = buffer.toByteBuffer();
+            frame = createFrame(conn, byteBuffer);
         } else {
             logger.error("received message, message can't convert to ByteBuffer, conn: {}, traceId: {}", conn.getId(), traceId);
             return;

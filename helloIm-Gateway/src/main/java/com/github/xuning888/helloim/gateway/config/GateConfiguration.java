@@ -1,10 +1,12 @@
 package com.github.xuning888.helloim.gateway.config;
 
+import com.github.xuning888.helloim.contract.protobuf.MsgCmd;
 import com.github.xuning888.helloim.gateway.adapter.UpMsgServiceAdapter;
 import com.github.xuning888.helloim.gateway.core.ImChannelPipeFactory;
 import com.github.xuning888.helloim.gateway.core.ImChannelUpStreamHandler;
 import com.github.xuning888.helloim.gateway.core.TcpChannelUpStreamHandler;
 import com.github.xuning888.helloim.gateway.core.cmd.handler.DefaultHandler;
+import com.github.xuning888.helloim.gateway.core.cmd.handler.EchoHandler;
 import com.github.xuning888.helloim.gateway.core.cmd.handler.HandlerProxy;
 import com.github.xuning888.helloim.gateway.core.handler.impl.HeadMsgHandler;
 import com.github.xuning888.helloim.gateway.core.handler.impl.TailMsgHandler;
@@ -47,11 +49,19 @@ public class GateConfiguration {
     }
 
     @Bean
-    public MsgPipeline msgPipeline(UpMsgServiceAdapter upMsgServiceAdapter,
-                                   SessionManager sessionManager, GateAddr gateAddr) {
+    public HandlerProxy handlerProxy(UpMsgServiceAdapter upMsgServiceAdapter, SessionManager sessionManager, GateAddr gateAddr) {
+        DefaultHandler defaultHandler = new DefaultHandler(upMsgServiceAdapter, sessionManager, gateAddr);
+        HandlerProxy handlerProxy = new HandlerProxy(defaultHandler);
+        // 注册Echo指令的处理器
+        handlerProxy.register(MsgCmd.CmdId.CMD_ID_ECHO_VALUE, new EchoHandler());
+        return handlerProxy;
+    }
+
+    @Bean
+    public MsgPipeline msgPipeline(HandlerProxy handlerProxy) {
         DefaultMsgPipeline defaultMsgPipeline = new DefaultMsgPipeline();
         defaultMsgPipeline.addLast("head", new HeadMsgHandler());
-        defaultMsgPipeline.addLast("tail", new TailMsgHandler(new HandlerProxy(new DefaultHandler(upMsgServiceAdapter, sessionManager, gateAddr))));
+        defaultMsgPipeline.addLast("tail", new TailMsgHandler(handlerProxy));
         return defaultMsgPipeline;
     }
 
@@ -71,10 +81,12 @@ public class GateConfiguration {
             GateServerProperties gateServerProperties,
             Processor processor
     ) {
-        if (gateServerProperties.getProtocol().equals("tcp")) {
+        String protocol = gateServerProperties.getProtocol();
+        if ("tcp".equals(protocol)) {
             return new TcpChannelUpStreamHandler(processor);
+        } else {
+            throw new IllegalArgumentException("Unknown protocol: " + gateServerProperties.getProtocol());
         }
-        throw new IllegalArgumentException("Unknown protocol: " + gateServerProperties.getProtocol());
     }
 
     @Bean

@@ -2,6 +2,8 @@ package com.github.xuning888.helloim.gateway.core.conn;
 
 import com.github.xuning888.helloim.contract.frame.Frame;
 import com.github.xuning888.helloim.gateway.core.pipeline.MsgPipeline;
+import org.jboss.netty.buffer.ChannelBuffer;
+import org.jboss.netty.buffer.ChannelBuffers;
 import org.jboss.netty.channel.Channel;
 import org.jboss.netty.channel.ChannelFuture;
 
@@ -48,7 +50,8 @@ public class TcpConn implements Conn {
     @Override
     public void write(Frame frame, String traceId) {
         byte[] byteArray = frame.toByteArray();
-        channel.write(byteArray);
+        ChannelBuffer channelBuffer = ChannelBuffers.wrappedBuffer(byteArray);
+        channel.write(channelBuffer);
     }
 
     @Override

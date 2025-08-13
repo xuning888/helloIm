@@ -61,7 +61,7 @@ public class DefaultSessionManager implements SessionManager {
         ConnStateEvent.State state = connStateEvent.getState();
         switch (state) {
             case OPEN:
-                logger.info("连接建立, sessionId: {}, traceId: {}", sessionId, traceId);
+                logger.info("conn connected, sessionId: {}, traceId: {}", sessionId, traceId);
                 break;
             case CLOSE:
                 closeSession(sessionId, GateSessionState.CLOSE, conn, traceId);

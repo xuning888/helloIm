@@ -26,6 +26,14 @@ public final class MsgCmd {
     CMD_ID_DEFAULT(0),
     /**
      * <pre>
+     * echo
+     * </pre>
+     *
+     * <code>CMD_ID_ECHO = 1;</code>
+     */
+    CMD_ID_ECHO(1),
+    /**
+     * <pre>
      * 单聊上行
      * </pre>
      *
@@ -63,6 +71,14 @@ public final class MsgCmd {
      * <code>CMD_ID_DEFAULT = 0;</code>
      */
     public static final int CMD_ID_DEFAULT_VALUE = 0;
+    /**
+     * <pre>
+     * echo
+     * </pre>
+     *
+     * <code>CMD_ID_ECHO = 1;</code>
+     */
+    public static final int CMD_ID_ECHO_VALUE = 1;
     /**
      * <pre>
      * 单聊上行
@@ -122,6 +138,7 @@ public final class MsgCmd {
     public static CmdId forNumber(int value) {
       switch (value) {
         case 0: return CMD_ID_DEFAULT;
+        case 1: return CMD_ID_ECHO;
         case 1006: return CMD_ID_C2CSEND;
         case 1007: return CMD_ID_C2CPUSH;
         case 1008: return CMD_ID_C2CPUSTH;
@@ -191,12 +208,12 @@ public final class MsgCmd {
       descriptor;
   static {
     java.lang.String[] descriptorData = {
-      "\n\013cmdId.proto\022\020helloim.protocol*p\n\005CmdId" +
-      "\022\022\n\016CMD_ID_DEFAULT\020\000\022\023\n\016CMD_ID_C2CSEND\020\356" +
-      "\007\022\023\n\016CMD_ID_C2CPUSH\020\357\007\022\024\n\017CMD_ID_C2CPUST" +
-      "H\020\360\007\022\023\n\016CMD_ID_C2GPUSH\020\361\007B8\n.com.github." +
-      "xuning888.helloim.contract.protobufB\006Msg" +
-      "Cmdb\006proto3"
+      "\n\013cmdId.proto\022\020helloim.protocol*\201\001\n\005CmdI" +
+      "d\022\022\n\016CMD_ID_DEFAULT\020\000\022\017\n\013CMD_ID_ECHO\020\001\022\023" +
+      "\n\016CMD_ID_C2CSEND\020\356\007\022\023\n\016CMD_ID_C2CPUSH\020\357\007" +
+      "\022\024\n\017CMD_ID_C2CPUSTH\020\360\007\022\023\n\016CMD_ID_C2GPUSH" +
+      "\020\361\007B8\n.com.github.xuning888.helloim.cont" +
+      "ract.protobufB\006MsgCmdb\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
