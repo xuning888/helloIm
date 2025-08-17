@@ -1,7 +1,7 @@
 package com.github.xuning888.helloim.contract.util;
 
 import com.github.xuning888.helloim.contract.api.request.DownMessageReq;
-import com.github.xuning888.helloim.contract.api.service.gate.DownMsgService;
+import com.github.xuning888.helloim.contract.api.service.DownMsgService;
 import com.github.xuning888.helloim.contract.dto.MsgContext;
 import com.github.xuning888.helloim.contract.frame.Frame;
 import com.github.xuning888.helloim.contract.frame.Header;

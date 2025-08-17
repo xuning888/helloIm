@@ -17,6 +17,7 @@
         <module>helloIm-delivery</module>
         <module>helloIm-WebApi</module>
         <module>helloIm-user</module>
+        <module>helloIm-session</module>
     </modules>
 
     <properties>

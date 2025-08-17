@@ -1,13 +1,10 @@
 package com.github.xuning888.helloim.contract.util;
 
-import com.github.xuning888.helloim.contract.api.service.gate.DownMsgService;
-import com.github.xuning888.helloim.contract.api.service.gate.UpMsgService;
+import com.github.xuning888.helloim.contract.api.service.DownMsgService;
 import com.github.xuning888.helloim.contract.meta.Endpoint;
 import org.apache.dubbo.config.ApplicationConfig;
 import org.apache.dubbo.config.MethodConfig;
 import org.apache.dubbo.config.ReferenceConfig;
-//import org.apache.dubbo.config.utils.ReferenceConfigCache;
-import org.apache.kafka.clients.producer.ProducerConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

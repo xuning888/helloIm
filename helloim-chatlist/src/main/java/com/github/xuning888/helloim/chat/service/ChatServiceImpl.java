@@ -1,6 +1,6 @@
 package com.github.xuning888.helloim.chat.service;
 
-import com.github.xuning888.helloim.contract.api.service.chatlist.ChatService;
+import com.github.xuning888.helloim.contract.api.service.ChatService;
 import com.github.xuning888.helloim.contract.contant.ChatType;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.DubboService;

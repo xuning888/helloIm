@@ -5,7 +5,7 @@ import com.github.xuning888.helloim.contract.api.request.LogoutRequest;
 import com.github.xuning888.helloim.contract.api.request.UpMessageReq;
 import com.github.xuning888.helloim.contract.api.response.AuthResponse;
 import com.github.xuning888.helloim.contract.api.response.LogoutResponse;
-import com.github.xuning888.helloim.contract.api.service.gate.UpMsgService;
+import com.github.xuning888.helloim.contract.api.service.UpMsgService;
 import com.github.xuning888.helloim.contract.dto.MsgContext;
 import com.github.xuning888.helloim.contract.frame.Frame;
 import com.github.xuning888.helloim.contract.meta.Endpoint;

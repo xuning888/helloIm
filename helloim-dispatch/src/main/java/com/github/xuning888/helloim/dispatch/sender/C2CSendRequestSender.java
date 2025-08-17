@@ -1,6 +1,6 @@
 package com.github.xuning888.helloim.dispatch.sender;
 
-import com.github.xuning888.helloim.contract.api.service.chatlist.ChatService;
+import com.github.xuning888.helloim.contract.api.service.ChatService;
 import com.github.xuning888.helloim.contract.contant.ChatType;
 import com.github.xuning888.helloim.contract.dto.MsgContext;
 import com.github.xuning888.helloim.contract.frame.Frame;

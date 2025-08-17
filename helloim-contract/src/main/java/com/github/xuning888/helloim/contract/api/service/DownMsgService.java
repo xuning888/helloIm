@@ -1,4 +1,4 @@
-package com.github.xuning888.helloim.contract.api.service.gate;
+package com.github.xuning888.helloim.contract.api.service;
 
 import com.github.xuning888.helloim.contract.api.request.DownMessageReq;
 

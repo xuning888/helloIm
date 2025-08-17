@@ -1,4 +1,4 @@
-package com.github.xuning888.helloim.contract.api.service.chatlist;
+package com.github.xuning888.helloim.contract.api.service;
 
 import com.github.xuning888.helloim.contract.contant.ChatType;
 
