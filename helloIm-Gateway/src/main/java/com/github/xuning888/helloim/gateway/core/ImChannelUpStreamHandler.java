@@ -33,7 +33,7 @@ public abstract class ImChannelUpStreamHandler extends SimpleChannelUpstreamHand
      */
     @Override
     public void channelConnected(ChannelHandlerContext ctx, ChannelStateEvent e) throws Exception {
-        super.channelDisconnected(ctx, e);
+        super.channelConnected(ctx, e);
         Channel channel = e.getChannel();
         // 多协议适配，创建Conn
         Conn conn = createOrGetConn(channel);
@@ -53,6 +53,9 @@ public abstract class ImChannelUpStreamHandler extends SimpleChannelUpstreamHand
         Conn conn = createOrGetConn(channel);
         String traceId = UUID.randomUUID().toString();
         // 长连接关闭事件下发到业务层
+        if (logger.isDebugEnabled()) {
+            logger.debug("channelDisconnected traceId: {}", traceId);
+        }
         processor.handleConnEvent(new ConnStateEvent(conn, ConnStateEvent.State.CLOSE, traceId));
         // 多协议适配，移除长连接
         removeConn(channel);
@@ -72,6 +75,7 @@ public abstract class ImChannelUpStreamHandler extends SimpleChannelUpstreamHand
                     IdleState.WRITER_IDLE.equals(state)) {
                 String traceId = UUID.randomUUID().toString();
                 Conn conn = createOrGetConn(e.getChannel());
+                logger.info("channelTimeout traceId: {}", traceId);
                 processor.handleConnEvent(new ConnStateEvent(conn, ConnStateEvent.State.TIMEOUT, traceId));
             }
         } else {

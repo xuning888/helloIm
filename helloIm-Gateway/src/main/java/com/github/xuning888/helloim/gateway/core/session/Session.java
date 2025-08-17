@@ -3,6 +3,7 @@ package com.github.xuning888.helloim.gateway.core.session;
 import com.github.xuning888.helloim.contract.contant.GateSessionEvent;
 import com.github.xuning888.helloim.contract.meta.GateUser;
 import com.github.xuning888.helloim.gateway.core.conn.Conn;
+import com.github.xuning888.helloim.gateway.core.pipeline.MsgPipeline;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -67,6 +68,11 @@ public class Session implements Serializable {
 
     public void addListener(SessionListener sessionListener) {
         this.listeners.add(sessionListener);
+    }
+
+
+    public MsgPipeline msgPipeline() {
+        return this.conn.getMsgPipeline();
     }
 
     @Override

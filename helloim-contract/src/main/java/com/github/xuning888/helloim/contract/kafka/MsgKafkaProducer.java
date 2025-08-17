@@ -90,7 +90,7 @@ public class MsgKafkaProducer {
                     .sorted(String::compareTo)
                     .collect(Collectors.joining("_"));
             return Utils.toPositive(Utils.murmur2(chat.getBytes(StandardCharsets.UTF_8))) % partitionSize;
-        } else if (MsgCmd.CmdId.CMD_ID_C2CPUSTH_VALUE == cmdId ||
+        } else if (MsgCmd.CmdId.CMD_ID_C2GSEND_VALUE == cmdId ||
                 MsgCmd.CmdId.CMD_ID_C2GPUSH_VALUE == cmdId) { // 群聊
             String groupId = msgContext.getMsgTo();
             Long groupIdInt64 = null;

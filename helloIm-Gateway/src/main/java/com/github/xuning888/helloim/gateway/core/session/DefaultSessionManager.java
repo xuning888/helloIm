@@ -39,11 +39,14 @@ public class DefaultSessionManager implements SessionManager {
 
 
     @Override
-    public void putSession(Session session, String traceId) {
+    public synchronized void putSession(Session session, String traceId) {
         Session oldSession = sessionMap.get(session.getId());
         if (oldSession != null) {
             logger.info("session重复auth, 需要检查是同一个用户的session, sessionId: {}", session.getId());
             checkAndDeleteOldDSession(session, oldSession, traceId);
+        }
+        if (logger.isDebugEnabled()) {
+            logger.debug("putSession session: {}, traceId: {}", session, traceId);
         }
         sessionMap.put(session.getId(), session);
         userSessionMap.put(session.getUser(), session);
@@ -64,12 +67,21 @@ public class DefaultSessionManager implements SessionManager {
                 logger.info("conn connected, sessionId: {}, traceId: {}", sessionId, traceId);
                 break;
             case CLOSE:
+                if (logger.isDebugEnabled()) {
+                    logger.debug("conn close, sessionId: {}, traceId: {}", sessionId, traceId);
+                }
                 closeSession(sessionId, GateSessionState.CLOSE, conn, traceId);
                 break;
             case TIMEOUT:
+                if (logger.isDebugEnabled()) {
+                    logger.debug("conn timeout, sessionId: {}, traceId: {}", sessionId, traceId);
+                }
                 closeSession(sessionId, GateSessionState.TIMEOUT, conn, traceId);
                 break;
             case ERROR:
+                if (logger.isDebugEnabled()) {
+                    logger.debug("conn error, sessionId: {}, traceId: {}", sessionId, traceId);
+                }
                 closeSession(sessionId, GateSessionState.ERROR, conn, traceId);
                 break;
             default:
@@ -104,19 +116,26 @@ public class DefaultSessionManager implements SessionManager {
     public void logout(String sessionId, String traceId) {
         Session session = sessionMap.get(sessionId);
         if (session != null) {
+            if (logger.isDebugEnabled()) {
+                logger.debug("logout traceId: {}", traceId);
+            }
             closeSession(sessionId, GateSessionState.LOGOUT, session.getConn(), traceId);
         }
     }
 
-    private void closeSession(String sessionId, GateSessionState sessionState, Conn conn, String traceId) {
+    private synchronized void closeSession(String sessionId, GateSessionState sessionState, Conn conn, String traceId) {
         Session session = sessionMap.remove(sessionId);
         if (session != null) {
-            logger.info("closeSession, session: {}, state: {}, traceId: {}", session, sessionState, traceId);
+            if (logger.isDebugEnabled()) {
+                logger.debug("closeSession, session: {}, state: {}, traceId: {}", session, sessionState, traceId);
+            }
             asyncCloseSession(session, new GateSessionEvent(sessionState, session.getUser(), traceId));
             GateUser user = session.getUser();
             userSessionMap.remove(user);
         } else {
-            logger.info("closeSession, session is null, sessionId: {}, traceId: {}", sessionId, traceId);
+            if (logger.isDebugEnabled()) {
+                logger.debug("closeSession, session is null, sessionId: {}, traceId: {}", sessionId, traceId);
+            }
             // 确保长连接也被关闭
             if (conn != null) {
                 conn.close();

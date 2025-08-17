@@ -1,6 +1,7 @@
 package com.github.xuning888.helloim.gateway.core;
 
 import com.github.xuning888.helloim.contract.frame.Frame;
+import com.github.xuning888.helloim.contract.frame.Header;
 import com.github.xuning888.helloim.gateway.core.cmd.UpCmdEvent;
 import com.github.xuning888.helloim.gateway.core.conn.Conn;
 import com.github.xuning888.helloim.gateway.core.conn.TcpConn;
@@ -63,7 +64,9 @@ public class TcpChannelUpStreamHandler extends ImChannelUpStreamHandler {
     public void messageReceived(ChannelHandlerContext ctx, MessageEvent e) throws Exception {
         String traceId = UUID.randomUUID().toString();
         Conn conn = createOrGetConn(e.getChannel());
-        logger.info("received message, conn: {}, traceId: {}", conn.getId(), traceId);
+        if (logger.isDebugEnabled()) {
+            logger.debug("received message, conn: {}, traceId: {}", conn.getId(), traceId);
+        }
         Object message = e.getMessage();
         Frame frame = null;
         if (message instanceof ByteBuffer) {
@@ -80,6 +83,12 @@ public class TcpChannelUpStreamHandler extends ImChannelUpStreamHandler {
         if (frame == null) {
             logger.error("received message, message can't convert to Frame, conn: {}, traceId: {}", conn.getId(), traceId);
             return;
+        }
+
+        if (logger.isDebugEnabled()) {
+            Header header = frame.getHeader();
+            logger.info("received message, conn: {}, cmdId:{}, seq:{}, traceId: {}",
+                    conn.getId(), header.getCmdId(), header.getSeq(), traceId);
         }
         // 创建上行事件
         UpCmdEvent upCmdEvent = new UpCmdEvent(frame, conn, traceId);

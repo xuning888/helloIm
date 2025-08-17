@@ -21,4 +21,8 @@ dubbo:
     timeout: 10000
   consumer:
     check: false
-
+  protocol:
+    name: tri
+    threadpool: fixed
+    threads: 200
+    port: 28802

@@ -2,6 +2,7 @@ package com.github.xuning888.helloim.gateway.adapter;
 
 import com.github.xuning888.helloim.contract.api.service.gate.UpMsgService;
 import org.apache.dubbo.config.annotation.DubboReference;
+import org.apache.dubbo.config.annotation.Method;
 import org.springframework.stereotype.Component;
 
 /**
@@ -11,7 +12,11 @@ import org.springframework.stereotype.Component;
 @Component
 public class UpMsgServiceAdapter {
 
-    @DubboReference
+    @DubboReference(
+         methods = {
+                 @Method(name = "sendMessage", timeout = 10000)
+         }
+    )
     private UpMsgService upMsgService;
 
     public UpMsgService upMsgService() {

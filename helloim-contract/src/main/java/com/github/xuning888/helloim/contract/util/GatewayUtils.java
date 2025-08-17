@@ -60,6 +60,6 @@ public class GatewayUtils {
             return;
         }
         DownMessageReq downMessageReq = new DownMessageReq(frame, Collections.singletonList(gateUser), traceId);
-        downMsgService. pushMessage(downMessageReq);
+        downMsgService.pushMessage(downMessageReq);
     }
 }

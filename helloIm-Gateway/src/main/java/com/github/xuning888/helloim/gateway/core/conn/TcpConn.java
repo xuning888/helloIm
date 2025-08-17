@@ -38,7 +38,7 @@ public class TcpConn implements Conn {
 
     @Override
     public boolean isOk() {
-        return channel.isConnected();
+        return channel.isConnected() && channel.isWritable();
     }
 
     @Override
@@ -51,7 +51,8 @@ public class TcpConn implements Conn {
     public void write(Frame frame, String traceId) {
         byte[] byteArray = frame.toByteArray();
         ChannelBuffer channelBuffer = ChannelBuffers.wrappedBuffer(byteArray);
-        channel.write(channelBuffer);
+        ChannelFuture future = channel.write(channelBuffer);
+        future.syncUninterruptibly();
     }
 
     @Override

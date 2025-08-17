@@ -5,6 +5,7 @@ import com.github.xuning888.helloim.gateway.adapter.UpMsgServiceAdapter;
 import com.github.xuning888.helloim.gateway.core.ImChannelPipeFactory;
 import com.github.xuning888.helloim.gateway.core.ImChannelUpStreamHandler;
 import com.github.xuning888.helloim.gateway.core.TcpChannelUpStreamHandler;
+import com.github.xuning888.helloim.gateway.core.cmd.handler.AuthHandler;
 import com.github.xuning888.helloim.gateway.core.cmd.handler.DefaultHandler;
 import com.github.xuning888.helloim.gateway.core.cmd.handler.EchoHandler;
 import com.github.xuning888.helloim.gateway.core.cmd.handler.HandlerProxy;
@@ -16,6 +17,7 @@ import com.github.xuning888.helloim.gateway.core.processor.MessageProcessor;
 import com.github.xuning888.helloim.gateway.core.processor.Processor;
 import com.github.xuning888.helloim.gateway.core.session.DefaultSessionManager;
 import com.github.xuning888.helloim.gateway.core.session.SessionManager;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -39,8 +41,8 @@ public class GateConfiguration {
     }
 
     @Bean
-    public GateAddr gateAddr(GateServerProperties gateServerProperties) {
-        return new GateAddr(gateServerProperties.getPort());
+    public GateAddr gateAddr(@Value("${dubbo.protocol.port}") Integer port) {
+        return new GateAddr(port);
     }
 
     @Bean
@@ -54,6 +56,8 @@ public class GateConfiguration {
         HandlerProxy handlerProxy = new HandlerProxy(defaultHandler);
         // 注册Echo指令的处理器
         handlerProxy.register(MsgCmd.CmdId.CMD_ID_ECHO_VALUE, new EchoHandler());
+        // 注册Auth指令
+        handlerProxy.register(MsgCmd.CmdId.CMD_ID_AUTH_VALUE, new AuthHandler(upMsgServiceAdapter, sessionManager, gateAddr));
         return handlerProxy;
     }
 

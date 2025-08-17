@@ -43,7 +43,11 @@ public class UpMessageServiceImpl implements UpMsgService {
 
     @Override
     public AuthResponse auth(AuthRequest authRequest) {
-        return new AuthResponse();
+        AuthResponse authResponse = new AuthResponse();
+        authResponse.setGateUser(authRequest.getGateUser());
+        authResponse.setSuccess(true);
+        authResponse.setTraceId(authRequest.getTraceId());
+        return authResponse;
     }
 
     @Override

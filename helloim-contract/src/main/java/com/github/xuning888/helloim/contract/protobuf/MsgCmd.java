@@ -34,6 +34,14 @@ public final class MsgCmd {
     CMD_ID_ECHO(1),
     /**
      * <pre>
+     * AUTH
+     * </pre>
+     *
+     * <code>CMD_ID_AUTH = 2;</code>
+     */
+    CMD_ID_AUTH(2),
+    /**
+     * <pre>
      * 单聊上行
      * </pre>
      *
@@ -53,9 +61,9 @@ public final class MsgCmd {
      * 群聊上行
      * </pre>
      *
-     * <code>CMD_ID_C2CPUSTH = 1008;</code>
+     * <code>CMD_ID_C2GSEND = 1008;</code>
      */
-    CMD_ID_C2CPUSTH(1008),
+    CMD_ID_C2GSEND(1008),
     /**
      * <pre>
      * 群聊下行
@@ -81,6 +89,14 @@ public final class MsgCmd {
     public static final int CMD_ID_ECHO_VALUE = 1;
     /**
      * <pre>
+     * AUTH
+     * </pre>
+     *
+     * <code>CMD_ID_AUTH = 2;</code>
+     */
+    public static final int CMD_ID_AUTH_VALUE = 2;
+    /**
+     * <pre>
      * 单聊上行
      * </pre>
      *
@@ -100,9 +116,9 @@ public final class MsgCmd {
      * 群聊上行
      * </pre>
      *
-     * <code>CMD_ID_C2CPUSTH = 1008;</code>
+     * <code>CMD_ID_C2GSEND = 1008;</code>
      */
-    public static final int CMD_ID_C2CPUSTH_VALUE = 1008;
+    public static final int CMD_ID_C2GSEND_VALUE = 1008;
     /**
      * <pre>
      * 群聊下行
@@ -139,9 +155,10 @@ public final class MsgCmd {
       switch (value) {
         case 0: return CMD_ID_DEFAULT;
         case 1: return CMD_ID_ECHO;
+        case 2: return CMD_ID_AUTH;
         case 1006: return CMD_ID_C2CSEND;
         case 1007: return CMD_ID_C2CPUSH;
-        case 1008: return CMD_ID_C2CPUSTH;
+        case 1008: return CMD_ID_C2GSEND;
         case 1009: return CMD_ID_C2GPUSH;
         default: return null;
       }
@@ -208,14 +225,14 @@ public final class MsgCmd {
       descriptor;
   static {
     java.lang.String[] descriptorData = {
-      "\n\013cmdId.proto\022\020helloim.protocol*\201\001\n\005CmdI" +
-      "d\022\022\n\016CMD_ID_DEFAULT\020\000\022\017\n\013CMD_ID_ECHO\020\001\022\023" +
-      "\n\016CMD_ID_C2CSEND\020\356\007\022\023\n\016CMD_ID_C2CPUSH\020\357\007" +
-      "\022\024\n\017CMD_ID_C2CPUSTH\020\360\007\022\023\n\016CMD_ID_C2GPUSH" +
-      "\020\361\007By\n.com.github.xuning888.helloim.cont" +
-      "ract.protobufB\006MsgCmdZ?github.com/xuning" +
-      "888/helloIMClient/internal/proto;helloim" +
-      "_protob\006proto3"
+      "\n\013cmdId.proto\022\020helloim.protocol*\221\001\n\005CmdI" +
+      "d\022\022\n\016CMD_ID_DEFAULT\020\000\022\017\n\013CMD_ID_ECHO\020\001\022\017" +
+      "\n\013CMD_ID_AUTH\020\002\022\023\n\016CMD_ID_C2CSEND\020\356\007\022\023\n\016" +
+      "CMD_ID_C2CPUSH\020\357\007\022\023\n\016CMD_ID_C2GSEND\020\360\007\022\023" +
+      "\n\016CMD_ID_C2GPUSH\020\361\007By\n.com.github.xuning" +
+      "888.helloim.contract.protobufB\006MsgCmdZ?g" +
+      "ithub.com/xuning888/helloIMClient/intern" +
+      "al/proto;helloim_protob\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,

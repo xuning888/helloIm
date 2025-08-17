@@ -39,9 +39,13 @@ public class DownMsgServiceImpl implements DownMsgService {
             logger.error("error traceId: {}", req.getTraceId(), ex);
             return;
         }
-        logger.info("sendSendResponse: {}", c2cSendResponse);
+        logger.info("pushMessage: {}, seq: {}", c2cSendResponse, frame.getHeader().getSeq());
         for (GateUser user : req.getUsers()) {
             Session session = sessionManager.getSessionByUser(user, req.getTraceId());
+            if (session == null) {
+                logger.error("pushMessage, getSessionByUser session is null, req:{}", req);
+                return;
+            }
             // 投递下行事件
             session.getConn().getMsgPipeline().sendDown(new DownCmdEvent(frame, session.getConn(), req.getTraceId()));
         }
