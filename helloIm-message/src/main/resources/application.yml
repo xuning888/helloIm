@@ -1,0 +1,48 @@
+server:
+  port: 8084
+
+spring:
+  profiles:
+    active: dev
+  application:
+    name: helloim-message
+  redis:
+    host: ${REDIS_ADDR}
+dubbo:
+  application:
+    name: helloim-message
+    logger: slf4j
+    qos-enable: false
+  metadata-report:
+    address: ${ZK_ADDRESS}
+  registry:
+    address: ${ZK_ADDRESS}
+    group: helloim
+    timeout: 10000
+  consumer:
+    check: false
+  protocol:
+    name: tri
+    threadpool: fixed
+    threads: 200
+    port: 28805
+
+im:
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS}
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.ByteArraySerializer
+      acks: all
+      max-inflight-requests-per-connection: 1
+      retries: 2
+      batch-size: 1000
+      buffer-memory: 3000000
+      linger-ms: 10
+    consumer:
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.ByteArrayDeserializer
+      max-poll-records: 10
+      group-id: helloim-message
+      enable-autocommit: false
+      auto-offset-reset: latest

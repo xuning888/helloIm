@@ -85,7 +85,7 @@ public abstract class MsgKafkaConsumer {
     }
 
     private void process() {
-        String batchLogId = UUID.randomUUID().toString();
+        String batchTraceId = UUID.randomUUID().toString();
         // 拉取消息
         ConsumerRecords<String, byte[]> records = consumer.poll(Duration.ofSeconds(timeoutSeconds));
         if (records.isEmpty()) {
@@ -101,19 +101,19 @@ public abstract class MsgKafkaConsumer {
             // 拿到一个partition的消息
             List<ConsumerRecord<String, byte[]>> partitionRecords = records.records(partition);
             for (ConsumerRecord<String, byte[]> record : partitionRecords) {
-                String logId = UUID.randomUUID().toString();
+                String traceId = UUID.randomUUID().toString();
                 try {
-                    processRecord(record, logId);
+                    processRecord(record, traceId);
                 } catch (Exception ex) {
-                    logger.error("process processRecord failed, batchLogId: {}, logId: {}", batchLogId, logId, ex);
+                    logger.error("process processRecord failed, batchTraceId: {}, traceId: {}", batchTraceId, traceId, ex);
                 }
             }
 
             // 打印日志记录一下
             long lastOffset = partitionRecords.get(partitionRecords.size() - 1).offset();
-            logger.info("process topic: {}, partition: {}, offset: {}, recordSize: {}, cost: {}ms, batchLogId: {}",
+            logger.info("process topic: {}, partition: {}, offset: {}, recordSize: {}, cost: {}ms, batchTraceId: {}",
                     partition.topic(), partition.partition(), lastOffset, partitionRecords.size(),
-                    System.currentTimeMillis() - begin, batchLogId);
+                    System.currentTimeMillis() - begin, batchTraceId);
 
             if (!autoCommit) {
                 // 确保消息都消费完成后手动提交
@@ -124,10 +124,10 @@ public abstract class MsgKafkaConsumer {
 
         long consumerTotalTime = System.currentTimeMillis() - begin;
         if (consumerTotalTime > 100) {
-            logger.info("process consumerTotalTime: {}ms, batchLogId: {} ", consumerTotalTime, batchLogId);
+            logger.info("process consumerTotalTime: {}ms, batchTraceId: {} ", consumerTotalTime, batchTraceId);
         }
     }
 
-    public abstract void processRecord(ConsumerRecord<String, byte[]> record, String logId);
+    public abstract void processRecord(ConsumerRecord<String, byte[]> record, String traceId);
 
 }

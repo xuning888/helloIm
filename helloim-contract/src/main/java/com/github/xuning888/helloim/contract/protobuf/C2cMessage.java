@@ -1765,6 +1765,106 @@ public final class C2cMessage {
   public interface C2cPushRequestOrBuilder extends
       // @@protoc_insertion_point(interface_extends:helloim.protocol.C2cPushRequest)
       com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <pre>
+     * 消息发送方的uid
+     * </pre>
+     *
+     * <code>string from = 1;</code>
+     * @return The from.
+     */
+    java.lang.String getFrom();
+    /**
+     * <pre>
+     * 消息发送方的uid
+     * </pre>
+     *
+     * <code>string from = 1;</code>
+     * @return The bytes for from.
+     */
+    com.google.protobuf.ByteString
+        getFromBytes();
+
+    /**
+     * <pre>
+     * 消息接收方的uid
+     * </pre>
+     *
+     * <code>string to = 2;</code>
+     * @return The to.
+     */
+    java.lang.String getTo();
+    /**
+     * <pre>
+     * 消息接收方的uid
+     * </pre>
+     *
+     * <code>string to = 2;</code>
+     * @return The bytes for to.
+     */
+    com.google.protobuf.ByteString
+        getToBytes();
+
+    /**
+     * <pre>
+     * 消息内容
+     * </pre>
+     *
+     * <code>string content = 3;</code>
+     * @return The content.
+     */
+    java.lang.String getContent();
+    /**
+     * <pre>
+     * 消息内容
+     * </pre>
+     *
+     * <code>string content = 3;</code>
+     * @return The bytes for content.
+     */
+    com.google.protobuf.ByteString
+        getContentBytes();
+
+    /**
+     * <pre>
+     * 消息的类型
+     * </pre>
+     *
+     * <code>int32 contentType = 4;</code>
+     * @return The contentType.
+     */
+    int getContentType();
+
+    /**
+     * <pre>
+     * 消息ID
+     * </pre>
+     *
+     * <code>int64 msgId = 5;</code>
+     * @return The msgId.
+     */
+    long getMsgId();
+
+    /**
+     * <pre>
+     * 服务端消息序号
+     * </pre>
+     *
+     * <code>int64 serverSeq = 6;</code>
+     * @return The serverSeq.
+     */
+    long getServerSeq();
+
+    /**
+     * <pre>
+     * 收到单聊消息的时间戳
+     * </pre>
+     *
+     * <code>int64 timestamp = 7;</code>
+     * @return The timestamp.
+     */
+    long getTimestamp();
   }
   /**
    * <pre>
@@ -1783,6 +1883,9 @@ public final class C2cMessage {
       super(builder);
     }
     private C2cPushRequest() {
+      from_ = "";
+      to_ = "";
+      content_ = "";
     }
 
     @java.lang.Override
@@ -1805,6 +1908,207 @@ public final class C2cMessage {
               com.github.xuning888.helloim.contract.protobuf.C2cMessage.C2cPushRequest.class, com.github.xuning888.helloim.contract.protobuf.C2cMessage.C2cPushRequest.Builder.class);
     }
 
+    public static final int FROM_FIELD_NUMBER = 1;
+    @SuppressWarnings("serial")
+    private volatile java.lang.Object from_ = "";
+    /**
+     * <pre>
+     * 消息发送方的uid
+     * </pre>
+     *
+     * <code>string from = 1;</code>
+     * @return The from.
+     */
+    @java.lang.Override
+    public java.lang.String getFrom() {
+      java.lang.Object ref = from_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        from_ = s;
+        return s;
+      }
+    }
+    /**
+     * <pre>
+     * 消息发送方的uid
+     * </pre>
+     *
+     * <code>string from = 1;</code>
+     * @return The bytes for from.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getFromBytes() {
+      java.lang.Object ref = from_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        from_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int TO_FIELD_NUMBER = 2;
+    @SuppressWarnings("serial")
+    private volatile java.lang.Object to_ = "";
+    /**
+     * <pre>
+     * 消息接收方的uid
+     * </pre>
+     *
+     * <code>string to = 2;</code>
+     * @return The to.
+     */
+    @java.lang.Override
+    public java.lang.String getTo() {
+      java.lang.Object ref = to_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        to_ = s;
+        return s;
+      }
+    }
+    /**
+     * <pre>
+     * 消息接收方的uid
+     * </pre>
+     *
+     * <code>string to = 2;</code>
+     * @return The bytes for to.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getToBytes() {
+      java.lang.Object ref = to_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        to_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int CONTENT_FIELD_NUMBER = 3;
+    @SuppressWarnings("serial")
+    private volatile java.lang.Object content_ = "";
+    /**
+     * <pre>
+     * 消息内容
+     * </pre>
+     *
+     * <code>string content = 3;</code>
+     * @return The content.
+     */
+    @java.lang.Override
+    public java.lang.String getContent() {
+      java.lang.Object ref = content_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        content_ = s;
+        return s;
+      }
+    }
+    /**
+     * <pre>
+     * 消息内容
+     * </pre>
+     *
+     * <code>string content = 3;</code>
+     * @return The bytes for content.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getContentBytes() {
+      java.lang.Object ref = content_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        content_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int CONTENTTYPE_FIELD_NUMBER = 4;
+    private int contentType_ = 0;
+    /**
+     * <pre>
+     * 消息的类型
+     * </pre>
+     *
+     * <code>int32 contentType = 4;</code>
+     * @return The contentType.
+     */
+    @java.lang.Override
+    public int getContentType() {
+      return contentType_;
+    }
+
+    public static final int MSGID_FIELD_NUMBER = 5;
+    private long msgId_ = 0L;
+    /**
+     * <pre>
+     * 消息ID
+     * </pre>
+     *
+     * <code>int64 msgId = 5;</code>
+     * @return The msgId.
+     */
+    @java.lang.Override
+    public long getMsgId() {
+      return msgId_;
+    }
+
+    public static final int SERVERSEQ_FIELD_NUMBER = 6;
+    private long serverSeq_ = 0L;
+    /**
+     * <pre>
+     * 服务端消息序号
+     * </pre>
+     *
+     * <code>int64 serverSeq = 6;</code>
+     * @return The serverSeq.
+     */
+    @java.lang.Override
+    public long getServerSeq() {
+      return serverSeq_;
+    }
+
+    public static final int TIMESTAMP_FIELD_NUMBER = 7;
+    private long timestamp_ = 0L;
+    /**
+     * <pre>
+     * 收到单聊消息的时间戳
+     * </pre>
+     *
+     * <code>int64 timestamp = 7;</code>
+     * @return The timestamp.
+     */
+    @java.lang.Override
+    public long getTimestamp() {
+      return timestamp_;
+    }
+
     private byte memoizedIsInitialized = -1;
     @java.lang.Override
     public final boolean isInitialized() {
@@ -1819,6 +2123,27 @@ public final class C2cMessage {
     @java.lang.Override
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(from_)) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 1, from_);
+      }
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(to_)) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 2, to_);
+      }
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(content_)) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 3, content_);
+      }
+      if (contentType_ != 0) {
+        output.writeInt32(4, contentType_);
+      }
+      if (msgId_ != 0L) {
+        output.writeInt64(5, msgId_);
+      }
+      if (serverSeq_ != 0L) {
+        output.writeInt64(6, serverSeq_);
+      }
+      if (timestamp_ != 0L) {
+        output.writeInt64(7, timestamp_);
+      }
       getUnknownFields().writeTo(output);
     }
 
@@ -1828,6 +2153,31 @@ public final class C2cMessage {
       if (size != -1) return size;
 
       size = 0;
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(from_)) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(1, from_);
+      }
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(to_)) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, to_);
+      }
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(content_)) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, content_);
+      }
+      if (contentType_ != 0) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt32Size(4, contentType_);
+      }
+      if (msgId_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt64Size(5, msgId_);
+      }
+      if (serverSeq_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt64Size(6, serverSeq_);
+      }
+      if (timestamp_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt64Size(7, timestamp_);
+      }
       size += getUnknownFields().getSerializedSize();
       memoizedSize = size;
       return size;
@@ -1843,6 +2193,20 @@ public final class C2cMessage {
       }
       com.github.xuning888.helloim.contract.protobuf.C2cMessage.C2cPushRequest other = (com.github.xuning888.helloim.contract.protobuf.C2cMessage.C2cPushRequest) obj;
 
+      if (!getFrom()
+          .equals(other.getFrom())) return false;
+      if (!getTo()
+          .equals(other.getTo())) return false;
+      if (!getContent()
+          .equals(other.getContent())) return false;
+      if (getContentType()
+          != other.getContentType()) return false;
+      if (getMsgId()
+          != other.getMsgId()) return false;
+      if (getServerSeq()
+          != other.getServerSeq()) return false;
+      if (getTimestamp()
+          != other.getTimestamp()) return false;
       if (!getUnknownFields().equals(other.getUnknownFields())) return false;
       return true;
     }
@@ -1854,6 +2218,23 @@ public final class C2cMessage {
       }
       int hash = 41;
       hash = (19 * hash) + getDescriptor().hashCode();
+      hash = (37 * hash) + FROM_FIELD_NUMBER;
+      hash = (53 * hash) + getFrom().hashCode();
+      hash = (37 * hash) + TO_FIELD_NUMBER;
+      hash = (53 * hash) + getTo().hashCode();
+      hash = (37 * hash) + CONTENT_FIELD_NUMBER;
+      hash = (53 * hash) + getContent().hashCode();
+      hash = (37 * hash) + CONTENTTYPE_FIELD_NUMBER;
+      hash = (53 * hash) + getContentType();
+      hash = (37 * hash) + MSGID_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+          getMsgId());
+      hash = (37 * hash) + SERVERSEQ_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+          getServerSeq());
+      hash = (37 * hash) + TIMESTAMP_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+          getTimestamp());
       hash = (29 * hash) + getUnknownFields().hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -1988,6 +2369,14 @@ public final class C2cMessage {
       @java.lang.Override
       public Builder clear() {
         super.clear();
+        bitField0_ = 0;
+        from_ = "";
+        to_ = "";
+        content_ = "";
+        contentType_ = 0;
+        msgId_ = 0L;
+        serverSeq_ = 0L;
+        timestamp_ = 0L;
         return this;
       }
 
@@ -2014,8 +2403,34 @@ public final class C2cMessage {
       @java.lang.Override
       public com.github.xuning888.helloim.contract.protobuf.C2cMessage.C2cPushRequest buildPartial() {
         com.github.xuning888.helloim.contract.protobuf.C2cMessage.C2cPushRequest result = new com.github.xuning888.helloim.contract.protobuf.C2cMessage.C2cPushRequest(this);
+        if (bitField0_ != 0) { buildPartial0(result); }
         onBuilt();
         return result;
+      }
+
+      private void buildPartial0(com.github.xuning888.helloim.contract.protobuf.C2cMessage.C2cPushRequest result) {
+        int from_bitField0_ = bitField0_;
+        if (((from_bitField0_ & 0x00000001) != 0)) {
+          result.from_ = from_;
+        }
+        if (((from_bitField0_ & 0x00000002) != 0)) {
+          result.to_ = to_;
+        }
+        if (((from_bitField0_ & 0x00000004) != 0)) {
+          result.content_ = content_;
+        }
+        if (((from_bitField0_ & 0x00000008) != 0)) {
+          result.contentType_ = contentType_;
+        }
+        if (((from_bitField0_ & 0x00000010) != 0)) {
+          result.msgId_ = msgId_;
+        }
+        if (((from_bitField0_ & 0x00000020) != 0)) {
+          result.serverSeq_ = serverSeq_;
+        }
+        if (((from_bitField0_ & 0x00000040) != 0)) {
+          result.timestamp_ = timestamp_;
+        }
       }
 
       @java.lang.Override
@@ -2062,6 +2477,33 @@ public final class C2cMessage {
 
       public Builder mergeFrom(com.github.xuning888.helloim.contract.protobuf.C2cMessage.C2cPushRequest other) {
         if (other == com.github.xuning888.helloim.contract.protobuf.C2cMessage.C2cPushRequest.getDefaultInstance()) return this;
+        if (!other.getFrom().isEmpty()) {
+          from_ = other.from_;
+          bitField0_ |= 0x00000001;
+          onChanged();
+        }
+        if (!other.getTo().isEmpty()) {
+          to_ = other.to_;
+          bitField0_ |= 0x00000002;
+          onChanged();
+        }
+        if (!other.getContent().isEmpty()) {
+          content_ = other.content_;
+          bitField0_ |= 0x00000004;
+          onChanged();
+        }
+        if (other.getContentType() != 0) {
+          setContentType(other.getContentType());
+        }
+        if (other.getMsgId() != 0L) {
+          setMsgId(other.getMsgId());
+        }
+        if (other.getServerSeq() != 0L) {
+          setServerSeq(other.getServerSeq());
+        }
+        if (other.getTimestamp() != 0L) {
+          setTimestamp(other.getTimestamp());
+        }
         this.mergeUnknownFields(other.getUnknownFields());
         onChanged();
         return this;
@@ -2088,6 +2530,41 @@ public final class C2cMessage {
               case 0:
                 done = true;
                 break;
+              case 10: {
+                from_ = input.readStringRequireUtf8();
+                bitField0_ |= 0x00000001;
+                break;
+              } // case 10
+              case 18: {
+                to_ = input.readStringRequireUtf8();
+                bitField0_ |= 0x00000002;
+                break;
+              } // case 18
+              case 26: {
+                content_ = input.readStringRequireUtf8();
+                bitField0_ |= 0x00000004;
+                break;
+              } // case 26
+              case 32: {
+                contentType_ = input.readInt32();
+                bitField0_ |= 0x00000008;
+                break;
+              } // case 32
+              case 40: {
+                msgId_ = input.readInt64();
+                bitField0_ |= 0x00000010;
+                break;
+              } // case 40
+              case 48: {
+                serverSeq_ = input.readInt64();
+                bitField0_ |= 0x00000020;
+                break;
+              } // case 48
+              case 56: {
+                timestamp_ = input.readInt64();
+                bitField0_ |= 0x00000040;
+                break;
+              } // case 56
               default: {
                 if (!super.parseUnknownField(input, extensionRegistry, tag)) {
                   done = true; // was an endgroup tag
@@ -2101,6 +2578,459 @@ public final class C2cMessage {
         } finally {
           onChanged();
         } // finally
+        return this;
+      }
+      private int bitField0_;
+
+      private java.lang.Object from_ = "";
+      /**
+       * <pre>
+       * 消息发送方的uid
+       * </pre>
+       *
+       * <code>string from = 1;</code>
+       * @return The from.
+       */
+      public java.lang.String getFrom() {
+        java.lang.Object ref = from_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          from_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <pre>
+       * 消息发送方的uid
+       * </pre>
+       *
+       * <code>string from = 1;</code>
+       * @return The bytes for from.
+       */
+      public com.google.protobuf.ByteString
+          getFromBytes() {
+        java.lang.Object ref = from_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          from_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <pre>
+       * 消息发送方的uid
+       * </pre>
+       *
+       * <code>string from = 1;</code>
+       * @param value The from to set.
+       * @return This builder for chaining.
+       */
+      public Builder setFrom(
+          java.lang.String value) {
+        if (value == null) { throw new NullPointerException(); }
+        from_ = value;
+        bitField0_ |= 0x00000001;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * 消息发送方的uid
+       * </pre>
+       *
+       * <code>string from = 1;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearFrom() {
+        from_ = getDefaultInstance().getFrom();
+        bitField0_ = (bitField0_ & ~0x00000001);
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * 消息发送方的uid
+       * </pre>
+       *
+       * <code>string from = 1;</code>
+       * @param value The bytes for from to set.
+       * @return This builder for chaining.
+       */
+      public Builder setFromBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) { throw new NullPointerException(); }
+        checkByteStringIsUtf8(value);
+        from_ = value;
+        bitField0_ |= 0x00000001;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object to_ = "";
+      /**
+       * <pre>
+       * 消息接收方的uid
+       * </pre>
+       *
+       * <code>string to = 2;</code>
+       * @return The to.
+       */
+      public java.lang.String getTo() {
+        java.lang.Object ref = to_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          to_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <pre>
+       * 消息接收方的uid
+       * </pre>
+       *
+       * <code>string to = 2;</code>
+       * @return The bytes for to.
+       */
+      public com.google.protobuf.ByteString
+          getToBytes() {
+        java.lang.Object ref = to_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          to_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <pre>
+       * 消息接收方的uid
+       * </pre>
+       *
+       * <code>string to = 2;</code>
+       * @param value The to to set.
+       * @return This builder for chaining.
+       */
+      public Builder setTo(
+          java.lang.String value) {
+        if (value == null) { throw new NullPointerException(); }
+        to_ = value;
+        bitField0_ |= 0x00000002;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * 消息接收方的uid
+       * </pre>
+       *
+       * <code>string to = 2;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearTo() {
+        to_ = getDefaultInstance().getTo();
+        bitField0_ = (bitField0_ & ~0x00000002);
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * 消息接收方的uid
+       * </pre>
+       *
+       * <code>string to = 2;</code>
+       * @param value The bytes for to to set.
+       * @return This builder for chaining.
+       */
+      public Builder setToBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) { throw new NullPointerException(); }
+        checkByteStringIsUtf8(value);
+        to_ = value;
+        bitField0_ |= 0x00000002;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object content_ = "";
+      /**
+       * <pre>
+       * 消息内容
+       * </pre>
+       *
+       * <code>string content = 3;</code>
+       * @return The content.
+       */
+      public java.lang.String getContent() {
+        java.lang.Object ref = content_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          content_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <pre>
+       * 消息内容
+       * </pre>
+       *
+       * <code>string content = 3;</code>
+       * @return The bytes for content.
+       */
+      public com.google.protobuf.ByteString
+          getContentBytes() {
+        java.lang.Object ref = content_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          content_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <pre>
+       * 消息内容
+       * </pre>
+       *
+       * <code>string content = 3;</code>
+       * @param value The content to set.
+       * @return This builder for chaining.
+       */
+      public Builder setContent(
+          java.lang.String value) {
+        if (value == null) { throw new NullPointerException(); }
+        content_ = value;
+        bitField0_ |= 0x00000004;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * 消息内容
+       * </pre>
+       *
+       * <code>string content = 3;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearContent() {
+        content_ = getDefaultInstance().getContent();
+        bitField0_ = (bitField0_ & ~0x00000004);
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * 消息内容
+       * </pre>
+       *
+       * <code>string content = 3;</code>
+       * @param value The bytes for content to set.
+       * @return This builder for chaining.
+       */
+      public Builder setContentBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) { throw new NullPointerException(); }
+        checkByteStringIsUtf8(value);
+        content_ = value;
+        bitField0_ |= 0x00000004;
+        onChanged();
+        return this;
+      }
+
+      private int contentType_ ;
+      /**
+       * <pre>
+       * 消息的类型
+       * </pre>
+       *
+       * <code>int32 contentType = 4;</code>
+       * @return The contentType.
+       */
+      @java.lang.Override
+      public int getContentType() {
+        return contentType_;
+      }
+      /**
+       * <pre>
+       * 消息的类型
+       * </pre>
+       *
+       * <code>int32 contentType = 4;</code>
+       * @param value The contentType to set.
+       * @return This builder for chaining.
+       */
+      public Builder setContentType(int value) {
+
+        contentType_ = value;
+        bitField0_ |= 0x00000008;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * 消息的类型
+       * </pre>
+       *
+       * <code>int32 contentType = 4;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearContentType() {
+        bitField0_ = (bitField0_ & ~0x00000008);
+        contentType_ = 0;
+        onChanged();
+        return this;
+      }
+
+      private long msgId_ ;
+      /**
+       * <pre>
+       * 消息ID
+       * </pre>
+       *
+       * <code>int64 msgId = 5;</code>
+       * @return The msgId.
+       */
+      @java.lang.Override
+      public long getMsgId() {
+        return msgId_;
+      }
+      /**
+       * <pre>
+       * 消息ID
+       * </pre>
+       *
+       * <code>int64 msgId = 5;</code>
+       * @param value The msgId to set.
+       * @return This builder for chaining.
+       */
+      public Builder setMsgId(long value) {
+
+        msgId_ = value;
+        bitField0_ |= 0x00000010;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * 消息ID
+       * </pre>
+       *
+       * <code>int64 msgId = 5;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearMsgId() {
+        bitField0_ = (bitField0_ & ~0x00000010);
+        msgId_ = 0L;
+        onChanged();
+        return this;
+      }
+
+      private long serverSeq_ ;
+      /**
+       * <pre>
+       * 服务端消息序号
+       * </pre>
+       *
+       * <code>int64 serverSeq = 6;</code>
+       * @return The serverSeq.
+       */
+      @java.lang.Override
+      public long getServerSeq() {
+        return serverSeq_;
+      }
+      /**
+       * <pre>
+       * 服务端消息序号
+       * </pre>
+       *
+       * <code>int64 serverSeq = 6;</code>
+       * @param value The serverSeq to set.
+       * @return This builder for chaining.
+       */
+      public Builder setServerSeq(long value) {
+
+        serverSeq_ = value;
+        bitField0_ |= 0x00000020;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * 服务端消息序号
+       * </pre>
+       *
+       * <code>int64 serverSeq = 6;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearServerSeq() {
+        bitField0_ = (bitField0_ & ~0x00000020);
+        serverSeq_ = 0L;
+        onChanged();
+        return this;
+      }
+
+      private long timestamp_ ;
+      /**
+       * <pre>
+       * 收到单聊消息的时间戳
+       * </pre>
+       *
+       * <code>int64 timestamp = 7;</code>
+       * @return The timestamp.
+       */
+      @java.lang.Override
+      public long getTimestamp() {
+        return timestamp_;
+      }
+      /**
+       * <pre>
+       * 收到单聊消息的时间戳
+       * </pre>
+       *
+       * <code>int64 timestamp = 7;</code>
+       * @param value The timestamp to set.
+       * @return This builder for chaining.
+       */
+      public Builder setTimestamp(long value) {
+
+        timestamp_ = value;
+        bitField0_ |= 0x00000040;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * 收到单聊消息的时间戳
+       * </pre>
+       *
+       * <code>int64 timestamp = 7;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearTimestamp() {
+        bitField0_ = (bitField0_ & ~0x00000040);
+        timestamp_ = 0L;
+        onChanged();
         return this;
       }
       @java.lang.Override
@@ -2170,6 +3100,56 @@ public final class C2cMessage {
   public interface C2cPushResponseOrBuilder extends
       // @@protoc_insertion_point(interface_extends:helloim.protocol.C2cPushResponse)
       com.google.protobuf.MessageOrBuilder {
+
+    /**
+     * <pre>
+     * 消息ID
+     * </pre>
+     *
+     * <code>int64 msgId = 1;</code>
+     * @return The msgId.
+     */
+    long getMsgId();
+
+    /**
+     * <pre>
+     * 消息发送方
+     * </pre>
+     *
+     * <code>string from = 2;</code>
+     * @return The from.
+     */
+    java.lang.String getFrom();
+    /**
+     * <pre>
+     * 消息发送方
+     * </pre>
+     *
+     * <code>string from = 2;</code>
+     * @return The bytes for from.
+     */
+    com.google.protobuf.ByteString
+        getFromBytes();
+
+    /**
+     * <pre>
+     * 消息的接收方
+     * </pre>
+     *
+     * <code>string to = 3;</code>
+     * @return The to.
+     */
+    java.lang.String getTo();
+    /**
+     * <pre>
+     * 消息的接收方
+     * </pre>
+     *
+     * <code>string to = 3;</code>
+     * @return The bytes for to.
+     */
+    com.google.protobuf.ByteString
+        getToBytes();
   }
   /**
    * <pre>
@@ -2188,6 +3168,8 @@ public final class C2cMessage {
       super(builder);
     }
     private C2cPushResponse() {
+      from_ = "";
+      to_ = "";
     }
 
     @java.lang.Override
@@ -2210,6 +3192,115 @@ public final class C2cMessage {
               com.github.xuning888.helloim.contract.protobuf.C2cMessage.C2cPushResponse.class, com.github.xuning888.helloim.contract.protobuf.C2cMessage.C2cPushResponse.Builder.class);
     }
 
+    public static final int MSGID_FIELD_NUMBER = 1;
+    private long msgId_ = 0L;
+    /**
+     * <pre>
+     * 消息ID
+     * </pre>
+     *
+     * <code>int64 msgId = 1;</code>
+     * @return The msgId.
+     */
+    @java.lang.Override
+    public long getMsgId() {
+      return msgId_;
+    }
+
+    public static final int FROM_FIELD_NUMBER = 2;
+    @SuppressWarnings("serial")
+    private volatile java.lang.Object from_ = "";
+    /**
+     * <pre>
+     * 消息发送方
+     * </pre>
+     *
+     * <code>string from = 2;</code>
+     * @return The from.
+     */
+    @java.lang.Override
+    public java.lang.String getFrom() {
+      java.lang.Object ref = from_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        from_ = s;
+        return s;
+      }
+    }
+    /**
+     * <pre>
+     * 消息发送方
+     * </pre>
+     *
+     * <code>string from = 2;</code>
+     * @return The bytes for from.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getFromBytes() {
+      java.lang.Object ref = from_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        from_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    public static final int TO_FIELD_NUMBER = 3;
+    @SuppressWarnings("serial")
+    private volatile java.lang.Object to_ = "";
+    /**
+     * <pre>
+     * 消息的接收方
+     * </pre>
+     *
+     * <code>string to = 3;</code>
+     * @return The to.
+     */
+    @java.lang.Override
+    public java.lang.String getTo() {
+      java.lang.Object ref = to_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        to_ = s;
+        return s;
+      }
+    }
+    /**
+     * <pre>
+     * 消息的接收方
+     * </pre>
+     *
+     * <code>string to = 3;</code>
+     * @return The bytes for to.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getToBytes() {
+      java.lang.Object ref = to_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        to_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
     private byte memoizedIsInitialized = -1;
     @java.lang.Override
     public final boolean isInitialized() {
@@ -2224,6 +3315,15 @@ public final class C2cMessage {
     @java.lang.Override
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
+      if (msgId_ != 0L) {
+        output.writeInt64(1, msgId_);
+      }
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(from_)) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 2, from_);
+      }
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(to_)) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 3, to_);
+      }
       getUnknownFields().writeTo(output);
     }
 
@@ -2233,6 +3333,16 @@ public final class C2cMessage {
       if (size != -1) return size;
 
       size = 0;
+      if (msgId_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt64Size(1, msgId_);
+      }
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(from_)) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, from_);
+      }
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(to_)) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, to_);
+      }
       size += getUnknownFields().getSerializedSize();
       memoizedSize = size;
       return size;
@@ -2248,6 +3358,12 @@ public final class C2cMessage {
       }
       com.github.xuning888.helloim.contract.protobuf.C2cMessage.C2cPushResponse other = (com.github.xuning888.helloim.contract.protobuf.C2cMessage.C2cPushResponse) obj;
 
+      if (getMsgId()
+          != other.getMsgId()) return false;
+      if (!getFrom()
+          .equals(other.getFrom())) return false;
+      if (!getTo()
+          .equals(other.getTo())) return false;
       if (!getUnknownFields().equals(other.getUnknownFields())) return false;
       return true;
     }
@@ -2259,6 +3375,13 @@ public final class C2cMessage {
       }
       int hash = 41;
       hash = (19 * hash) + getDescriptor().hashCode();
+      hash = (37 * hash) + MSGID_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+          getMsgId());
+      hash = (37 * hash) + FROM_FIELD_NUMBER;
+      hash = (53 * hash) + getFrom().hashCode();
+      hash = (37 * hash) + TO_FIELD_NUMBER;
+      hash = (53 * hash) + getTo().hashCode();
       hash = (29 * hash) + getUnknownFields().hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -2393,6 +3516,10 @@ public final class C2cMessage {
       @java.lang.Override
       public Builder clear() {
         super.clear();
+        bitField0_ = 0;
+        msgId_ = 0L;
+        from_ = "";
+        to_ = "";
         return this;
       }
 
@@ -2419,8 +3546,22 @@ public final class C2cMessage {
       @java.lang.Override
       public com.github.xuning888.helloim.contract.protobuf.C2cMessage.C2cPushResponse buildPartial() {
         com.github.xuning888.helloim.contract.protobuf.C2cMessage.C2cPushResponse result = new com.github.xuning888.helloim.contract.protobuf.C2cMessage.C2cPushResponse(this);
+        if (bitField0_ != 0) { buildPartial0(result); }
         onBuilt();
         return result;
+      }
+
+      private void buildPartial0(com.github.xuning888.helloim.contract.protobuf.C2cMessage.C2cPushResponse result) {
+        int from_bitField0_ = bitField0_;
+        if (((from_bitField0_ & 0x00000001) != 0)) {
+          result.msgId_ = msgId_;
+        }
+        if (((from_bitField0_ & 0x00000002) != 0)) {
+          result.from_ = from_;
+        }
+        if (((from_bitField0_ & 0x00000004) != 0)) {
+          result.to_ = to_;
+        }
       }
 
       @java.lang.Override
@@ -2467,6 +3608,19 @@ public final class C2cMessage {
 
       public Builder mergeFrom(com.github.xuning888.helloim.contract.protobuf.C2cMessage.C2cPushResponse other) {
         if (other == com.github.xuning888.helloim.contract.protobuf.C2cMessage.C2cPushResponse.getDefaultInstance()) return this;
+        if (other.getMsgId() != 0L) {
+          setMsgId(other.getMsgId());
+        }
+        if (!other.getFrom().isEmpty()) {
+          from_ = other.from_;
+          bitField0_ |= 0x00000002;
+          onChanged();
+        }
+        if (!other.getTo().isEmpty()) {
+          to_ = other.to_;
+          bitField0_ |= 0x00000004;
+          onChanged();
+        }
         this.mergeUnknownFields(other.getUnknownFields());
         onChanged();
         return this;
@@ -2493,6 +3647,21 @@ public final class C2cMessage {
               case 0:
                 done = true;
                 break;
+              case 8: {
+                msgId_ = input.readInt64();
+                bitField0_ |= 0x00000001;
+                break;
+              } // case 8
+              case 18: {
+                from_ = input.readStringRequireUtf8();
+                bitField0_ |= 0x00000002;
+                break;
+              } // case 18
+              case 26: {
+                to_ = input.readStringRequireUtf8();
+                bitField0_ |= 0x00000004;
+                break;
+              } // case 26
               default: {
                 if (!super.parseUnknownField(input, extensionRegistry, tag)) {
                   done = true; // was an endgroup tag
@@ -2506,6 +3675,235 @@ public final class C2cMessage {
         } finally {
           onChanged();
         } // finally
+        return this;
+      }
+      private int bitField0_;
+
+      private long msgId_ ;
+      /**
+       * <pre>
+       * 消息ID
+       * </pre>
+       *
+       * <code>int64 msgId = 1;</code>
+       * @return The msgId.
+       */
+      @java.lang.Override
+      public long getMsgId() {
+        return msgId_;
+      }
+      /**
+       * <pre>
+       * 消息ID
+       * </pre>
+       *
+       * <code>int64 msgId = 1;</code>
+       * @param value The msgId to set.
+       * @return This builder for chaining.
+       */
+      public Builder setMsgId(long value) {
+
+        msgId_ = value;
+        bitField0_ |= 0x00000001;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * 消息ID
+       * </pre>
+       *
+       * <code>int64 msgId = 1;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearMsgId() {
+        bitField0_ = (bitField0_ & ~0x00000001);
+        msgId_ = 0L;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object from_ = "";
+      /**
+       * <pre>
+       * 消息发送方
+       * </pre>
+       *
+       * <code>string from = 2;</code>
+       * @return The from.
+       */
+      public java.lang.String getFrom() {
+        java.lang.Object ref = from_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          from_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <pre>
+       * 消息发送方
+       * </pre>
+       *
+       * <code>string from = 2;</code>
+       * @return The bytes for from.
+       */
+      public com.google.protobuf.ByteString
+          getFromBytes() {
+        java.lang.Object ref = from_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          from_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <pre>
+       * 消息发送方
+       * </pre>
+       *
+       * <code>string from = 2;</code>
+       * @param value The from to set.
+       * @return This builder for chaining.
+       */
+      public Builder setFrom(
+          java.lang.String value) {
+        if (value == null) { throw new NullPointerException(); }
+        from_ = value;
+        bitField0_ |= 0x00000002;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * 消息发送方
+       * </pre>
+       *
+       * <code>string from = 2;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearFrom() {
+        from_ = getDefaultInstance().getFrom();
+        bitField0_ = (bitField0_ & ~0x00000002);
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * 消息发送方
+       * </pre>
+       *
+       * <code>string from = 2;</code>
+       * @param value The bytes for from to set.
+       * @return This builder for chaining.
+       */
+      public Builder setFromBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) { throw new NullPointerException(); }
+        checkByteStringIsUtf8(value);
+        from_ = value;
+        bitField0_ |= 0x00000002;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object to_ = "";
+      /**
+       * <pre>
+       * 消息的接收方
+       * </pre>
+       *
+       * <code>string to = 3;</code>
+       * @return The to.
+       */
+      public java.lang.String getTo() {
+        java.lang.Object ref = to_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          to_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <pre>
+       * 消息的接收方
+       * </pre>
+       *
+       * <code>string to = 3;</code>
+       * @return The bytes for to.
+       */
+      public com.google.protobuf.ByteString
+          getToBytes() {
+        java.lang.Object ref = to_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          to_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <pre>
+       * 消息的接收方
+       * </pre>
+       *
+       * <code>string to = 3;</code>
+       * @param value The to to set.
+       * @return This builder for chaining.
+       */
+      public Builder setTo(
+          java.lang.String value) {
+        if (value == null) { throw new NullPointerException(); }
+        to_ = value;
+        bitField0_ |= 0x00000004;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * 消息的接收方
+       * </pre>
+       *
+       * <code>string to = 3;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearTo() {
+        to_ = getDefaultInstance().getTo();
+        bitField0_ = (bitField0_ & ~0x00000004);
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * 消息的接收方
+       * </pre>
+       *
+       * <code>string to = 3;</code>
+       * @param value The bytes for to to set.
+       * @return This builder for chaining.
+       */
+      public Builder setToBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) { throw new NullPointerException(); }
+        checkByteStringIsUtf8(value);
+        to_ = value;
+        bitField0_ |= 0x00000004;
+        onChanged();
         return this;
       }
       @java.lang.Override
@@ -2605,11 +4003,15 @@ public final class C2cMessage {
       "Request\022\014\n\004from\030\001 \001(\t\022\n\n\002to\030\002 \001(\t\022\017\n\007con" +
       "tent\030\003 \001(\t\022\023\n\013contentType\030\004 \001(\005\"F\n\017C2cSe" +
       "ndResponse\022\r\n\005msgId\030\001 \001(\003\022\021\n\ttimestamp\030\002" +
-      " \001(\003\022\021\n\tserverSeq\030\003 \001(\003\"\020\n\016C2cPushReques" +
-      "t\"\021\n\017C2cPushResponseB}\n.com.github.xunin" +
-      "g888.helloim.contract.protobufB\nC2cMessa" +
-      "geZ?github.com/xuning888/helloIMClient/i" +
-      "nternal/proto;helloim_protob\006proto3"
+      " \001(\003\022\021\n\tserverSeq\030\003 \001(\003\"\205\001\n\016C2cPushReque" +
+      "st\022\014\n\004from\030\001 \001(\t\022\n\n\002to\030\002 \001(\t\022\017\n\007content\030" +
+      "\003 \001(\t\022\023\n\013contentType\030\004 \001(\005\022\r\n\005msgId\030\005 \001(" +
+      "\003\022\021\n\tserverSeq\030\006 \001(\003\022\021\n\ttimestamp\030\007 \001(\003\"" +
+      ":\n\017C2cPushResponse\022\r\n\005msgId\030\001 \001(\003\022\014\n\004fro" +
+      "m\030\002 \001(\t\022\n\n\002to\030\003 \001(\tB}\n.com.github.xuning" +
+      "888.helloim.contract.protobufB\nC2cMessag" +
+      "eZ?github.com/xuning888/helloIMClient/in" +
+      "ternal/proto;helloim_protob\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -2632,13 +4034,13 @@ public final class C2cMessage {
     internal_static_helloim_protocol_C2cPushRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_helloim_protocol_C2cPushRequest_descriptor,
-        new java.lang.String[] { });
+        new java.lang.String[] { "From", "To", "Content", "ContentType", "MsgId", "ServerSeq", "Timestamp", });
     internal_static_helloim_protocol_C2cPushResponse_descriptor =
       getDescriptor().getMessageTypes().get(3);
     internal_static_helloim_protocol_C2cPushResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_helloim_protocol_C2cPushResponse_descriptor,
-        new java.lang.String[] { });
+        new java.lang.String[] { "MsgId", "From", "To", });
   }
 
   // @@protoc_insertion_point(outer_class_scope)

@@ -1,4 +1,4 @@
-package com.github.xuning888.helloim.config;
+package com.github.xuning888.helloim.session.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

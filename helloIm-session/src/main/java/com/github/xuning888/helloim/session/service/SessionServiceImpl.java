@@ -1,4 +1,4 @@
-package com.github.xuning888.helloim.service;
+package com.github.xuning888.helloim.session.service;
 
 import com.github.xuning888.helloim.contract.api.service.SessionService;
 import com.github.xuning888.helloim.contract.meta.Endpoint;

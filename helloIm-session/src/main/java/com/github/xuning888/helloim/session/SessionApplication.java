@@ -1,4 +1,4 @@
-package com.github.xuning888.helloim.delivery;
+package com.github.xuning888.helloim.session;
 
 import org.apache.dubbo.config.spring.context.annotation.EnableDubbo;
 import org.springframework.boot.SpringApplication;
@@ -6,13 +6,13 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 /**
  * @author xuning
- * @date 2025/8/2 20:50
+ * @date 2025/8/22 19:55
  */
 @EnableDubbo
 @SpringBootApplication
-public class DeliveryApplication {
+public class SessionApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(DeliveryApplication.class, args);
+        SpringApplication.run(SessionApplication.class, args);
     }
 }
