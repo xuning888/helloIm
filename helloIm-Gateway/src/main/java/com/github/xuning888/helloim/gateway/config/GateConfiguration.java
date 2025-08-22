@@ -1,5 +1,6 @@
 package com.github.xuning888.helloim.gateway.config;
 
+import com.github.xuning888.helloim.contract.meta.GateUser;
 import com.github.xuning888.helloim.contract.protobuf.MsgCmd;
 import com.github.xuning888.helloim.gateway.adapter.UpMsgServiceAdapter;
 import com.github.xuning888.helloim.gateway.core.ImChannelPipeFactory;
@@ -41,13 +42,14 @@ public class GateConfiguration {
     }
 
     @Bean
-    public GateAddr gateAddr(@Value("${dubbo.protocol.port}") Integer port) {
-        return new GateAddr(port);
+    public GateAddr gateAddr(@Value("${dubbo.protocol.port}") Integer port,
+                             @Value("${im.gate.protocol}") String protocol) {
+        return new GateAddr(port, protocol);
     }
 
     @Bean
-    public SessionManager sessionManager(UpMsgServiceAdapter upMsgServiceAdapter) {
-        return new DefaultSessionManager(upMsgServiceAdapter);
+    public SessionManager sessionManager(UpMsgServiceAdapter upMsgServiceAdapter, GateAddr addr) {
+        return new DefaultSessionManager(upMsgServiceAdapter, addr);
     }
 
     @Bean

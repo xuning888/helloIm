@@ -1,6 +1,7 @@
 package com.github.xuning888.helloim.gateway.config;
 
 import com.github.xuning888.helloim.contract.meta.Endpoint;
+import com.github.xuning888.helloim.contract.meta.GateType;
 import org.apache.dubbo.common.utils.NetUtils;
 
 /**
@@ -13,12 +14,15 @@ public class GateAddr {
 
     private final String host;
 
-    public GateAddr(int port) {
-        this.port = port;
-        this.host = NetUtils.getLocalHost();
-    }
+    private final String protocol;
 
     private volatile Endpoint endpoint;
+
+    public GateAddr(int port, String protocol) {
+        this.port = port;
+        this.host = NetUtils.getLocalHost();
+        this.protocol = protocol;
+    }
 
     public Endpoint endpoint() {
         if (endpoint != null) {
@@ -31,6 +35,7 @@ public class GateAddr {
             endpoint = new Endpoint();
             endpoint.setPort(this.port);
             endpoint.setHost(this.host);
+            endpoint.setGateType(GateType.parseGateType(protocol));
         }
         return endpoint;
     }

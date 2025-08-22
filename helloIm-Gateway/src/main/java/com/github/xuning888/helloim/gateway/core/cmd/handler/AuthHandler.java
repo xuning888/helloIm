@@ -1,7 +1,9 @@
 package com.github.xuning888.helloim.gateway.core.cmd.handler;
 
 import com.github.xuning888.helloim.contract.api.request.AuthRequest;
+import com.github.xuning888.helloim.contract.api.request.LogoutRequest;
 import com.github.xuning888.helloim.contract.api.response.AuthResponse;
+import com.github.xuning888.helloim.contract.contant.GateSessionEvent;
 import com.github.xuning888.helloim.contract.frame.Frame;
 import com.github.xuning888.helloim.contract.frame.Header;
 import com.github.xuning888.helloim.contract.meta.GateUser;
@@ -14,6 +16,7 @@ import com.github.xuning888.helloim.gateway.core.cmd.DownCmdEvent;
 import com.github.xuning888.helloim.gateway.core.conn.Conn;
 import com.github.xuning888.helloim.gateway.core.conn.event.ConnStateEvent;
 import com.github.xuning888.helloim.gateway.core.session.Session;
+import com.github.xuning888.helloim.gateway.core.session.SessionListener;
 import com.github.xuning888.helloim.gateway.core.session.SessionManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,8 +44,7 @@ public class AuthHandler implements CmdHandler {
     public void handle(CmdEvent cmdEvent) throws Exception {
         AuthResponse authResponse = handleAuth(cmdEvent);
         if (authResponse.getSuccess()) {
-            // 长连接认证成功, 建立session
-            Session session = new Session(cmdEvent.getConn(), authResponse.getGateUser());
+            Session session = createSession(cmdEvent.getConn(), authResponse.getGateUser(), cmdEvent.getTraceId());
             sessionManager.putSession(session, cmdEvent.getTraceId());
             // 构造auth的Response
             Frame response = buildAuthResponse(cmdEvent.getFrame(), authResponse.getGateUser());
@@ -99,4 +101,20 @@ public class AuthHandler implements CmdHandler {
         return new Frame(header, body);
     }
 
+
+    private Session createSession(Conn conn, GateUser gateUser, String traceId) {
+        Session session = new Session(conn, gateUser);
+        session.addListener(new SessionListener() {
+            @Override
+            public void notifyEvent(Session session, GateSessionEvent sessionEvent) {
+                LogoutRequest logoutRequest = new LogoutRequest();
+                logoutRequest.setTraceId(traceId);
+                logoutRequest.setGateUser(session.getUser());
+                logoutRequest.setSessionEvent(sessionEvent);
+                logoutRequest.setEndpoint(gateAddr.endpoint());
+                upMsgServiceAdapter.upMsgService().logout(logoutRequest);
+            }
+        });
+        return session;
+    }
 }

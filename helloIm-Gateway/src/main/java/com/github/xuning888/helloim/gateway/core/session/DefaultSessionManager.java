@@ -6,6 +6,7 @@ import com.github.xuning888.helloim.contract.contant.GateSessionEvent;
 import com.github.xuning888.helloim.contract.contant.GateSessionState;
 import com.github.xuning888.helloim.contract.meta.GateUser;
 import com.github.xuning888.helloim.gateway.adapter.UpMsgServiceAdapter;
+import com.github.xuning888.helloim.gateway.config.GateAddr;
 import com.github.xuning888.helloim.gateway.core.conn.Conn;
 import com.github.xuning888.helloim.gateway.core.conn.event.ConnStateEvent;
 import org.slf4j.Logger;
@@ -31,9 +32,11 @@ public class DefaultSessionManager implements SessionManager {
     private final ScheduledExecutorService scheduled = Executors.newSingleThreadScheduledExecutor();
 
     private final UpMsgServiceAdapter upMsgServiceAdapter;
+    private final GateAddr gateAddr;
 
-    public DefaultSessionManager(UpMsgServiceAdapter upMsgServiceAdapter) {
+    public DefaultSessionManager(UpMsgServiceAdapter upMsgServiceAdapter, GateAddr gateAddr) {
         this.upMsgServiceAdapter = upMsgServiceAdapter;
+        this.gateAddr = gateAddr;
         registerTask();
     }
 
@@ -155,6 +158,7 @@ public class DefaultSessionManager implements SessionManager {
                 logoutRequest.setGateUser(oldSession.getUser());
                 logoutRequest.setTraceId(traceId);
                 logoutRequest.setSessionEvent(new GateSessionEvent(GateSessionState.LOGOUT, oldSession.getUser(), traceId));
+                logoutRequest.setEndpoint(gateAddr.endpoint());
                 LogoutResponse logoutResponse = upMsgServiceAdapter.upMsgService().logout(logoutRequest);
                 logger.info("logoutResponse: {}, traceId: {}", logoutResponse, traceId);
             } catch (Exception ex) {

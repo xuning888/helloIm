@@ -58,6 +58,6 @@ public class GateUser implements Serializable {
 
     @Override
     public String toString() {
-        return String.format("GateUser: %d_%s", uid, userType);
+        return String.format("%d_%s", uid, userType);
     }
 }

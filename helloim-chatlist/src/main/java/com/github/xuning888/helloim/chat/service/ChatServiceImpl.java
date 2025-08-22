@@ -44,7 +44,7 @@ public class ChatServiceImpl implements ChatService {
 
 
     @Resource
-    private RedisTemplate<String, Object> redisTemplate;
+    private RedisTemplate redisTemplate;
 
     @Override
     public Long serverSeq(String from, String to, ChatType chatType, String traceId) {
@@ -54,7 +54,7 @@ public class ChatServiceImpl implements ChatService {
                     from, to, chatType, traceId);
             return ERROR_SERVER_SEQ;
         }
-        Long serverSeq  = null;
+        Long serverSeq = null;
         Object value = this.redisTemplate.opsForValue().get(key);
         if (value == null) {
             try {
@@ -89,7 +89,7 @@ public class ChatServiceImpl implements ChatService {
         script.setResultType(Long.class);
         int random = (int) (Math.random() * 3600);
         int ttl = serverSeqTTL + random;
-        return this.redisTemplate.execute(script, Collections.singletonList(key), serverSeq, ttl);
+        return (Long) this.redisTemplate.execute(script, Collections.singletonList(key), serverSeq, ttl);
     }
 
 

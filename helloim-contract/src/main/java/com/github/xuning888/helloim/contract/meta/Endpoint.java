@@ -12,11 +12,14 @@ public class Endpoint implements Serializable {
 
     private int port;
 
+    private GateType gateType;
+
     public Endpoint() {}
 
-    public Endpoint(String host, int port) {
+    public Endpoint(String host, int port, GateType gateType) {
         this.host = host;
         this.port = port;
+        this.gateType = gateType;
     }
 
     public String getHost() {
@@ -35,8 +38,20 @@ public class Endpoint implements Serializable {
         this.port = port;
     }
 
+    public GateType getGateType() {
+        return gateType;
+    }
+
+    public void setGateType(GateType gateType) {
+        this.gateType = gateType;
+    }
+
     @Override
     public String toString() {
-        return String.format("endpoint: %s:%d\n", host, port);
+        return "Endpoint{" +
+                "host='" + host + '\'' +
+                ", port=" + port +
+                ", gateType=" + gateType +
+                '}';
     }
 }
