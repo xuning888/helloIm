@@ -110,10 +110,10 @@ public class ChatServiceImpl implements ChatService {
     private Long serverSeqFromDB(String from, String to, ChatType chatType, String traceId) {
         if (ChatType.C2C.equals(chatType)) {
             // 查询单聊数据库
-            return 1L;
+            return 0L;
         } else if (ChatType.C2G.equals(chatType)) {
             // 查询群聊数据库
-            return 1L;
+            return 0L;
         } else {
             return ERROR_SERVER_SEQ;
         }
