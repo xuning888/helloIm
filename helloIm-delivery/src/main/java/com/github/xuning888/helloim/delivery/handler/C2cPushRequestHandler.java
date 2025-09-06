@@ -30,10 +30,15 @@ public class C2cPushRequestHandler implements MsgDeliverHandler {
     public void handle(MsgContext msgContext, String kTraceId) {
         String msgTo = msgContext.getMsgTo();
         GateUser toUser = new GateUser(Long.parseLong(msgTo));
-        ImSession imsession = sessionService.getSession(toUser, GateType.TCP, msgContext.getTraceId());
-        if (imsession != null) {
-            Endpoint endpoint = imsession.getEndpoint();
+        ImSession imSession = getSessionTcp(toUser, msgContext.getTraceId());
+        if (imSession != null) {
+            // 用户在线
+            Endpoint endpoint = imSession.getEndpoint();
             GatewayUtils.pushMessage(msgContext.getFrame(), toUser, endpoint, msgContext.getTraceId());
         }
+    }
+
+    private ImSession getSessionTcp(GateUser user, String traceId) {
+        return sessionService.getSession(user, GateType.TCP, traceId);
     }
 }

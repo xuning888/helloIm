@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Collections;
+import java.util.List;
 
 /**
  * @author xuning
@@ -60,6 +61,17 @@ public class GatewayUtils {
             return;
         }
         DownMessageReq downMessageReq = new DownMessageReq(frame, Collections.singletonList(gateUser), traceId);
+        downMsgService.pushMessage(downMessageReq);
+    }
+
+    public static void batchPushMessage(Frame frame, List<GateUser> users, Endpoint endpoint, String traceId){
+        String appName = ApplicationModel.getApplicationConfig().getName();
+        DownMsgService downMsgService = DubboUtils.downMsgService(appName, endpoint, traceId);
+        if (downMsgService == null) {
+            logger.error("batchPushMessage error, downMsgService is null, traceId: {}", traceId);
+            return;
+        }
+        DownMessageReq downMessageReq = new DownMessageReq(frame, users, traceId);
         downMsgService.pushMessage(downMessageReq);
     }
 }

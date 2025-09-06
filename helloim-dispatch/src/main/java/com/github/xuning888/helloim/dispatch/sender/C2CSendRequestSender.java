@@ -44,15 +44,9 @@ public class C2CSendRequestSender implements MessageSender {
         String traceId = msgContext.getTraceId();
         Frame frame = msgContext.getFrame();
         byte[] body = frame.getBody();
-        // c2c上行消息反序列化
-        C2cMessage.C2cSendRequest c2cSendRequest = null;
-        try {
-            c2cSendRequest = C2cMessage.C2cSendRequest.parseFrom(body);
-        } catch (Exception ex) {
-            logger.error("c2cSendRequest 反序列化消息内容失败, traceId: {}", traceId, ex);
-            return;
-        }
 
+        // c2c上行消息反序列化
+        C2cMessage.C2cSendRequest c2cSendRequest = extraC2cSendRequest(body, traceId);
         if (c2cSendRequest == null) {
             logger.error("c2cSendRequest 反序列化后消息内容为空, traceId: {}", traceId);
             return;
@@ -85,6 +79,16 @@ public class C2CSendRequestSender implements MessageSender {
 
         // 回复ACK
         GatewayUtils.pushResponse(msgContext, msgContext.getEndpoint(), traceId);
+    }
+
+    private C2cMessage.C2cSendRequest extraC2cSendRequest(byte[] body, String traceId) {
+        C2cMessage.C2cSendRequest c2cSendRequest = null;
+        try {
+            c2cSendRequest = C2cMessage.C2cSendRequest.parseFrom(body);
+        } catch (Exception ex) {
+            logger.error("c2cSendRequest 反序列化消息内容失败, traceId: {}", traceId, ex);
+        }
+        return c2cSendRequest;
     }
 
     private String kafkaKey(MsgContext msgContext) {
