@@ -50,7 +50,7 @@ services:
     depends_on:
       - zookeeper
   mysql:
-    image:  mysql:5.7.26
+    image:  mysql:8.0
     container_name: mysql
     hostname: mysql
     ports:
