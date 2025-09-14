@@ -40,8 +40,8 @@ build/
 .idea/
 .mvn/
 
-docker/zookeeper/
-docker/kafka/
-docker/redis
-
+deploy-dev/zookeeper/
+deploy-dev/kafka/
+deploy-dev/redis/
+deploy-dev/mysql/
 *.rdb

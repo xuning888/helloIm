@@ -19,4 +19,10 @@ mkdir -p ./zookeeper/datalog
 # init kafka
 mkdir -p ./kafka/logs
 
-sudo docker-compose up -d
+# init mysql
+mkdir -p ./mysql/data
+mkdir -p ./mysql/logs
+mkdir -p ./mysql/init
+cp ./script/sql/*.sql ./mysql/init
+
+docker-compose up -d

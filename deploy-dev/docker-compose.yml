@@ -49,3 +49,19 @@ services:
       - ./kafka/logs:/tmp/kafka/logs
     depends_on:
       - zookeeper
+  mysql:
+    image:  mysql:5.7.26
+    container_name: mysql
+    hostname: mysql
+    ports:
+      - "3306:3306"
+    networks:
+      - im-net
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_CHARACTER_SET_SERVER: utf8mb4
+      MYSQL_COLLATION_SERVER: utf8mb4_unicode_ci
+    volumes:
+      - ./mysql/data:/var/lib/mysql
+      - ./mysql/logs:/var/log/mysql
+      - ./mysql/init:/docker-entrypoint-initdb.d
