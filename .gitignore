@@ -39,3 +39,9 @@ build/
 
 .idea/
 .mvn/
+
+docker/zookeeper/
+docker/kafka/
+docker/redis
+
+*.rdb

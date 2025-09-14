@@ -1,0 +1,51 @@
+version: '3.8'
+networks:
+  im-net:
+    name: im-net
+services:
+  redis:
+    image: redis:7.0
+    container_name: redis-server
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./redis/conf/redis.conf:/usr/local/etc/redis/redis.conf
+      - ./redis/data:/data
+      - ./redis/log:/var/log/redis
+    command: redis-server /usr/local/etc/redis/redis.conf
+    networks:
+      - im-net
+  zookeeper:
+    image: zookeeper:3.8.1
+    container_name: zookeeper
+    hostname: zookeeper
+    networks:
+      - im-net
+    ports:
+      - "2181:2181"
+    environment:
+      ZOO_MY_ID: 1
+      ZOO_SERVERS: server.1=zookeeper1:2888:3888;2181
+    volumes:
+      - ./zookeeper/data:/data
+      - ./zookeeper/datalog:/datalog
+  kafka:
+    image: bitnami/kafka:2.8.0
+    container_name: kafka
+    hostname: kafka
+    ports:
+      - "9092:9092"
+    networks:
+      - im-net
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://host.docker.internal:9092 # docker-desktop需要配置hosts文件, linux写服务器地址
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      ALLOW_PLAINTEXT_LISTENER: yes
+      KAFKA_LOG_DIRS: /tmp/kafka/logs
+    volumes:
+      - ./kafka/logs:/tmp/kafka/logs
+    depends_on:
+      - zookeeper

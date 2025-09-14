@@ -9,4 +9,4 @@ dubbo:
       port: 28804
 logging:
   level:
-    root: debug
+    root: INFO

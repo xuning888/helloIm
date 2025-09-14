@@ -7,16 +7,16 @@ spring:
   application:
     name: helloim-gateway
   redis:
-    host: ${REDIS_ADDR}
+    host: ${REDIS_ADDR:127.0.0.1}
 dubbo:
   application:
     name: helloim-gateway
     logger: slf4j
     qos-enable: false
   metadata-report:
-    address: ${ZK_ADDRESS}
+    address: ${ZK_ADDRESS:zookeeper://127.0.0.1:2181}
   registry:
-    address: ${ZK_ADDRESS}
+    address: ${ZK_ADDRESS:zookeeper://127.0.0.1:2181}
     group: helloim
     timeout: 10000
   consumer:

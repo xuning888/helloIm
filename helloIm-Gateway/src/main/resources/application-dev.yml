@@ -3,7 +3,7 @@ logging:
     root: info
 im:
   gate:
-    protocol: ${PROTOCOL}
+    protocol: ${PROTOCOL:tcp}
     port: 9300
     max-frame-size: 8192
     read-timeout-seconds: 630
