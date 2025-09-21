@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.github.xuning888.helloim.store.mapper.ImMessageGroupMapper">
+  <resultMap id="BaseResultMap" type="com.github.xuning888.helloim.contract.entity.ImMessageGroup">
+    <id column="msg_id" jdbcType="BIGINT" property="msgId" />
+    <result column="msg_from" jdbcType="BIGINT" property="msgFrom" />
+    <result column="from_user_type" jdbcType="TINYINT" property="fromUserType" />
+    <result column="group_id" jdbcType="BIGINT" property="groupId" />
+    <result column="msg_seq" jdbcType="INTEGER" property="msgSeq" />
+    <result column="msg_content" jdbcType="VARCHAR" property="msgContent" />
+    <result column="content_type" jdbcType="INTEGER" property="contentType" />
+    <result column="cmd_id" jdbcType="INTEGER" property="cmdId" />
+    <result column="send_time" jdbcType="TIMESTAMP" property="sendTime" />
+    <result column="server_seq" jdbcType="BIGINT" property="serverSeq" />
+    <result column="created_at" jdbcType="TIMESTAMP" property="createdAt" />
+    <result column="updated_at" jdbcType="TIMESTAMP" property="updatedAt" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    msg_id, msg_from, from_user_type, group_id, msg_seq, msg_content, content_type, cmd_id, 
+    send_time, server_seq, created_at, updated_at
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from im_message_group
+    where msg_id = #{msgId,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from im_message_group
+    where msg_id = #{msgId,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.github.xuning888.helloim.contract.entity.ImMessageGroup">
+    <selectKey keyProperty="msgId" order="AFTER" resultType="java.lang.Long">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into im_message_group (msg_from, from_user_type, group_id, 
+      msg_seq, msg_content, content_type, 
+      cmd_id, send_time, server_seq, 
+      created_at, updated_at)
+    values (#{msgFrom,jdbcType=BIGINT}, #{fromUserType,jdbcType=TINYINT}, #{groupId,jdbcType=BIGINT}, 
+      #{msgSeq,jdbcType=INTEGER}, #{msgContent,jdbcType=VARCHAR}, #{contentType,jdbcType=INTEGER}, 
+      #{cmdId,jdbcType=INTEGER}, #{sendTime,jdbcType=TIMESTAMP}, #{serverSeq,jdbcType=BIGINT}, 
+      #{createdAt,jdbcType=TIMESTAMP}, #{updatedAt,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.github.xuning888.helloim.contract.entity.ImMessageGroup">
+    <selectKey keyProperty="msgId" order="AFTER" resultType="java.lang.Long">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into im_message_group
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="msgFrom != null">
+        msg_from,
+      </if>
+      <if test="fromUserType != null">
+        from_user_type,
+      </if>
+      <if test="groupId != null">
+        group_id,
+      </if>
+      <if test="msgSeq != null">
+        msg_seq,
+      </if>
+      <if test="msgContent != null">
+        msg_content,
+      </if>
+      <if test="contentType != null">
+        content_type,
+      </if>
+      <if test="cmdId != null">
+        cmd_id,
+      </if>
+      <if test="sendTime != null">
+        send_time,
+      </if>
+      <if test="serverSeq != null">
+        server_seq,
+      </if>
+      <if test="createdAt != null">
+        created_at,
+      </if>
+      <if test="updatedAt != null">
+        updated_at,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="msgFrom != null">
+        #{msgFrom,jdbcType=BIGINT},
+      </if>
+      <if test="fromUserType != null">
+        #{fromUserType,jdbcType=TINYINT},
+      </if>
+      <if test="groupId != null">
+        #{groupId,jdbcType=BIGINT},
+      </if>
+      <if test="msgSeq != null">
+        #{msgSeq,jdbcType=INTEGER},
+      </if>
+      <if test="msgContent != null">
+        #{msgContent,jdbcType=VARCHAR},
+      </if>
+      <if test="contentType != null">
+        #{contentType,jdbcType=INTEGER},
+      </if>
+      <if test="cmdId != null">
+        #{cmdId,jdbcType=INTEGER},
+      </if>
+      <if test="sendTime != null">
+        #{sendTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="serverSeq != null">
+        #{serverSeq,jdbcType=BIGINT},
+      </if>
+      <if test="createdAt != null">
+        #{createdAt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updatedAt != null">
+        #{updatedAt,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.github.xuning888.helloim.contract.entity.ImMessageGroup">
+    update im_message_group
+    <set>
+      <if test="msgFrom != null">
+        msg_from = #{msgFrom,jdbcType=BIGINT},
+      </if>
+      <if test="fromUserType != null">
+        from_user_type = #{fromUserType,jdbcType=TINYINT},
+      </if>
+      <if test="groupId != null">
+        group_id = #{groupId,jdbcType=BIGINT},
+      </if>
+      <if test="msgSeq != null">
+        msg_seq = #{msgSeq,jdbcType=INTEGER},
+      </if>
+      <if test="msgContent != null">
+        msg_content = #{msgContent,jdbcType=VARCHAR},
+      </if>
+      <if test="contentType != null">
+        content_type = #{contentType,jdbcType=INTEGER},
+      </if>
+      <if test="cmdId != null">
+        cmd_id = #{cmdId,jdbcType=INTEGER},
+      </if>
+      <if test="sendTime != null">
+        send_time = #{sendTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="serverSeq != null">
+        server_seq = #{serverSeq,jdbcType=BIGINT},
+      </if>
+      <if test="createdAt != null">
+        created_at = #{createdAt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updatedAt != null">
+        updated_at = #{updatedAt,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where msg_id = #{msgId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.github.xuning888.helloim.contract.entity.ImMessageGroup">
+    update im_message_group
+    set msg_from = #{msgFrom,jdbcType=BIGINT},
+      from_user_type = #{fromUserType,jdbcType=TINYINT},
+      group_id = #{groupId,jdbcType=BIGINT},
+      msg_seq = #{msgSeq,jdbcType=INTEGER},
+      msg_content = #{msgContent,jdbcType=VARCHAR},
+      content_type = #{contentType,jdbcType=INTEGER},
+      cmd_id = #{cmdId,jdbcType=INTEGER},
+      send_time = #{sendTime,jdbcType=TIMESTAMP},
+      server_seq = #{serverSeq,jdbcType=BIGINT},
+      created_at = #{createdAt,jdbcType=TIMESTAMP},
+      updated_at = #{updatedAt,jdbcType=TIMESTAMP}
+    where msg_id = #{msgId,jdbcType=BIGINT}
+  </update>
+</mapper>

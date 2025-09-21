@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.github.xuning888.helloim.message.mapper.ImGroupUserMapper">
+  <resultMap id="BaseResultMap" type="com.github.xuning888.helloim.contract.entity.ImGroupUser">
+    <id column="group_id" jdbcType="BIGINT" property="groupId" />
+    <id column="user_id" jdbcType="BIGINT" property="userId" />
+    <id column="user_type" jdbcType="INTEGER" property="userType" />
+    <result column="group_name" jdbcType="VARCHAR" property="groupName" />
+    <result column="group_icon" jdbcType="VARCHAR" property="groupIcon" />
+    <result column="nick_name" jdbcType="VARCHAR" property="nickName" />
+    <result column="join_time" jdbcType="TIMESTAMP" property="joinTime" />
+    <result column="exit_time" jdbcType="TIMESTAMP" property="exitTime" />
+    <result column="role" jdbcType="INTEGER" property="role" />
+    <result column="mute_status" jdbcType="INTEGER" property="muteStatus" />
+    <result column="del_status" jdbcType="TINYINT" property="delStatus" />
+    <result column="created_at" jdbcType="TIMESTAMP" property="createdAt" />
+    <result column="updated_at" jdbcType="TIMESTAMP" property="updatedAt" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    group_id, user_id, user_type, group_name, group_icon, nick_name, join_time, exit_time, 
+    role, mute_status, del_status, created_at, updated_at
+  </sql>
+
+  <insert id="insert" parameterType="com.github.xuning888.helloim.contract.entity.ImGroupUser">
+    <selectKey keyProperty="groupId" order="AFTER" resultType="java.lang.Long">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into im_group_user (user_id, user_type, group_name, 
+      group_icon, nick_name, join_time, 
+      exit_time, role, mute_status, 
+      del_status, created_at, updated_at
+      )
+    values (#{userId,jdbcType=BIGINT}, #{userType,jdbcType=INTEGER}, #{groupName,jdbcType=VARCHAR}, 
+      #{groupIcon,jdbcType=VARCHAR}, #{nickName,jdbcType=VARCHAR}, #{joinTime,jdbcType=TIMESTAMP}, 
+      #{exitTime,jdbcType=TIMESTAMP}, #{role,jdbcType=INTEGER}, #{muteStatus,jdbcType=INTEGER}, 
+      #{delStatus,jdbcType=TINYINT}, #{createdAt,jdbcType=TIMESTAMP}, #{updatedAt,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.github.xuning888.helloim.contract.entity.ImGroupUser">
+    <selectKey keyProperty="groupId" order="AFTER" resultType="java.lang.Long">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into im_group_user
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="userId != null">
+        user_id,
+      </if>
+      <if test="userType != null">
+        user_type,
+      </if>
+      <if test="groupName != null">
+        group_name,
+      </if>
+      <if test="groupIcon != null">
+        group_icon,
+      </if>
+      <if test="nickName != null">
+        nick_name,
+      </if>
+      <if test="joinTime != null">
+        join_time,
+      </if>
+      <if test="exitTime != null">
+        exit_time,
+      </if>
+      <if test="role != null">
+        role,
+      </if>
+      <if test="muteStatus != null">
+        mute_status,
+      </if>
+      <if test="delStatus != null">
+        del_status,
+      </if>
+      <if test="createdAt != null">
+        created_at,
+      </if>
+      <if test="updatedAt != null">
+        updated_at,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="userId != null">
+        #{userId,jdbcType=BIGINT},
+      </if>
+      <if test="userType != null">
+        #{userType,jdbcType=INTEGER},
+      </if>
+      <if test="groupName != null">
+        #{groupName,jdbcType=VARCHAR},
+      </if>
+      <if test="groupIcon != null">
+        #{groupIcon,jdbcType=VARCHAR},
+      </if>
+      <if test="nickName != null">
+        #{nickName,jdbcType=VARCHAR},
+      </if>
+      <if test="joinTime != null">
+        #{joinTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="exitTime != null">
+        #{exitTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="role != null">
+        #{role,jdbcType=INTEGER},
+      </if>
+      <if test="muteStatus != null">
+        #{muteStatus,jdbcType=INTEGER},
+      </if>
+      <if test="delStatus != null">
+        #{delStatus,jdbcType=TINYINT},
+      </if>
+      <if test="createdAt != null">
+        #{createdAt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updatedAt != null">
+        #{updatedAt,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.github.xuning888.helloim.contract.entity.ImGroupUser">
+    update im_group_user
+    <set>
+      <if test="groupName != null">
+        group_name = #{groupName,jdbcType=VARCHAR},
+      </if>
+      <if test="groupIcon != null">
+        group_icon = #{groupIcon,jdbcType=VARCHAR},
+      </if>
+      <if test="nickName != null">
+        nick_name = #{nickName,jdbcType=VARCHAR},
+      </if>
+      <if test="joinTime != null">
+        join_time = #{joinTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="exitTime != null">
+        exit_time = #{exitTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="role != null">
+        role = #{role,jdbcType=INTEGER},
+      </if>
+      <if test="muteStatus != null">
+        mute_status = #{muteStatus,jdbcType=INTEGER},
+      </if>
+      <if test="delStatus != null">
+        del_status = #{delStatus,jdbcType=TINYINT},
+      </if>
+      <if test="createdAt != null">
+        created_at = #{createdAt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updatedAt != null">
+        updated_at = #{updatedAt,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where group_id = #{groupId,jdbcType=BIGINT}
+      and user_id = #{userId,jdbcType=BIGINT}
+      and user_type = #{userType,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.github.xuning888.helloim.contract.entity.ImGroupUser">
+    update im_group_user
+    set group_name = #{groupName,jdbcType=VARCHAR},
+      group_icon = #{groupIcon,jdbcType=VARCHAR},
+      nick_name = #{nickName,jdbcType=VARCHAR},
+      join_time = #{joinTime,jdbcType=TIMESTAMP},
+      exit_time = #{exitTime,jdbcType=TIMESTAMP},
+      role = #{role,jdbcType=INTEGER},
+      mute_status = #{muteStatus,jdbcType=INTEGER},
+      del_status = #{delStatus,jdbcType=TINYINT},
+      created_at = #{createdAt,jdbcType=TIMESTAMP},
+      updated_at = #{updatedAt,jdbcType=TIMESTAMP}
+    where group_id = #{groupId,jdbcType=BIGINT}
+      and user_id = #{userId,jdbcType=BIGINT}
+      and user_type = #{userType,jdbcType=INTEGER}
+  </update>
+</mapper>

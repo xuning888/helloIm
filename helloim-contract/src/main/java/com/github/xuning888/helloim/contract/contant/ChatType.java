@@ -15,6 +15,7 @@ public enum ChatType implements Serializable {
 
     private final int type;
     private final String description;
+
     ChatType(int type, String description) {
         this.type = type;
         this.description = description;
@@ -31,5 +32,12 @@ public enum ChatType implements Serializable {
     @Override
     public String toString() {
         return this.name();
+    }
+
+    public boolean match(Integer type) {
+        if (type == null) {
+            return false;
+        }
+        return this.type == type;
     }
 }

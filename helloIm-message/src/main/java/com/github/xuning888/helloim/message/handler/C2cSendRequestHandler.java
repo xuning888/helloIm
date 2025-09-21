@@ -1,5 +1,7 @@
 package com.github.xuning888.helloim.message.handler;
 
+import com.github.xuning888.helloim.contract.contant.ChatType;
+import com.github.xuning888.helloim.contract.dto.ChatMessage;
 import com.github.xuning888.helloim.contract.dto.MsgContext;
 import com.github.xuning888.helloim.contract.frame.Frame;
 import com.github.xuning888.helloim.contract.frame.Header;
@@ -7,9 +9,13 @@ import com.github.xuning888.helloim.contract.kafka.MsgKafkaProducer;
 import com.github.xuning888.helloim.contract.kafka.Topics;
 import com.github.xuning888.helloim.contract.protobuf.C2cMessage;
 import com.github.xuning888.helloim.contract.protobuf.MsgCmd;
+import com.github.xuning888.helloim.message.rpc.DubboAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+
+import javax.annotation.Resource;
+import java.util.Date;
 
 /**
  * @author xuning
@@ -19,6 +25,9 @@ import org.springframework.stereotype.Component;
 public class C2cSendRequestHandler implements MsgHandler {
 
     private static final Logger logger = LoggerFactory.getLogger(C2cSendRequestHandler.class);
+
+    @Resource
+    private DubboAdapter dubboAdapter;
 
     @Override
     public int getCmdId() {
@@ -44,7 +53,10 @@ public class C2cSendRequestHandler implements MsgHandler {
         }
 
         // 消息持久化
-        saveMessage(msgContext);
+        if (!saveMessage(msgContext, c2cSendRequest)) {
+            logger.error("c2cSendMessage saveMessage error: traceId: {}", traceId);
+            return;
+        }
 
         // 构造下行消息, 发送消息
         Frame c2cPushRequestFrame = buildC2cPushRequestFrame(msgContext, c2cSendRequest);
@@ -53,10 +65,30 @@ public class C2cSendRequestHandler implements MsgHandler {
     }
 
 
-    private void saveMessage(MsgContext msgContext) {
-
+    private boolean saveMessage(MsgContext msgContext, C2cMessage.C2cSendRequest c2cSendRequest) {
+        ChatMessage chatMessage = convertChatMessage(msgContext, c2cSendRequest);
+        int raw = this.dubboAdapter.msgStoreService().saveMessage(chatMessage, msgContext.getTraceId());
+        return raw > 0;
     }
 
+    private ChatMessage convertChatMessage(MsgContext msgContext, C2cMessage.C2cSendRequest c2cSendRequest) {
+        ChatMessage chatMessage = new ChatMessage();
+        chatMessage.setCmdId(MsgCmd.CmdId.CMD_ID_C2CSEND_VALUE);
+        chatMessage.setChatType(ChatType.C2C.getType());
+        chatMessage.setMsgId(msgContext.getMsgId());
+        chatMessage.setMsgFrom(Long.parseLong(msgContext.getMsgFrom()));
+        chatMessage.setFromUserType(msgContext.getFromUserType());
+        chatMessage.setMsgTo(Long.parseLong(msgContext.getMsgTo()));
+        chatMessage.setToUserType(msgContext.getToUserType());
+        chatMessage.setGroupId(0L);
+        chatMessage.setMsgSeq(msgContext.getMsgSeq());
+        chatMessage.setMsgContent(c2cSendRequest.getContent());
+        chatMessage.setContentType(c2cSendRequest.getContentType());
+        chatMessage.setSendTime(new Date()); // TODO 这个时间不准确
+        chatMessage.setReceiptStatus(0);
+        chatMessage.setServerSeq(msgContext.getServerSeq());
+        return chatMessage;
+    }
 
     private String msgKey(MsgContext msgContext) {
         return msgContext.getMsgFrom() + "_" + msgContext.getMsgTo() + "_" + msgContext.getServerSeq();

@@ -1,65 +1,6 @@
-create database if not exists helloim0;
+create database if not exists helloim2;
 
-use helloim0;
-
-
-create table if not exists im_user
-(
-    user_id     bigint(20)   not null default 0 comment 'user_id, 使用雪花算法',
-    user_type   int(4)       not null default 0 comment '用户类型',
-    user_name   varchar(256) not null default '' comment '用户名称',
-    icon        varchar(256) not null default '' comment '头像',
-    mobile      varchar(50)  not null default '' comment '加密手机号',
-    device_id   varchar(50)  not null default '' comment '设备ID',
-    extra       varchar(512) not null default '' comment '扩展属性',
-    user_status tinyint(4)   not null default 0 comment '用户状态: 0-正常, 1-禁用',
-    created_at  timestamp    not null default current_timestamp comment '创建时间',
-    updated_at  timestamp    not null default current_timestamp on update current_timestamp comment '更新时间',
-    primary key (user_id),
-    unique index uniq_idx_user_id (user_id) comment 'IM侧userId的唯一索引'
-) engine InnoDB
-  default charset utf8mb4 comment 'IM用户信息表';
-
-create table if not exists im_group
-(
-    group_id         bigint(20)    not null default 0 comment '群聊ID,使用雪花算法',
-    group_name       varchar(256)  not null default '' comment '群聊名称',
-    group_icon       varchar(256)  not null default '' comment '群头像',
-    create_user      bigint(20)    not null default 0 comment '群聊创建者的userId',
-    create_user_type int(4)    not null default 0 comment '创建群聊的用户的用户类型',
-    owner_user       bigint(20)    not null default 0 comment '群主的userId',
-    owner_user_type  int(4)    not null default 0 comment '群主的用户类型',
-    announcement     varchar(4000) not null default '' comment '群公告',
-    atall_enable     tinyint(4)    not null default 0 comment '是否开启@所有人',
-    mute_status      tinyint(4)    not null default 0 comment '禁言状态：0-未禁言, 1-禁言',
-    group_type       tinyint(4)    not null default 0 comment '群聊类型',
-    group_version    bigint(20)    not null default 0 comment '群版本号',
-    extra            varchar(512)  not null default '' comment '扩展信息',
-    created_at       timestamp     not null default current_timestamp comment '创建时间',
-    updated_at       timestamp     not null default current_timestamp on update current_timestamp comment '更新时间',
-    primary key (group_id),
-    index idx_group_id (group_id) comment '群聊ID'
-) engine InnoDB
-  default charset utf8mb4 comment '群聊信息';
-
-create table if not exists im_group_user
-(
-    group_id    bigint(20)   not null default 0 comment 'group_id',
-    group_name  varchar(256) not null default '' comment '群聊名称',
-    group_icon  varchar(256) not null default '' comment '群头像',
-    user_id     bigint(20)   not null default 0 comment 'user_id',
-    user_type   int(4)   not null default 0 comment '用户类型',
-    nick_name   varchar(256) not null default '' comment '群昵称',
-    join_time   timestamp    not null default current_timestamp comment '入群时间',
-    exit_time   timestamp    not null default current_timestamp comment '退群时间',
-    role        int(4)       not null default 0 comment '用户角色: 0-群成员, 1-群主',
-    mute_status int(4)       not null default 0 comment '群成员禁言状态: 1-禁言',
-    del_status  tinyint(4)   not null default 0 comment '逻辑删除',
-    created_at  timestamp    not null default current_timestamp comment '创建时间',
-    updated_at  timestamp    not null default current_timestamp on update current_timestamp comment '更新时间',
-    primary key (group_id, user_id, user_type)
-) engine InnoDB
-  default charset utf8mb4 comment '群成员表';
+use helloim2;
 
 create table if not exists im_chat
 (

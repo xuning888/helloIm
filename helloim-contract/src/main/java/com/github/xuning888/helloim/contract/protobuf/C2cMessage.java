@@ -88,6 +88,16 @@ public final class C2cMessage {
      * @return The contentType.
      */
     int getContentType();
+
+    /**
+     * <pre>
+     * 发送消息的时间戳
+     * </pre>
+     *
+     * <code>int64 sendTimestamp = 5;</code>
+     * @return The sendTimestamp.
+     */
+    long getSendTimestamp();
   }
   /**
    * <pre>
@@ -287,6 +297,21 @@ public final class C2cMessage {
       return contentType_;
     }
 
+    public static final int SENDTIMESTAMP_FIELD_NUMBER = 5;
+    private long sendTimestamp_ = 0L;
+    /**
+     * <pre>
+     * 发送消息的时间戳
+     * </pre>
+     *
+     * <code>int64 sendTimestamp = 5;</code>
+     * @return The sendTimestamp.
+     */
+    @java.lang.Override
+    public long getSendTimestamp() {
+      return sendTimestamp_;
+    }
+
     private byte memoizedIsInitialized = -1;
     @java.lang.Override
     public final boolean isInitialized() {
@@ -313,6 +338,9 @@ public final class C2cMessage {
       if (contentType_ != 0) {
         output.writeInt32(4, contentType_);
       }
+      if (sendTimestamp_ != 0L) {
+        output.writeInt64(5, sendTimestamp_);
+      }
       getUnknownFields().writeTo(output);
     }
 
@@ -334,6 +362,10 @@ public final class C2cMessage {
       if (contentType_ != 0) {
         size += com.google.protobuf.CodedOutputStream
           .computeInt32Size(4, contentType_);
+      }
+      if (sendTimestamp_ != 0L) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt64Size(5, sendTimestamp_);
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSize = size;
@@ -358,6 +390,8 @@ public final class C2cMessage {
           .equals(other.getContent())) return false;
       if (getContentType()
           != other.getContentType()) return false;
+      if (getSendTimestamp()
+          != other.getSendTimestamp()) return false;
       if (!getUnknownFields().equals(other.getUnknownFields())) return false;
       return true;
     }
@@ -377,6 +411,9 @@ public final class C2cMessage {
       hash = (53 * hash) + getContent().hashCode();
       hash = (37 * hash) + CONTENTTYPE_FIELD_NUMBER;
       hash = (53 * hash) + getContentType();
+      hash = (37 * hash) + SENDTIMESTAMP_FIELD_NUMBER;
+      hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+          getSendTimestamp());
       hash = (29 * hash) + getUnknownFields().hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -516,6 +553,7 @@ public final class C2cMessage {
         to_ = "";
         content_ = "";
         contentType_ = 0;
+        sendTimestamp_ = 0L;
         return this;
       }
 
@@ -560,6 +598,9 @@ public final class C2cMessage {
         }
         if (((from_bitField0_ & 0x00000008) != 0)) {
           result.contentType_ = contentType_;
+        }
+        if (((from_bitField0_ & 0x00000010) != 0)) {
+          result.sendTimestamp_ = sendTimestamp_;
         }
       }
 
@@ -625,6 +666,9 @@ public final class C2cMessage {
         if (other.getContentType() != 0) {
           setContentType(other.getContentType());
         }
+        if (other.getSendTimestamp() != 0L) {
+          setSendTimestamp(other.getSendTimestamp());
+        }
         this.mergeUnknownFields(other.getUnknownFields());
         onChanged();
         return this;
@@ -671,6 +715,11 @@ public final class C2cMessage {
                 bitField0_ |= 0x00000008;
                 break;
               } // case 32
+              case 40: {
+                sendTimestamp_ = input.readInt64();
+                bitField0_ |= 0x00000010;
+                break;
+              } // case 40
               default: {
                 if (!super.parseUnknownField(input, extensionRegistry, tag)) {
                   done = true; // was an endgroup tag
@@ -1004,6 +1053,50 @@ public final class C2cMessage {
       public Builder clearContentType() {
         bitField0_ = (bitField0_ & ~0x00000008);
         contentType_ = 0;
+        onChanged();
+        return this;
+      }
+
+      private long sendTimestamp_ ;
+      /**
+       * <pre>
+       * 发送消息的时间戳
+       * </pre>
+       *
+       * <code>int64 sendTimestamp = 5;</code>
+       * @return The sendTimestamp.
+       */
+      @java.lang.Override
+      public long getSendTimestamp() {
+        return sendTimestamp_;
+      }
+      /**
+       * <pre>
+       * 发送消息的时间戳
+       * </pre>
+       *
+       * <code>int64 sendTimestamp = 5;</code>
+       * @param value The sendTimestamp to set.
+       * @return This builder for chaining.
+       */
+      public Builder setSendTimestamp(long value) {
+
+        sendTimestamp_ = value;
+        bitField0_ |= 0x00000010;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * 发送消息的时间戳
+       * </pre>
+       *
+       * <code>int64 sendTimestamp = 5;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearSendTimestamp() {
+        bitField0_ = (bitField0_ & ~0x00000010);
+        sendTimestamp_ = 0L;
         onChanged();
         return this;
       }
@@ -3999,19 +4092,20 @@ public final class C2cMessage {
       descriptor;
   static {
     java.lang.String[] descriptorData = {
-      "\n\tc2c.proto\022\020helloim.protocol\"P\n\016C2cSend" +
+      "\n\tc2c.proto\022\020helloim.protocol\"g\n\016C2cSend" +
       "Request\022\014\n\004from\030\001 \001(\t\022\n\n\002to\030\002 \001(\t\022\017\n\007con" +
-      "tent\030\003 \001(\t\022\023\n\013contentType\030\004 \001(\005\"F\n\017C2cSe" +
-      "ndResponse\022\r\n\005msgId\030\001 \001(\003\022\021\n\ttimestamp\030\002" +
-      " \001(\003\022\021\n\tserverSeq\030\003 \001(\003\"\205\001\n\016C2cPushReque" +
-      "st\022\014\n\004from\030\001 \001(\t\022\n\n\002to\030\002 \001(\t\022\017\n\007content\030" +
-      "\003 \001(\t\022\023\n\013contentType\030\004 \001(\005\022\r\n\005msgId\030\005 \001(" +
-      "\003\022\021\n\tserverSeq\030\006 \001(\003\022\021\n\ttimestamp\030\007 \001(\003\"" +
-      ":\n\017C2cPushResponse\022\r\n\005msgId\030\001 \001(\003\022\014\n\004fro" +
-      "m\030\002 \001(\t\022\n\n\002to\030\003 \001(\tB}\n.com.github.xuning" +
-      "888.helloim.contract.protobufB\nC2cMessag" +
-      "eZ?github.com/xuning888/helloIMClient/in" +
-      "ternal/proto;helloim_protob\006proto3"
+      "tent\030\003 \001(\t\022\023\n\013contentType\030\004 \001(\005\022\025\n\rsendT" +
+      "imestamp\030\005 \001(\003\"F\n\017C2cSendResponse\022\r\n\005msg" +
+      "Id\030\001 \001(\003\022\021\n\ttimestamp\030\002 \001(\003\022\021\n\tserverSeq" +
+      "\030\003 \001(\003\"\205\001\n\016C2cPushRequest\022\014\n\004from\030\001 \001(\t\022" +
+      "\n\n\002to\030\002 \001(\t\022\017\n\007content\030\003 \001(\t\022\023\n\013contentT" +
+      "ype\030\004 \001(\005\022\r\n\005msgId\030\005 \001(\003\022\021\n\tserverSeq\030\006 " +
+      "\001(\003\022\021\n\ttimestamp\030\007 \001(\003\":\n\017C2cPushRespons" +
+      "e\022\r\n\005msgId\030\001 \001(\003\022\014\n\004from\030\002 \001(\t\022\n\n\002to\030\003 \001" +
+      "(\tB}\n.com.github.xuning888.helloim.contr" +
+      "act.protobufB\nC2cMessageZ?github.com/xun" +
+      "ing888/helloIMClient/internal/proto;hell" +
+      "oim_protob\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -4022,7 +4116,7 @@ public final class C2cMessage {
     internal_static_helloim_protocol_C2cSendRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_helloim_protocol_C2cSendRequest_descriptor,
-        new java.lang.String[] { "From", "To", "Content", "ContentType", });
+        new java.lang.String[] { "From", "To", "Content", "ContentType", "SendTimestamp", });
     internal_static_helloim_protocol_C2cSendResponse_descriptor =
       getDescriptor().getMessageTypes().get(1);
     internal_static_helloim_protocol_C2cSendResponse_fieldAccessorTable = new

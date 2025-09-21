@@ -1,0 +1,31 @@
+server:
+  port: 8086
+
+spring:
+  profiles:
+    active: dev
+  application:
+    name: helloim-store
+  redis:
+    host: ${REDIS_ADDR:127.0.0.1}
+dubbo:
+  application:
+    name: helloim-store
+    logger: slf4j
+    qos-enable: false
+  metadata-report:
+    address: ${ZK_ADDRESS:zookeeper://127.0.0.1:2181}
+  registry:
+    address: ${ZK_ADDRESS:zookeeper://127.0.0.1:2181}
+    group: helloim
+    timeout: 10000
+  consumer:
+    check: false
+  protocol:
+    name: tri
+    threadpool: fixed
+    threads: 200
+    port: 28806
+
+mybatis:
+  mapper-locations: classpath:mapper/*.xml

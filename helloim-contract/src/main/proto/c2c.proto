@@ -15,6 +15,7 @@ message C2cSendRequest {
   string to = 2; // 消息接收方的uid
   string content = 3; // 消息内容
   int32 contentType = 4;  // 消息的类型
+  int64 sendTimestamp = 5; // 发送消息的时间戳
 }
 
 // 单聊上行消息的ACK

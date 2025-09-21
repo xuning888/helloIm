@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.github.xuning888.helloim.store.mapper.ImMessageMapper">
+  <resultMap id="BaseResultMap" type="com.github.xuning888.helloim.contract.entity.ImMessage">
+    <id column="msg_id" jdbcType="BIGINT" property="msgId" />
+    <result column="msg_from" jdbcType="BIGINT" property="msgFrom" />
+    <result column="from_user_type" jdbcType="INTEGER" property="fromUserType" />
+    <result column="msg_to" jdbcType="BIGINT" property="msgTo" />
+    <result column="to_user_type" jdbcType="INTEGER" property="toUserType" />
+    <result column="msg_seq" jdbcType="INTEGER" property="msgSeq" />
+    <result column="msg_content" jdbcType="VARCHAR" property="msgContent" />
+    <result column="content_type" jdbcType="INTEGER" property="contentType" />
+    <result column="cmd_id" jdbcType="INTEGER" property="cmdId" />
+    <result column="send_time" jdbcType="TIMESTAMP" property="sendTime" />
+    <result column="server_seq" jdbcType="BIGINT" property="serverSeq" />
+    <result column="receipt_status" jdbcType="TINYINT" property="receiptStatus" />
+    <result column="created_at" jdbcType="TIMESTAMP" property="createdAt" />
+    <result column="updated_at" jdbcType="TIMESTAMP" property="updatedAt" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    msg_id, msg_from, from_user_type, msg_to, to_user_type, msg_seq, msg_content, content_type, 
+    cmd_id, send_time, server_seq, receipt_status, created_at, updated_at
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from im_message
+    where msg_id = #{msgId,jdbcType=BIGINT}
+  </select>
+
+  <insert id="insertSelective" parameterType="com.github.xuning888.helloim.contract.entity.ImMessage">
+    insert into im_message
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="msgId != null">
+        msg_id,
+      </if>
+      <if test="msgFrom != null">
+        msg_from,
+      </if>
+      <if test="fromUserType != null">
+        from_user_type,
+      </if>
+      <if test="msgTo != null">
+        msg_to,
+      </if>
+      <if test="toUserType != null">
+        to_user_type,
+      </if>
+      <if test="msgSeq != null">
+        msg_seq,
+      </if>
+      <if test="msgContent != null">
+        msg_content,
+      </if>
+      <if test="contentType != null">
+        content_type,
+      </if>
+      <if test="cmdId != null">
+        cmd_id,
+      </if>
+      <if test="sendTime != null">
+        send_time,
+      </if>
+      <if test="serverSeq != null">
+        server_seq,
+      </if>
+      <if test="receiptStatus != null">
+        receipt_status,
+      </if>
+      <if test="createdAt != null">
+        created_at,
+      </if>
+      <if test="updatedAt != null">
+        updated_at,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="msgId != null">
+        #{msgId,jdbcType=BIGINT},
+      </if>
+      <if test="msgFrom != null">
+        #{msgFrom,jdbcType=BIGINT},
+      </if>
+      <if test="fromUserType != null">
+        #{fromUserType,jdbcType=INTEGER},
+      </if>
+      <if test="msgTo != null">
+        #{msgTo,jdbcType=BIGINT},
+      </if>
+      <if test="toUserType != null">
+        #{toUserType,jdbcType=INTEGER},
+      </if>
+      <if test="msgSeq != null">
+        #{msgSeq,jdbcType=INTEGER},
+      </if>
+      <if test="msgContent != null">
+        #{msgContent,jdbcType=VARCHAR},
+      </if>
+      <if test="contentType != null">
+        #{contentType,jdbcType=INTEGER},
+      </if>
+      <if test="cmdId != null">
+        #{cmdId,jdbcType=INTEGER},
+      </if>
+      <if test="sendTime != null">
+        #{sendTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="serverSeq != null">
+        #{serverSeq,jdbcType=BIGINT},
+      </if>
+      <if test="receiptStatus != null">
+        #{receiptStatus,jdbcType=TINYINT},
+      </if>
+      <if test="createdAt != null">
+        #{createdAt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updatedAt != null">
+        #{updatedAt,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.github.xuning888.helloim.contract.entity.ImMessage">
+    update im_message
+    <set>
+      <if test="msgFrom != null">
+        msg_from = #{msgFrom,jdbcType=BIGINT},
+      </if>
+      <if test="fromUserType != null">
+        from_user_type = #{fromUserType,jdbcType=INTEGER},
+      </if>
+      <if test="msgTo != null">
+        msg_to = #{msgTo,jdbcType=BIGINT},
+      </if>
+      <if test="toUserType != null">
+        to_user_type = #{toUserType,jdbcType=INTEGER},
+      </if>
+      <if test="msgSeq != null">
+        msg_seq = #{msgSeq,jdbcType=INTEGER},
+      </if>
+      <if test="msgContent != null">
+        msg_content = #{msgContent,jdbcType=VARCHAR},
+      </if>
+      <if test="contentType != null">
+        content_type = #{contentType,jdbcType=INTEGER},
+      </if>
+      <if test="cmdId != null">
+        cmd_id = #{cmdId,jdbcType=INTEGER},
+      </if>
+      <if test="sendTime != null">
+        send_time = #{sendTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="serverSeq != null">
+        server_seq = #{serverSeq,jdbcType=BIGINT},
+      </if>
+      <if test="receiptStatus != null">
+        receipt_status = #{receiptStatus,jdbcType=TINYINT},
+      </if>
+      <if test="createdAt != null">
+        created_at = #{createdAt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updatedAt != null">
+        updated_at = #{updatedAt,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where msg_id = #{msgId,jdbcType=BIGINT}
+  </update>
+</mapper>

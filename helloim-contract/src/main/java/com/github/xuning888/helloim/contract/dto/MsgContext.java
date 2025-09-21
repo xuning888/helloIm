@@ -1,6 +1,7 @@
 package com.github.xuning888.helloim.contract.dto;
 
 import com.github.xuning888.helloim.contract.frame.Frame;
+import com.github.xuning888.helloim.contract.frame.Header;
 import com.github.xuning888.helloim.contract.meta.Endpoint;
 import io.protostuff.Tag;
 
@@ -64,6 +65,12 @@ public class MsgContext implements Serializable {
 
     @Tag(value =  9)
     private final long timestamp = System.currentTimeMillis();
+
+    @Tag(value = 10)
+    private Integer fromUserType;
+
+    @Tag(value = 11)
+    private Integer toUserType;
 
     public String getMsgFrom() {
         return msgFrom;
@@ -137,19 +144,30 @@ public class MsgContext implements Serializable {
         return timestamp;
     }
 
+    public Integer getFromUserType() {
+        return fromUserType;
+    }
 
-    @Override
-    public String toString() {
-        return "MsgContext{" +
-                "msgFrom='" + msgFrom + '\'' +
-                ", msgTo='" + msgTo + '\'' +
-                ", msgId=" + msgId +
-                ", serverSeq=" + serverSeq +
-                ", endpoint=" + endpoint +
-                ", frame=" + frame +
-                ", traceId='" + traceId + '\'' +
-                ", contextMap=" + contextMap +
-                ", timestamp=" + timestamp +
-                '}';
+    public void setFromUserType(Integer fromUserType) {
+        this.fromUserType = fromUserType;
+    }
+
+    public Integer getToUserType() {
+        return toUserType;
+    }
+
+    public void setToUserType(Integer toUserType) {
+        this.toUserType = toUserType;
+    }
+
+    public int getMsgSeq() {
+        if (this.frame == null) {
+            return 0;
+        }
+        Header header = frame.getHeader();
+        if (header == null) {
+            return 0;
+        }
+        return header.getSeq();
     }
 }

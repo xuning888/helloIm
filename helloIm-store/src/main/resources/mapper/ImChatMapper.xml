@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.github.xuning888.helloim.store.mapper.ImChatMapper">
+  <resultMap id="BaseResultMap" type="com.github.xuning888.helloim.contract.entity.ImChat">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="user_id" jdbcType="BIGINT" property="userId" />
+    <result column="chat_id" jdbcType="BIGINT" property="chatId" />
+    <result column="chat_type" jdbcType="TINYINT" property="chatType" />
+    <result column="chat_top" jdbcType="TINYINT" property="chatTop" />
+    <result column="chat_del" jdbcType="TINYINT" property="chatDel" />
+    <result column="update_timestamp" jdbcType="TIMESTAMP" property="updateTimestamp" />
+    <result column="del_timestamp" jdbcType="TIMESTAMP" property="delTimestamp" />
+    <result column="chat_mute" jdbcType="TINYINT" property="chatMute" />
+    <result column="created_at" jdbcType="TIMESTAMP" property="createdAt" />
+    <result column="updated_at" jdbcType="TIMESTAMP" property="updatedAt" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, user_id, chat_id, chat_type, chat_top, chat_del, update_timestamp, del_timestamp, 
+    chat_mute, created_at, updated_at
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from im_chat
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from im_chat
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.github.xuning888.helloim.contract.entity.ImChat">
+    insert into im_chat (id, user_id, chat_id, 
+      chat_type, chat_top, chat_del, 
+      update_timestamp, del_timestamp, chat_mute, 
+      created_at, updated_at)
+    values (#{id,jdbcType=BIGINT}, #{userId,jdbcType=BIGINT}, #{chatId,jdbcType=BIGINT}, 
+      #{chatType,jdbcType=TINYINT}, #{chatTop,jdbcType=TINYINT}, #{chatDel,jdbcType=TINYINT}, 
+      #{updateTimestamp,jdbcType=TIMESTAMP}, #{delTimestamp,jdbcType=TIMESTAMP}, #{chatMute,jdbcType=TINYINT}, 
+      #{createdAt,jdbcType=TIMESTAMP}, #{updatedAt,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.github.xuning888.helloim.contract.entity.ImChat">
+    insert into im_chat
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="userId != null">
+        user_id,
+      </if>
+      <if test="chatId != null">
+        chat_id,
+      </if>
+      <if test="chatType != null">
+        chat_type,
+      </if>
+      <if test="chatTop != null">
+        chat_top,
+      </if>
+      <if test="chatDel != null">
+        chat_del,
+      </if>
+      <if test="updateTimestamp != null">
+        update_timestamp,
+      </if>
+      <if test="delTimestamp != null">
+        del_timestamp,
+      </if>
+      <if test="chatMute != null">
+        chat_mute,
+      </if>
+      <if test="createdAt != null">
+        created_at,
+      </if>
+      <if test="updatedAt != null">
+        updated_at,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="userId != null">
+        #{userId,jdbcType=BIGINT},
+      </if>
+      <if test="chatId != null">
+        #{chatId,jdbcType=BIGINT},
+      </if>
+      <if test="chatType != null">
+        #{chatType,jdbcType=TINYINT},
+      </if>
+      <if test="chatTop != null">
+        #{chatTop,jdbcType=TINYINT},
+      </if>
+      <if test="chatDel != null">
+        #{chatDel,jdbcType=TINYINT},
+      </if>
+      <if test="updateTimestamp != null">
+        #{updateTimestamp,jdbcType=TIMESTAMP},
+      </if>
+      <if test="delTimestamp != null">
+        #{delTimestamp,jdbcType=TIMESTAMP},
+      </if>
+      <if test="chatMute != null">
+        #{chatMute,jdbcType=TINYINT},
+      </if>
+      <if test="createdAt != null">
+        #{createdAt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updatedAt != null">
+        #{updatedAt,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.github.xuning888.helloim.contract.entity.ImChat">
+    update im_chat
+    <set>
+      <if test="userId != null">
+        user_id = #{userId,jdbcType=BIGINT},
+      </if>
+      <if test="chatId != null">
+        chat_id = #{chatId,jdbcType=BIGINT},
+      </if>
+      <if test="chatType != null">
+        chat_type = #{chatType,jdbcType=TINYINT},
+      </if>
+      <if test="chatTop != null">
+        chat_top = #{chatTop,jdbcType=TINYINT},
+      </if>
+      <if test="chatDel != null">
+        chat_del = #{chatDel,jdbcType=TINYINT},
+      </if>
+      <if test="updateTimestamp != null">
+        update_timestamp = #{updateTimestamp,jdbcType=TIMESTAMP},
+      </if>
+      <if test="delTimestamp != null">
+        del_timestamp = #{delTimestamp,jdbcType=TIMESTAMP},
+      </if>
+      <if test="chatMute != null">
+        chat_mute = #{chatMute,jdbcType=TINYINT},
+      </if>
+      <if test="createdAt != null">
+        created_at = #{createdAt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updatedAt != null">
+        updated_at = #{updatedAt,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.github.xuning888.helloim.contract.entity.ImChat">
+    update im_chat
+    set user_id = #{userId,jdbcType=BIGINT},
+      chat_id = #{chatId,jdbcType=BIGINT},
+      chat_type = #{chatType,jdbcType=TINYINT},
+      chat_top = #{chatTop,jdbcType=TINYINT},
+      chat_del = #{chatDel,jdbcType=TINYINT},
+      update_timestamp = #{updateTimestamp,jdbcType=TIMESTAMP},
+      del_timestamp = #{delTimestamp,jdbcType=TIMESTAMP},
+      chat_mute = #{chatMute,jdbcType=TINYINT},
+      created_at = #{createdAt,jdbcType=TIMESTAMP},
+      updated_at = #{updatedAt,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

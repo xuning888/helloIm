@@ -73,7 +73,6 @@ public class MsgDispatchService {
                 msgContext = ProtoStuffUtils.deserialize(value, MsgContext.class);
                 MsgDispatchService.this.doDispatch(msgContext, this.traceId);
             } catch (Exception ex) {
-                String errMsg = null;
                 if (msgContext != null) {
                     logger.error("handle message failed, topic: {}, key: {}, offset: {}, msgId: {}, traceId: {}",
                             topic, key, offset, msgContext.getMsgId(), traceId, ex);
