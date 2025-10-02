@@ -25,13 +25,13 @@ public class DefaultSessionManager implements SessionManager {
 
     private final Map<String, Session> sessionMap = new ConcurrentHashMap<>();
 
-    private final Map<GateUser, Session> userSessionMap = new ConcurrentHashMap<>();
-
-    private final ExecutorService executorService = Executors.newCachedThreadPool();
+    // gate数量 * coreSize <= dispatch数量 * 200
+    private final ExecutorService executorService = Executors.newFixedThreadPool(15);
 
     private final ScheduledExecutorService scheduled = Executors.newSingleThreadScheduledExecutor();
 
     private final UpMsgServiceAdapter upMsgServiceAdapter;
+
     private final GateAddr gateAddr;
 
     public DefaultSessionManager(UpMsgServiceAdapter upMsgServiceAdapter, GateAddr gateAddr) {
@@ -42,7 +42,7 @@ public class DefaultSessionManager implements SessionManager {
 
 
     @Override
-    public synchronized void putSession(Session session, String traceId) {
+    public void putSession(Session session, String traceId) {
         Session oldSession = sessionMap.get(session.getId());
         if (oldSession != null) {
             logger.info("session重复auth, 需要检查是同一个用户的session, sessionId: {}", session.getId());
@@ -52,7 +52,6 @@ public class DefaultSessionManager implements SessionManager {
             logger.debug("putSession session: {}, traceId: {}", session, traceId);
         }
         sessionMap.put(session.getId(), session);
-        userSessionMap.put(session.getUser(), session);
     }
 
     /**
@@ -105,17 +104,6 @@ public class DefaultSessionManager implements SessionManager {
     }
 
     @Override
-    public Session getSessionByUser(GateUser user, String traceId) {
-        Session session = userSessionMap.get(user);
-        if (session == null) {
-            if (logger.isDebugEnabled()) {
-                logger.debug("getSessionByUser, user: {}, traceId: {}", user, traceId);
-            }
-        }
-        return session;
-    }
-
-    @Override
     public void logout(String sessionId, String traceId) {
         Session session = sessionMap.get(sessionId);
         if (session != null) {
@@ -134,7 +122,6 @@ public class DefaultSessionManager implements SessionManager {
             }
             GateUser user = session.getUser();
             asyncCloseSession(session, new GateSessionEvent(sessionState, user, traceId));
-            userSessionMap.remove(user);
         } else {
             if (logger.isDebugEnabled()) {
                 logger.debug("closeSession, session is null, sessionId: {}, traceId: {}", sessionId, traceId);

@@ -14,9 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.nio.ByteBuffer;
-import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author xuning
@@ -25,9 +23,6 @@ import java.util.concurrent.ConcurrentHashMap;
 public class TcpChannelUpStreamHandler extends ImChannelUpStreamHandler {
 
     private static final Logger logger = LoggerFactory.getLogger(TcpChannelUpStreamHandler.class);
-
-    private final Map<Channel, Conn> connMap = new ConcurrentHashMap<>();
-
     private final Processor processor;
 
     public TcpChannelUpStreamHandler(Processor processor) {
@@ -37,28 +32,14 @@ public class TcpChannelUpStreamHandler extends ImChannelUpStreamHandler {
 
     @Override
     protected Conn createOrGetConn(Channel channel) {
-        Conn conn = connMap.get(channel);
+        TcpConn conn = (TcpConn) channel.getAttachment();
         if (conn != null) {
             return conn;
         }
-        // 确保单例
-        synchronized (this) {
-            conn = connMap.get(channel);
-            if (conn != null) {
-                return conn;
-            }
-            conn = new TcpConn(channel, processor.msgPipeline());
-            connMap.put(channel, conn);
-        }
+        conn = new TcpConn(channel, processor.msgPipeline());
+        channel.setAttachment(conn);
         return conn;
     }
-
-    @Override
-    protected void removeConn(Channel channel) {
-        Conn conn = connMap.remove(channel);
-        logger.info("removeConn conn: {}", conn.getId());
-    }
-
 
     @Override
     public void messageReceived(ChannelHandlerContext ctx, MessageEvent e) throws Exception {

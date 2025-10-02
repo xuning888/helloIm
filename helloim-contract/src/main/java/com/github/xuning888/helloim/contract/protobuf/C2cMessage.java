@@ -98,6 +98,26 @@ public final class C2cMessage {
      * @return The sendTimestamp.
      */
     long getSendTimestamp();
+
+    /**
+     * <pre>
+     * 消息发送方的userType
+     * </pre>
+     *
+     * <code>int32 fromUserType = 6;</code>
+     * @return The fromUserType.
+     */
+    int getFromUserType();
+
+    /**
+     * <pre>
+     * 消息接收方的userType
+     * </pre>
+     *
+     * <code>int32 toUserType = 7;</code>
+     * @return The toUserType.
+     */
+    int getToUserType();
   }
   /**
    * <pre>
@@ -312,6 +332,36 @@ public final class C2cMessage {
       return sendTimestamp_;
     }
 
+    public static final int FROMUSERTYPE_FIELD_NUMBER = 6;
+    private int fromUserType_ = 0;
+    /**
+     * <pre>
+     * 消息发送方的userType
+     * </pre>
+     *
+     * <code>int32 fromUserType = 6;</code>
+     * @return The fromUserType.
+     */
+    @java.lang.Override
+    public int getFromUserType() {
+      return fromUserType_;
+    }
+
+    public static final int TOUSERTYPE_FIELD_NUMBER = 7;
+    private int toUserType_ = 0;
+    /**
+     * <pre>
+     * 消息接收方的userType
+     * </pre>
+     *
+     * <code>int32 toUserType = 7;</code>
+     * @return The toUserType.
+     */
+    @java.lang.Override
+    public int getToUserType() {
+      return toUserType_;
+    }
+
     private byte memoizedIsInitialized = -1;
     @java.lang.Override
     public final boolean isInitialized() {
@@ -341,6 +391,12 @@ public final class C2cMessage {
       if (sendTimestamp_ != 0L) {
         output.writeInt64(5, sendTimestamp_);
       }
+      if (fromUserType_ != 0) {
+        output.writeInt32(6, fromUserType_);
+      }
+      if (toUserType_ != 0) {
+        output.writeInt32(7, toUserType_);
+      }
       getUnknownFields().writeTo(output);
     }
 
@@ -367,6 +423,14 @@ public final class C2cMessage {
         size += com.google.protobuf.CodedOutputStream
           .computeInt64Size(5, sendTimestamp_);
       }
+      if (fromUserType_ != 0) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt32Size(6, fromUserType_);
+      }
+      if (toUserType_ != 0) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt32Size(7, toUserType_);
+      }
       size += getUnknownFields().getSerializedSize();
       memoizedSize = size;
       return size;
@@ -392,6 +456,10 @@ public final class C2cMessage {
           != other.getContentType()) return false;
       if (getSendTimestamp()
           != other.getSendTimestamp()) return false;
+      if (getFromUserType()
+          != other.getFromUserType()) return false;
+      if (getToUserType()
+          != other.getToUserType()) return false;
       if (!getUnknownFields().equals(other.getUnknownFields())) return false;
       return true;
     }
@@ -414,6 +482,10 @@ public final class C2cMessage {
       hash = (37 * hash) + SENDTIMESTAMP_FIELD_NUMBER;
       hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
           getSendTimestamp());
+      hash = (37 * hash) + FROMUSERTYPE_FIELD_NUMBER;
+      hash = (53 * hash) + getFromUserType();
+      hash = (37 * hash) + TOUSERTYPE_FIELD_NUMBER;
+      hash = (53 * hash) + getToUserType();
       hash = (29 * hash) + getUnknownFields().hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -554,6 +626,8 @@ public final class C2cMessage {
         content_ = "";
         contentType_ = 0;
         sendTimestamp_ = 0L;
+        fromUserType_ = 0;
+        toUserType_ = 0;
         return this;
       }
 
@@ -601,6 +675,12 @@ public final class C2cMessage {
         }
         if (((from_bitField0_ & 0x00000010) != 0)) {
           result.sendTimestamp_ = sendTimestamp_;
+        }
+        if (((from_bitField0_ & 0x00000020) != 0)) {
+          result.fromUserType_ = fromUserType_;
+        }
+        if (((from_bitField0_ & 0x00000040) != 0)) {
+          result.toUserType_ = toUserType_;
         }
       }
 
@@ -669,6 +749,12 @@ public final class C2cMessage {
         if (other.getSendTimestamp() != 0L) {
           setSendTimestamp(other.getSendTimestamp());
         }
+        if (other.getFromUserType() != 0) {
+          setFromUserType(other.getFromUserType());
+        }
+        if (other.getToUserType() != 0) {
+          setToUserType(other.getToUserType());
+        }
         this.mergeUnknownFields(other.getUnknownFields());
         onChanged();
         return this;
@@ -720,6 +806,16 @@ public final class C2cMessage {
                 bitField0_ |= 0x00000010;
                 break;
               } // case 40
+              case 48: {
+                fromUserType_ = input.readInt32();
+                bitField0_ |= 0x00000020;
+                break;
+              } // case 48
+              case 56: {
+                toUserType_ = input.readInt32();
+                bitField0_ |= 0x00000040;
+                break;
+              } // case 56
               default: {
                 if (!super.parseUnknownField(input, extensionRegistry, tag)) {
                   done = true; // was an endgroup tag
@@ -1097,6 +1193,94 @@ public final class C2cMessage {
       public Builder clearSendTimestamp() {
         bitField0_ = (bitField0_ & ~0x00000010);
         sendTimestamp_ = 0L;
+        onChanged();
+        return this;
+      }
+
+      private int fromUserType_ ;
+      /**
+       * <pre>
+       * 消息发送方的userType
+       * </pre>
+       *
+       * <code>int32 fromUserType = 6;</code>
+       * @return The fromUserType.
+       */
+      @java.lang.Override
+      public int getFromUserType() {
+        return fromUserType_;
+      }
+      /**
+       * <pre>
+       * 消息发送方的userType
+       * </pre>
+       *
+       * <code>int32 fromUserType = 6;</code>
+       * @param value The fromUserType to set.
+       * @return This builder for chaining.
+       */
+      public Builder setFromUserType(int value) {
+
+        fromUserType_ = value;
+        bitField0_ |= 0x00000020;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * 消息发送方的userType
+       * </pre>
+       *
+       * <code>int32 fromUserType = 6;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearFromUserType() {
+        bitField0_ = (bitField0_ & ~0x00000020);
+        fromUserType_ = 0;
+        onChanged();
+        return this;
+      }
+
+      private int toUserType_ ;
+      /**
+       * <pre>
+       * 消息接收方的userType
+       * </pre>
+       *
+       * <code>int32 toUserType = 7;</code>
+       * @return The toUserType.
+       */
+      @java.lang.Override
+      public int getToUserType() {
+        return toUserType_;
+      }
+      /**
+       * <pre>
+       * 消息接收方的userType
+       * </pre>
+       *
+       * <code>int32 toUserType = 7;</code>
+       * @param value The toUserType to set.
+       * @return This builder for chaining.
+       */
+      public Builder setToUserType(int value) {
+
+        toUserType_ = value;
+        bitField0_ |= 0x00000040;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * 消息接收方的userType
+       * </pre>
+       *
+       * <code>int32 toUserType = 7;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearToUserType() {
+        bitField0_ = (bitField0_ & ~0x00000040);
+        toUserType_ = 0;
         onChanged();
         return this;
       }
@@ -1958,6 +2142,26 @@ public final class C2cMessage {
      * @return The timestamp.
      */
     long getTimestamp();
+
+    /**
+     * <pre>
+     * 消息发送方的userType
+     * </pre>
+     *
+     * <code>int32 fromUserType = 8;</code>
+     * @return The fromUserType.
+     */
+    int getFromUserType();
+
+    /**
+     * <pre>
+     * 消息接收方的userType
+     * </pre>
+     *
+     * <code>int32 toUserType = 9;</code>
+     * @return The toUserType.
+     */
+    int getToUserType();
   }
   /**
    * <pre>
@@ -2202,6 +2406,36 @@ public final class C2cMessage {
       return timestamp_;
     }
 
+    public static final int FROMUSERTYPE_FIELD_NUMBER = 8;
+    private int fromUserType_ = 0;
+    /**
+     * <pre>
+     * 消息发送方的userType
+     * </pre>
+     *
+     * <code>int32 fromUserType = 8;</code>
+     * @return The fromUserType.
+     */
+    @java.lang.Override
+    public int getFromUserType() {
+      return fromUserType_;
+    }
+
+    public static final int TOUSERTYPE_FIELD_NUMBER = 9;
+    private int toUserType_ = 0;
+    /**
+     * <pre>
+     * 消息接收方的userType
+     * </pre>
+     *
+     * <code>int32 toUserType = 9;</code>
+     * @return The toUserType.
+     */
+    @java.lang.Override
+    public int getToUserType() {
+      return toUserType_;
+    }
+
     private byte memoizedIsInitialized = -1;
     @java.lang.Override
     public final boolean isInitialized() {
@@ -2237,6 +2471,12 @@ public final class C2cMessage {
       if (timestamp_ != 0L) {
         output.writeInt64(7, timestamp_);
       }
+      if (fromUserType_ != 0) {
+        output.writeInt32(8, fromUserType_);
+      }
+      if (toUserType_ != 0) {
+        output.writeInt32(9, toUserType_);
+      }
       getUnknownFields().writeTo(output);
     }
 
@@ -2271,6 +2511,14 @@ public final class C2cMessage {
         size += com.google.protobuf.CodedOutputStream
           .computeInt64Size(7, timestamp_);
       }
+      if (fromUserType_ != 0) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt32Size(8, fromUserType_);
+      }
+      if (toUserType_ != 0) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeInt32Size(9, toUserType_);
+      }
       size += getUnknownFields().getSerializedSize();
       memoizedSize = size;
       return size;
@@ -2300,6 +2548,10 @@ public final class C2cMessage {
           != other.getServerSeq()) return false;
       if (getTimestamp()
           != other.getTimestamp()) return false;
+      if (getFromUserType()
+          != other.getFromUserType()) return false;
+      if (getToUserType()
+          != other.getToUserType()) return false;
       if (!getUnknownFields().equals(other.getUnknownFields())) return false;
       return true;
     }
@@ -2328,6 +2580,10 @@ public final class C2cMessage {
       hash = (37 * hash) + TIMESTAMP_FIELD_NUMBER;
       hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
           getTimestamp());
+      hash = (37 * hash) + FROMUSERTYPE_FIELD_NUMBER;
+      hash = (53 * hash) + getFromUserType();
+      hash = (37 * hash) + TOUSERTYPE_FIELD_NUMBER;
+      hash = (53 * hash) + getToUserType();
       hash = (29 * hash) + getUnknownFields().hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -2470,6 +2726,8 @@ public final class C2cMessage {
         msgId_ = 0L;
         serverSeq_ = 0L;
         timestamp_ = 0L;
+        fromUserType_ = 0;
+        toUserType_ = 0;
         return this;
       }
 
@@ -2523,6 +2781,12 @@ public final class C2cMessage {
         }
         if (((from_bitField0_ & 0x00000040) != 0)) {
           result.timestamp_ = timestamp_;
+        }
+        if (((from_bitField0_ & 0x00000080) != 0)) {
+          result.fromUserType_ = fromUserType_;
+        }
+        if (((from_bitField0_ & 0x00000100) != 0)) {
+          result.toUserType_ = toUserType_;
         }
       }
 
@@ -2597,6 +2861,12 @@ public final class C2cMessage {
         if (other.getTimestamp() != 0L) {
           setTimestamp(other.getTimestamp());
         }
+        if (other.getFromUserType() != 0) {
+          setFromUserType(other.getFromUserType());
+        }
+        if (other.getToUserType() != 0) {
+          setToUserType(other.getToUserType());
+        }
         this.mergeUnknownFields(other.getUnknownFields());
         onChanged();
         return this;
@@ -2658,6 +2928,16 @@ public final class C2cMessage {
                 bitField0_ |= 0x00000040;
                 break;
               } // case 56
+              case 64: {
+                fromUserType_ = input.readInt32();
+                bitField0_ |= 0x00000080;
+                break;
+              } // case 64
+              case 72: {
+                toUserType_ = input.readInt32();
+                bitField0_ |= 0x00000100;
+                break;
+              } // case 72
               default: {
                 if (!super.parseUnknownField(input, extensionRegistry, tag)) {
                   done = true; // was an endgroup tag
@@ -3123,6 +3403,94 @@ public final class C2cMessage {
       public Builder clearTimestamp() {
         bitField0_ = (bitField0_ & ~0x00000040);
         timestamp_ = 0L;
+        onChanged();
+        return this;
+      }
+
+      private int fromUserType_ ;
+      /**
+       * <pre>
+       * 消息发送方的userType
+       * </pre>
+       *
+       * <code>int32 fromUserType = 8;</code>
+       * @return The fromUserType.
+       */
+      @java.lang.Override
+      public int getFromUserType() {
+        return fromUserType_;
+      }
+      /**
+       * <pre>
+       * 消息发送方的userType
+       * </pre>
+       *
+       * <code>int32 fromUserType = 8;</code>
+       * @param value The fromUserType to set.
+       * @return This builder for chaining.
+       */
+      public Builder setFromUserType(int value) {
+
+        fromUserType_ = value;
+        bitField0_ |= 0x00000080;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * 消息发送方的userType
+       * </pre>
+       *
+       * <code>int32 fromUserType = 8;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearFromUserType() {
+        bitField0_ = (bitField0_ & ~0x00000080);
+        fromUserType_ = 0;
+        onChanged();
+        return this;
+      }
+
+      private int toUserType_ ;
+      /**
+       * <pre>
+       * 消息接收方的userType
+       * </pre>
+       *
+       * <code>int32 toUserType = 9;</code>
+       * @return The toUserType.
+       */
+      @java.lang.Override
+      public int getToUserType() {
+        return toUserType_;
+      }
+      /**
+       * <pre>
+       * 消息接收方的userType
+       * </pre>
+       *
+       * <code>int32 toUserType = 9;</code>
+       * @param value The toUserType to set.
+       * @return This builder for chaining.
+       */
+      public Builder setToUserType(int value) {
+
+        toUserType_ = value;
+        bitField0_ |= 0x00000100;
+        onChanged();
+        return this;
+      }
+      /**
+       * <pre>
+       * 消息接收方的userType
+       * </pre>
+       *
+       * <code>int32 toUserType = 9;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearToUserType() {
+        bitField0_ = (bitField0_ & ~0x00000100);
+        toUserType_ = 0;
         onChanged();
         return this;
       }
@@ -4092,20 +4460,22 @@ public final class C2cMessage {
       descriptor;
   static {
     java.lang.String[] descriptorData = {
-      "\n\tc2c.proto\022\020helloim.protocol\"g\n\016C2cSend" +
-      "Request\022\014\n\004from\030\001 \001(\t\022\n\n\002to\030\002 \001(\t\022\017\n\007con" +
-      "tent\030\003 \001(\t\022\023\n\013contentType\030\004 \001(\005\022\025\n\rsendT" +
-      "imestamp\030\005 \001(\003\"F\n\017C2cSendResponse\022\r\n\005msg" +
-      "Id\030\001 \001(\003\022\021\n\ttimestamp\030\002 \001(\003\022\021\n\tserverSeq" +
-      "\030\003 \001(\003\"\205\001\n\016C2cPushRequest\022\014\n\004from\030\001 \001(\t\022" +
-      "\n\n\002to\030\002 \001(\t\022\017\n\007content\030\003 \001(\t\022\023\n\013contentT" +
-      "ype\030\004 \001(\005\022\r\n\005msgId\030\005 \001(\003\022\021\n\tserverSeq\030\006 " +
-      "\001(\003\022\021\n\ttimestamp\030\007 \001(\003\":\n\017C2cPushRespons" +
-      "e\022\r\n\005msgId\030\001 \001(\003\022\014\n\004from\030\002 \001(\t\022\n\n\002to\030\003 \001" +
-      "(\tB}\n.com.github.xuning888.helloim.contr" +
-      "act.protobufB\nC2cMessageZ?github.com/xun" +
-      "ing888/helloIMClient/internal/proto;hell" +
-      "oim_protob\006proto3"
+      "\n\tc2c.proto\022\020helloim.protocol\"\221\001\n\016C2cSen" +
+      "dRequest\022\014\n\004from\030\001 \001(\t\022\n\n\002to\030\002 \001(\t\022\017\n\007co" +
+      "ntent\030\003 \001(\t\022\023\n\013contentType\030\004 \001(\005\022\025\n\rsend" +
+      "Timestamp\030\005 \001(\003\022\024\n\014fromUserType\030\006 \001(\005\022\022\n" +
+      "\ntoUserType\030\007 \001(\005\"F\n\017C2cSendResponse\022\r\n\005" +
+      "msgId\030\001 \001(\003\022\021\n\ttimestamp\030\002 \001(\003\022\021\n\tserver" +
+      "Seq\030\003 \001(\003\"\257\001\n\016C2cPushRequest\022\014\n\004from\030\001 \001" +
+      "(\t\022\n\n\002to\030\002 \001(\t\022\017\n\007content\030\003 \001(\t\022\023\n\013conte" +
+      "ntType\030\004 \001(\005\022\r\n\005msgId\030\005 \001(\003\022\021\n\tserverSeq" +
+      "\030\006 \001(\003\022\021\n\ttimestamp\030\007 \001(\003\022\024\n\014fromUserTyp" +
+      "e\030\010 \001(\005\022\022\n\ntoUserType\030\t \001(\005\":\n\017C2cPushRe" +
+      "sponse\022\r\n\005msgId\030\001 \001(\003\022\014\n\004from\030\002 \001(\t\022\n\n\002t" +
+      "o\030\003 \001(\tB}\n.com.github.xuning888.helloim." +
+      "contract.protobufB\nC2cMessageZ?github.co" +
+      "m/xuning888/helloIMClient/internal/proto" +
+      ";helloim_protob\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -4116,7 +4486,7 @@ public final class C2cMessage {
     internal_static_helloim_protocol_C2cSendRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_helloim_protocol_C2cSendRequest_descriptor,
-        new java.lang.String[] { "From", "To", "Content", "ContentType", "SendTimestamp", });
+        new java.lang.String[] { "From", "To", "Content", "ContentType", "SendTimestamp", "FromUserType", "ToUserType", });
     internal_static_helloim_protocol_C2cSendResponse_descriptor =
       getDescriptor().getMessageTypes().get(1);
     internal_static_helloim_protocol_C2cSendResponse_fieldAccessorTable = new
@@ -4128,7 +4498,7 @@ public final class C2cMessage {
     internal_static_helloim_protocol_C2cPushRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_helloim_protocol_C2cPushRequest_descriptor,
-        new java.lang.String[] { "From", "To", "Content", "ContentType", "MsgId", "ServerSeq", "Timestamp", });
+        new java.lang.String[] { "From", "To", "Content", "ContentType", "MsgId", "ServerSeq", "Timestamp", "FromUserType", "ToUserType", });
     internal_static_helloim_protocol_C2cPushResponse_descriptor =
       getDescriptor().getMessageTypes().get(3);
     internal_static_helloim_protocol_C2cPushResponse_fieldAccessorTable = new

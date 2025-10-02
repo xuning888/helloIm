@@ -1,6 +1,7 @@
 package com.github.xuning888.helloim.contract.meta;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 /**
  * @author xuning
@@ -53,5 +54,17 @@ public class Endpoint implements Serializable {
                 ", port=" + port +
                 ", gateType=" + gateType +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (object == null || getClass() != object.getClass()) return false;
+        Endpoint endpoint = (Endpoint) object;
+        return port == endpoint.port && Objects.equals(host, endpoint.host) && gateType == endpoint.gateType;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(host, port, gateType);
     }
 }

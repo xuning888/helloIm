@@ -76,11 +76,11 @@ public class AuthHandler implements CmdHandler {
             logger.error("handleAuth, authRequest is null, sessionId: {}, traceId: {}", conn.getId(), traceId);
             return new AuthResponse(false, "parse AuthRequest failed", null, traceId);
         }
-
+        GateUser gateUser = new GateUser(Long.parseLong(authRequest.getUid()), authRequest.getUserType(), conn.getId());
         // 构造authRequest
         AuthRequest logicAuthRequest = new AuthRequest();
         logicAuthRequest.setEndpoint(gateAddr.endpoint());
-        logicAuthRequest.setGateUser(new GateUser(Long.parseLong(authRequest.getUid()), authRequest.getUserType()));
+        logicAuthRequest.setGateUser(gateUser);
         logicAuthRequest.setSessionId(conn.getId());
         logicAuthRequest.setTraceId(cmdEvent.getTraceId());
         // 发送auth到logic
@@ -111,6 +111,7 @@ public class AuthHandler implements CmdHandler {
                 logoutRequest.setTraceId(traceId);
                 logoutRequest.setGateUser(session.getUser());
                 logoutRequest.setSessionEvent(sessionEvent);
+                logoutRequest.setSessionId(session.getId());
                 logoutRequest.setEndpoint(gateAddr.endpoint());
                 upMsgServiceAdapter.upMsgService().logout(logoutRequest);
             }

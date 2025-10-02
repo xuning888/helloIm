@@ -20,14 +20,9 @@ public class LogoutRequest implements Serializable {
 
     private GateSessionEvent sessionEvent;
 
-    public LogoutRequest() {
-    }
+    private String sessionId;
 
-    public LogoutRequest(GateUser gateUser, Endpoint endpoint, GateSessionEvent sessionEvent, String traceId) {
-        this.gateUser = gateUser;
-        this.sessionEvent = sessionEvent;
-        this.endpoint = endpoint;
-        this.traceId = traceId;
+    public LogoutRequest() {
     }
 
     public Endpoint getEndpoint() {
@@ -60,6 +55,14 @@ public class LogoutRequest implements Serializable {
 
     public void setSessionEvent(GateSessionEvent sessionEvent) {
         this.sessionEvent = sessionEvent;
+    }
+
+    public String getSessionId() {
+        return sessionId;
+    }
+
+    public void setSessionId(String sessionId) {
+        this.sessionId = sessionId;
     }
 
     @Override

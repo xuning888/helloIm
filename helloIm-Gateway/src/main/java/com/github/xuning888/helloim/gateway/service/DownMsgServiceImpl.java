@@ -8,6 +8,7 @@ import com.github.xuning888.helloim.contract.protobuf.C2cMessage;
 import com.github.xuning888.helloim.gateway.core.cmd.DownCmdEvent;
 import com.github.xuning888.helloim.gateway.core.session.Session;
 import com.github.xuning888.helloim.gateway.core.session.SessionManager;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.DubboService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,13 +42,26 @@ public class DownMsgServiceImpl implements DownMsgService {
         }
         logger.info("pushMessage: {}, seq: {}", c2cSendResponse, frame.getHeader().getSeq());
         for (GateUser user : req.getUsers()) {
-            Session session = sessionManager.getSessionByUser(user, req.getTraceId());
-            if (session == null) {
-                logger.error("pushMessage, getSessionByUser session is null, req:{}", req);
-                return;
-            }
-            // 投递下行事件
-            session.getConn().getMsgPipeline().sendDown(new DownCmdEvent(frame, session.getConn(), req.getTraceId()));
+            sendMessage(frame, user, req.getTraceId());
         }
+    }
+
+    private void sendMessage(Frame frame, GateUser user, String traceId) {
+        if (user == null) {
+            logger.error("pushMessage user is null, traceId: {}", traceId);
+            return;
+        }
+        String sessionId = user.getSessionId();
+        if (StringUtils.isBlank(sessionId)) {
+            logger.error("pushMessage sessionId is null, user: {}, traceId: {}", user, traceId);
+            return;
+        }
+        Session session = sessionManager.getSession(sessionId, traceId);
+        if (session == null) {
+            logger.error("pushMessage, session is null, user: {}, traceId: {}", user, traceId);
+            return;
+        }
+        // 投递下行事件
+        session.getConn().getMsgPipeline().sendDown(new DownCmdEvent(frame, session.getConn(), traceId));
     }
 }

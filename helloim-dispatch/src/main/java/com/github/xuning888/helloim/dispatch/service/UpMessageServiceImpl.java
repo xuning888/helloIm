@@ -71,7 +71,9 @@ public class UpMessageServiceImpl implements UpMsgService {
         MsgContext msgContext = new MsgContext();
         msgContext.setTraceId(traceId); // 设置traceId
         msgContext.setMsgFrom(String.valueOf(gateUser.getUid())); // 消息发送者
+        msgContext.setFromUserType(gateUser.getUserType()); // 消息发送者到用户类型
         msgContext.setEndpoint(endpoint); // 消息来自哪个网关机
+        msgContext.setSessionId(gateUser.getSessionId());
         msgContext.setFrame(frame); // 数据帧
 
         // 分配并设置消息ID
@@ -130,8 +132,6 @@ public class UpMessageServiceImpl implements UpMsgService {
 
     private LogoutResponse doLogout(LogoutRequest logoutRequest) {
 
-        // TODO 删除token
-
         // 删除session
         removeSession(logoutRequest);
 
@@ -144,10 +144,14 @@ public class UpMessageServiceImpl implements UpMsgService {
     }
 
     private void removeSession(LogoutRequest logoutRequest) {
+        GateUser gateUser = logoutRequest.getGateUser();
+        String traceId = logoutRequest.getTraceId();
+        Endpoint endpoint = logoutRequest.getEndpoint();
         ImSession imSession = new ImSession();
-        imSession.setGateUser(logoutRequest.getGateUser());
-        imSession.setEndpoint(logoutRequest.getEndpoint());
-        this.sessionService.removeSession(imSession, logoutRequest.getTraceId());
+        imSession.setSessionId(logoutRequest.getSessionId());
+        imSession.setGateUser(gateUser);
+        imSession.setEndpoint(endpoint);
+        this.sessionService.removeSession(imSession, traceId);
     }
 
     /**
@@ -158,6 +162,7 @@ public class UpMessageServiceImpl implements UpMsgService {
         imSession.setEndpoint(authRequest.getEndpoint());
         imSession.setGateUser(authRequest.getGateUser());
         imSession.setSessionId(authRequest.getSessionId());
+
         sessionService.saveSession(imSession, authRequest.getTraceId());
     }
 }

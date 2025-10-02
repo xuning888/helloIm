@@ -1,6 +1,7 @@
 package com.github.xuning888.helloim.contract.meta;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 /**
  * @author xuning
@@ -54,5 +55,17 @@ public class ImSession implements Serializable {
                 ", endpoint=" + endpoint +
                 ", gateUser=" + gateUser +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (object == null || getClass() != object.getClass()) return false;
+        ImSession imSession = (ImSession) object;
+        return Objects.equals(sessionId, imSession.sessionId) && Objects.equals(endpoint, imSession.endpoint) && Objects.equals(gateUser, imSession.gateUser);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(sessionId, endpoint, gateUser);
     }
 }

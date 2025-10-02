@@ -5,12 +5,15 @@ import com.github.xuning888.helloim.contract.frame.Frame;
 import com.github.xuning888.helloim.gateway.core.conn.Conn;
 import com.github.xuning888.helloim.gateway.core.conn.event.ConnStateEvent;
 import com.github.xuning888.helloim.gateway.core.processor.Processor;
+import io.netty.handler.codec.TooLongFrameException;
 import org.jboss.netty.channel.*;
 import org.jboss.netty.handler.timeout.IdleState;
 import org.jboss.netty.handler.timeout.IdleStateEvent;
+import org.jboss.netty.handler.timeout.ReadTimeoutException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.UUID;
 
@@ -57,8 +60,6 @@ public abstract class ImChannelUpStreamHandler extends SimpleChannelUpstreamHand
             logger.debug("channelDisconnected traceId: {}", traceId);
         }
         processor.handleConnEvent(new ConnStateEvent(conn, ConnStateEvent.State.CLOSE, traceId));
-        // 多协议适配，移除长连接
-        removeConn(channel);
     }
 
     /**
@@ -84,6 +85,24 @@ public abstract class ImChannelUpStreamHandler extends SimpleChannelUpstreamHand
         }
     }
 
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, ExceptionEvent e) throws Exception {
+        String traceId = UUID.randomUUID().toString();
+        Throwable cause = e.getCause();
+        Channel channel = e.getChannel();
+        if (cause instanceof ReadTimeoutException) {
+            logger.error("ReadTimeoutException remoteAddr: {}, sessionId: {}, traceId: {}", channel.getRemoteAddress(), channel.getId(), traceId, cause);
+        } else if (cause instanceof IOException) {
+            logger.error("IOException remoteAddr: {}, sessionId: {}, traceId: {}", channel.getRemoteAddress(), channel.getId(), traceId, cause);
+        } else if (cause instanceof TooLongFrameException) {
+            logger.error("TooLongFrameException remoteAddr: {}, sessionId: {}, traceId: {}", channel.getRemoteAddress(), channel.getId(), traceId, cause);
+        } else {
+            logger.error("exceptionCaught, remoteAddr: {}, sessionId: {}, traceId: {}", channel.getRemoteAddress(), channel.getId(), traceId, cause);
+        }
+        Conn conn = createOrGetConn(channel);
+        processor.handleConnEvent(new ConnStateEvent(conn, ConnStateEvent.State.ERROR, traceId));
+    }
+
     protected Frame createFrame(Conn conn, ByteBuffer byteBuffer) {
         Frame frame = null;
         try {
@@ -101,9 +120,4 @@ public abstract class ImChannelUpStreamHandler extends SimpleChannelUpstreamHand
      * @return Conn
      */
     protected abstract Conn createOrGetConn(Channel channel);
-
-    /**
-     * 移除长连接
-     */
-    protected abstract void removeConn(Channel channel);
 }

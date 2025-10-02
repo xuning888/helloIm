@@ -54,8 +54,10 @@ public class C2CSendRequestSender implements MessageSender {
 
         String msgFrom = c2cSendRequest.getFrom();
         String msgTo = c2cSendRequest.getTo();
+        int toUserType = c2cSendRequest.getToUserType();
         // 设置消息的接收方
         msgContext.setMsgTo(msgTo);
+        msgContext.setToUserType(toUserType);
 
         // 生成serverSeq
         Long serverSeq = null;

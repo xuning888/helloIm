@@ -26,14 +26,6 @@ public interface SessionManager {
     Session getSession(String sessionId, String traceId);
 
     /**
-     * 通过user查询session
-     * @param user user
-     * @param traceId traceId
-     * @return session
-     */
-    Session getSessionByUser(GateUser user, String traceId);
-
-    /**
      * 登出并传递事件
      */
     void logout(String sessionId, String traceId);

@@ -49,7 +49,7 @@ public class GatewayUtils {
             logger.error("pushResponse parseLong error from: {}, traceId: {}", from, traceId);
             return;
         }
-        GateUser gateUser = new GateUser(uidInt64);
+        GateUser gateUser = new GateUser(uidInt64, msgContext.getFromUserType(), msgContext.getSessionId());
         pushMessage(responseFrame, gateUser, endpoint, traceId);
     }
 

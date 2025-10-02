@@ -13,19 +13,16 @@ public class GateUser implements Serializable {
 
     private Integer userType;
 
+    private String sessionId;
+
     public GateUser() {
-        this.uid = null;
         this.userType = 0;
     }
 
-    public GateUser(Long uid) {
-        this.uid = uid;
-        this.userType = 0;
-    }
-
-    public GateUser(Long uid, Integer userType) {
+    public GateUser(Long uid, Integer userType, String sessionId) {
         this.uid = uid;
         this.userType = userType;
+        this.sessionId = sessionId;
     }
 
     public Long getUid() {
@@ -42,6 +39,14 @@ public class GateUser implements Serializable {
 
     public void setUserType(Integer userType) {
         this.userType = userType;
+    }
+
+    public String getSessionId() {
+        return sessionId;
+    }
+
+    public void setSessionId(String sessionId) {
+        this.sessionId = sessionId;
     }
 
     @Override

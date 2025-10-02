@@ -72,6 +72,9 @@ public class MsgContext implements Serializable {
     @Tag(value = 11)
     private Integer toUserType;
 
+    @Tag(value = 12)
+    private String sessionId;
+
     public String getMsgFrom() {
         return msgFrom;
     }
@@ -158,6 +161,15 @@ public class MsgContext implements Serializable {
 
     public void setToUserType(Integer toUserType) {
         this.toUserType = toUserType;
+    }
+
+
+    public String getSessionId() {
+        return sessionId;
+    }
+
+    public void setSessionId(String sessionId) {
+        this.sessionId = sessionId;
     }
 
     public int getMsgSeq() {

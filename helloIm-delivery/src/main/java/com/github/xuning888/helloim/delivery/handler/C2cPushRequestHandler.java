@@ -9,6 +9,8 @@ import com.github.xuning888.helloim.contract.meta.ImSession;
 import com.github.xuning888.helloim.contract.protobuf.MsgCmd;
 import com.github.xuning888.helloim.contract.util.GatewayUtils;
 import org.apache.dubbo.config.annotation.DubboReference;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 /**
@@ -17,6 +19,8 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class C2cPushRequestHandler implements MsgDeliverHandler {
+
+    private static final Logger logger = LoggerFactory.getLogger(C2cPushRequestHandler.class);
 
     @DubboReference
     private SessionService sessionService;
@@ -29,12 +33,15 @@ public class C2cPushRequestHandler implements MsgDeliverHandler {
     @Override
     public void handle(MsgContext msgContext, String kTraceId) {
         String msgTo = msgContext.getMsgTo();
-        GateUser toUser = new GateUser(Long.parseLong(msgTo));
+        GateUser toUser = new GateUser(Long.parseLong(msgTo), msgContext.getToUserType(), null);
         ImSession imSession = getSessionTcp(toUser, msgContext.getTraceId());
         if (imSession != null) {
             // 用户在线
+            GateUser gateUser = imSession.getGateUser();
             Endpoint endpoint = imSession.getEndpoint();
-            GatewayUtils.pushMessage(msgContext.getFrame(), toUser, endpoint, msgContext.getTraceId());
+            logger.info("handle message, session: {}, toUser: {}, traceId: {}, kTraceId: {}", imSession, gateUser,
+                    msgContext.getTraceId(), kTraceId);
+            GatewayUtils.pushMessage(msgContext.getFrame(), gateUser, endpoint, msgContext.getTraceId());
         }
     }
 
