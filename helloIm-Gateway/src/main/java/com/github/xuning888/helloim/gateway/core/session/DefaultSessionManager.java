@@ -132,8 +132,8 @@ public class DefaultSessionManager implements SessionManager {
             if (logger.isDebugEnabled()) {
                 logger.debug("closeSession, session: {}, state: {}, traceId: {}", session, sessionState, traceId);
             }
-            asyncCloseSession(session, new GateSessionEvent(sessionState, session.getUser(), traceId));
             GateUser user = session.getUser();
+            asyncCloseSession(session, new GateSessionEvent(sessionState, user, traceId));
             userSessionMap.remove(user);
         } else {
             if (logger.isDebugEnabled()) {

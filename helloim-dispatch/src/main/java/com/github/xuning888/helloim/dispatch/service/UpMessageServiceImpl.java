@@ -49,6 +49,7 @@ public class UpMessageServiceImpl implements UpMsgService {
         authResponse.setGateUser(authRequest.getGateUser());
         authResponse.setSuccess(true);
         authResponse.setTraceId(authRequest.getTraceId());
+        // TODO 校验token
         // 保存session
         saveSession(authRequest);
         return authResponse;
@@ -128,6 +129,8 @@ public class UpMessageServiceImpl implements UpMsgService {
     }
 
     private LogoutResponse doLogout(LogoutRequest logoutRequest) {
+
+        // TODO 删除token
 
         // 删除session
         removeSession(logoutRequest);

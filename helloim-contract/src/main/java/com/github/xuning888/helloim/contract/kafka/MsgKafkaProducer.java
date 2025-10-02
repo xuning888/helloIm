@@ -110,8 +110,8 @@ public class MsgKafkaProducer {
 
         private final String traceId;
 
-        public SendCallback(String logId) {
-            this.traceId = logId;
+        public SendCallback(String traceId) {
+            this.traceId = traceId;
         }
 
         @Override
