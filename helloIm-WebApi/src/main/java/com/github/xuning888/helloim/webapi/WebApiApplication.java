@@ -1,5 +1,6 @@
 package com.github.xuning888.helloim.webapi;
 
+import org.apache.dubbo.config.spring.context.annotation.EnableDubbo;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
@@ -7,6 +8,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * @author xuning
  * @date 2025/8/2 19:59
  */
+@EnableDubbo
 @SpringBootApplication
 public class WebApiApplication {
 
