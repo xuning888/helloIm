@@ -1,12 +1,11 @@
 dubbo:
   config:
     multiple: true
-  protocols:
-    dubbo:
-      name: tri
-      threadpool: fixed
-      threads: 200
-      port: 28803
+  protocol:
+    name: tri
+    threadpool: fixed
+    port: 28803
+    threads: 200
 logging:
   level:
     root: INFO

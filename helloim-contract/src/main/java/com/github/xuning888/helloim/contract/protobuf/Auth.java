@@ -36,6 +36,18 @@ public final class Auth {
      * @return The userType.
      */
     int getUserType();
+
+    /**
+     * <code>string token = 3;</code>
+     * @return The token.
+     */
+    java.lang.String getToken();
+    /**
+     * <code>string token = 3;</code>
+     * @return The bytes for token.
+     */
+    com.google.protobuf.ByteString
+        getTokenBytes();
   }
   /**
    * <pre>
@@ -55,6 +67,7 @@ public final class Auth {
     }
     private AuthRequest() {
       uid_ = "";
+      token_ = "";
     }
 
     @java.lang.Override
@@ -127,6 +140,45 @@ public final class Auth {
       return userType_;
     }
 
+    public static final int TOKEN_FIELD_NUMBER = 3;
+    @SuppressWarnings("serial")
+    private volatile java.lang.Object token_ = "";
+    /**
+     * <code>string token = 3;</code>
+     * @return The token.
+     */
+    @java.lang.Override
+    public java.lang.String getToken() {
+      java.lang.Object ref = token_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        token_ = s;
+        return s;
+      }
+    }
+    /**
+     * <code>string token = 3;</code>
+     * @return The bytes for token.
+     */
+    @java.lang.Override
+    public com.google.protobuf.ByteString
+        getTokenBytes() {
+      java.lang.Object ref = token_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        token_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
     private byte memoizedIsInitialized = -1;
     @java.lang.Override
     public final boolean isInitialized() {
@@ -147,6 +199,9 @@ public final class Auth {
       if (userType_ != 0) {
         output.writeInt32(2, userType_);
       }
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(token_)) {
+        com.google.protobuf.GeneratedMessageV3.writeString(output, 3, token_);
+      }
       getUnknownFields().writeTo(output);
     }
 
@@ -162,6 +217,9 @@ public final class Auth {
       if (userType_ != 0) {
         size += com.google.protobuf.CodedOutputStream
           .computeInt32Size(2, userType_);
+      }
+      if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(token_)) {
+        size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, token_);
       }
       size += getUnknownFields().getSerializedSize();
       memoizedSize = size;
@@ -182,6 +240,8 @@ public final class Auth {
           .equals(other.getUid())) return false;
       if (getUserType()
           != other.getUserType()) return false;
+      if (!getToken()
+          .equals(other.getToken())) return false;
       if (!getUnknownFields().equals(other.getUnknownFields())) return false;
       return true;
     }
@@ -197,6 +257,8 @@ public final class Auth {
       hash = (53 * hash) + getUid().hashCode();
       hash = (37 * hash) + USERTYPE_FIELD_NUMBER;
       hash = (53 * hash) + getUserType();
+      hash = (37 * hash) + TOKEN_FIELD_NUMBER;
+      hash = (53 * hash) + getToken().hashCode();
       hash = (29 * hash) + getUnknownFields().hashCode();
       memoizedHashCode = hash;
       return hash;
@@ -334,6 +396,7 @@ public final class Auth {
         bitField0_ = 0;
         uid_ = "";
         userType_ = 0;
+        token_ = "";
         return this;
       }
 
@@ -372,6 +435,9 @@ public final class Auth {
         }
         if (((from_bitField0_ & 0x00000002) != 0)) {
           result.userType_ = userType_;
+        }
+        if (((from_bitField0_ & 0x00000004) != 0)) {
+          result.token_ = token_;
         }
       }
 
@@ -427,6 +493,11 @@ public final class Auth {
         if (other.getUserType() != 0) {
           setUserType(other.getUserType());
         }
+        if (!other.getToken().isEmpty()) {
+          token_ = other.token_;
+          bitField0_ |= 0x00000004;
+          onChanged();
+        }
         this.mergeUnknownFields(other.getUnknownFields());
         onChanged();
         return this;
@@ -463,6 +534,11 @@ public final class Auth {
                 bitField0_ |= 0x00000002;
                 break;
               } // case 16
+              case 26: {
+                token_ = input.readStringRequireUtf8();
+                bitField0_ |= 0x00000004;
+                break;
+              } // case 26
               default: {
                 if (!super.parseUnknownField(input, extensionRegistry, tag)) {
                   done = true; // was an endgroup tag
@@ -580,6 +656,78 @@ public final class Auth {
       public Builder clearUserType() {
         bitField0_ = (bitField0_ & ~0x00000002);
         userType_ = 0;
+        onChanged();
+        return this;
+      }
+
+      private java.lang.Object token_ = "";
+      /**
+       * <code>string token = 3;</code>
+       * @return The token.
+       */
+      public java.lang.String getToken() {
+        java.lang.Object ref = token_;
+        if (!(ref instanceof java.lang.String)) {
+          com.google.protobuf.ByteString bs =
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          token_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>string token = 3;</code>
+       * @return The bytes for token.
+       */
+      public com.google.protobuf.ByteString
+          getTokenBytes() {
+        java.lang.Object ref = token_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          token_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>string token = 3;</code>
+       * @param value The token to set.
+       * @return This builder for chaining.
+       */
+      public Builder setToken(
+          java.lang.String value) {
+        if (value == null) { throw new NullPointerException(); }
+        token_ = value;
+        bitField0_ |= 0x00000004;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string token = 3;</code>
+       * @return This builder for chaining.
+       */
+      public Builder clearToken() {
+        token_ = getDefaultInstance().getToken();
+        bitField0_ = (bitField0_ & ~0x00000004);
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>string token = 3;</code>
+       * @param value The bytes for token to set.
+       * @return This builder for chaining.
+       */
+      public Builder setTokenBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) { throw new NullPointerException(); }
+        checkByteStringIsUtf8(value);
+        token_ = value;
+        bitField0_ |= 0x00000004;
         onChanged();
         return this;
       }
@@ -1371,13 +1519,14 @@ public final class Auth {
       descriptor;
   static {
     java.lang.String[] descriptorData = {
-      "\n\nauth.proto\022\020helloim.protocol\",\n\013AuthRe" +
-      "quest\022\013\n\003uid\030\001 \001(\t\022\020\n\010userType\030\002 \001(\005\">\n\014" +
-      "AuthResponse\022\013\n\003uid\030\001 \001(\t\022\020\n\010userType\030\002 " +
-      "\001(\005\022\017\n\007success\030\003 \001(\010Bw\n.com.github.xunin" +
-      "g888.helloim.contract.protobufB\004AuthZ?gi" +
-      "thub.com/xuning888/helloIMClient/interna" +
-      "l/proto;helloim_protob\006proto3"
+      "\n\nauth.proto\022\020helloim.protocol\";\n\013AuthRe" +
+      "quest\022\013\n\003uid\030\001 \001(\t\022\020\n\010userType\030\002 \001(\005\022\r\n\005" +
+      "token\030\003 \001(\t\">\n\014AuthResponse\022\013\n\003uid\030\001 \001(\t" +
+      "\022\020\n\010userType\030\002 \001(\005\022\017\n\007success\030\003 \001(\010Bw\n.c" +
+      "om.github.xuning888.helloim.contract.pro" +
+      "tobufB\004AuthZ?github.com/xuning888/helloI" +
+      "MClient/internal/proto;helloim_protob\006pr" +
+      "oto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -1388,7 +1537,7 @@ public final class Auth {
     internal_static_helloim_protocol_AuthRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_helloim_protocol_AuthRequest_descriptor,
-        new java.lang.String[] { "Uid", "UserType", });
+        new java.lang.String[] { "Uid", "UserType", "Token", });
     internal_static_helloim_protocol_AuthResponse_descriptor =
       getDescriptor().getMessageTypes().get(1);
     internal_static_helloim_protocol_AuthResponse_fieldAccessorTable = new

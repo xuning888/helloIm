@@ -2,7 +2,6 @@ package com.github.xuning888.helloim.gateway.core.cmd.handler;
 
 import com.github.xuning888.helloim.contract.api.request.UpMessageReq;
 import com.github.xuning888.helloim.contract.frame.Frame;
-import com.github.xuning888.helloim.contract.frame.Header;
 import com.github.xuning888.helloim.contract.meta.Endpoint;
 import com.github.xuning888.helloim.contract.meta.GateUser;
 import com.github.xuning888.helloim.gateway.adapter.UpMsgServiceAdapter;
@@ -12,6 +11,7 @@ import com.github.xuning888.helloim.gateway.core.cmd.CmdHandler;
 import com.github.xuning888.helloim.gateway.core.conn.Conn;
 import com.github.xuning888.helloim.gateway.core.session.Session;
 import com.github.xuning888.helloim.gateway.core.session.SessionManager;
+import com.github.xuning888.helloim.gateway.utils.CommonUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,7 +43,7 @@ public class DefaultHandler implements CmdHandler {
         Session session = sessionManager.getSession(conn.getId(), traceId);
         if (session == null) {
             // 这种情况就是非法长连接, 回复一个空包
-            writeEmpty(cmdEvent);
+            CommonUtils.writeEmpty(cmdEvent);
             logger.error("投递上行消息, 但是conn没有于用户关联, conn: {}, traceId: {}", conn.getId(), traceId);
             return;
         }
@@ -52,14 +52,5 @@ public class DefaultHandler implements CmdHandler {
         Endpoint endpoint = gateAddr.endpoint();
         UpMessageReq upMessageReq = new UpMessageReq(frame, endpoint, user, traceId);
         upMsgServiceAdapter.upMsgService().sendMessage(upMessageReq);
-    }
-
-    private void writeEmpty(CmdEvent cmdEvent) {
-        Frame frame = cmdEvent.getFrame();
-        Header header = frame.getHeader();
-        Header copy = header.copy();
-        copy.setBodyLength(0);
-        Frame response = new Frame(copy, new byte[0]);
-        cmdEvent.getConn().write(response, cmdEvent.getTraceId());
     }
 }

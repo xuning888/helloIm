@@ -29,4 +29,10 @@ public interface SessionManager {
      * 登出并传递事件
      */
     void logout(String sessionId, String traceId);
+
+    /**
+     * 返回在线用户数
+     * @return cnt
+     */
+    int count();
 }

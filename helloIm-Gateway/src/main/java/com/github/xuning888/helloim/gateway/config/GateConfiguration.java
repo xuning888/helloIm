@@ -1,15 +1,11 @@
 package com.github.xuning888.helloim.gateway.config;
 
-import com.github.xuning888.helloim.contract.meta.GateUser;
 import com.github.xuning888.helloim.contract.protobuf.MsgCmd;
 import com.github.xuning888.helloim.gateway.adapter.UpMsgServiceAdapter;
 import com.github.xuning888.helloim.gateway.core.ImChannelPipeFactory;
 import com.github.xuning888.helloim.gateway.core.ImChannelUpStreamHandler;
 import com.github.xuning888.helloim.gateway.core.TcpChannelUpStreamHandler;
-import com.github.xuning888.helloim.gateway.core.cmd.handler.AuthHandler;
-import com.github.xuning888.helloim.gateway.core.cmd.handler.DefaultHandler;
-import com.github.xuning888.helloim.gateway.core.cmd.handler.EchoHandler;
-import com.github.xuning888.helloim.gateway.core.cmd.handler.HandlerProxy;
+import com.github.xuning888.helloim.gateway.core.cmd.handler.*;
 import com.github.xuning888.helloim.gateway.core.handler.impl.HeadMsgHandler;
 import com.github.xuning888.helloim.gateway.core.handler.impl.TailMsgHandler;
 import com.github.xuning888.helloim.gateway.core.pipeline.DefaultMsgPipeline;
@@ -60,6 +56,8 @@ public class GateConfiguration {
         handlerProxy.register(MsgCmd.CmdId.CMD_ID_ECHO_VALUE, new EchoHandler());
         // 注册Auth指令
         handlerProxy.register(MsgCmd.CmdId.CMD_ID_AUTH_VALUE, new AuthHandler(upMsgServiceAdapter, sessionManager, gateAddr));
+        // 心跳处理
+        handlerProxy.register(MsgCmd.CmdId.CMD_ID_HEARTBEAT_VALUE, new HeartbeatHandler(sessionManager));
         return handlerProxy;
     }
 

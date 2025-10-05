@@ -114,6 +114,11 @@ public class DefaultSessionManager implements SessionManager {
         }
     }
 
+    @Override
+    public int count() {
+        return sessionMap.size();
+    }
+
     private synchronized void closeSession(String sessionId, GateSessionState sessionState, Conn conn, String traceId) {
         Session session = sessionMap.remove(sessionId);
         if (session != null) {
