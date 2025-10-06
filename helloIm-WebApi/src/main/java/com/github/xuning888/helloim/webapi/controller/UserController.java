@@ -1,9 +1,16 @@
 package com.github.xuning888.helloim.webapi.controller;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.github.xuning888.helloim.contract.api.service.UserService;
+import com.github.xuning888.helloim.contract.dto.RestResult;
+import com.github.xuning888.helloim.contract.entity.ImUser;
+import com.github.xuning888.helloim.contract.util.RestResultUtils;
+import org.apache.dubbo.config.annotation.DubboReference;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
+import java.util.UUID;
 
 /**
  * @author xuning
@@ -13,7 +20,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/user")
 public class UserController {
 
-    private static final Logger logger = LoggerFactory.getLogger(UserController.class);
+    @DubboReference
+    private UserService userService;
 
-
+    @GetMapping("/allUser")
+    public RestResult<List<ImUser>> getAllUser() {
+        String traceId = UUID.randomUUID().toString();
+        return RestResultUtils.success(userService.getAllUser(traceId));
+    }
 }

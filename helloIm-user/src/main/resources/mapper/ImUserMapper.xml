@@ -24,6 +24,13 @@
         where user_id = #{userId,jdbcType=BIGINT}
     </select>
 
+
+    <select id="selectAllUser" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List"/>
+        from im_user
+        where user_status = 0
+    </select>
+
     <insert id="insert" parameterType="com.github.xuning888.helloim.contract.entity.ImUser">
         insert into im_user (user_id, user_type, user_name, icon,
                              mobile, device_id, extra,

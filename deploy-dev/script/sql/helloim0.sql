@@ -121,3 +121,12 @@ create table if not exists im_message_group
     index idx_group_from (group_id, msg_from)
 ) engine InnoDB
   default charset utf8mb4 comment '群聊消息表';
+
+
+insert into im_user(user_id, user_type, user_name)
+values
+    (1, 0, 'user1'),
+    (2, 0, 'user2'),
+    (3, 0, 'user3'),
+    (4, 0, 'user4'),
+    (5, 0, 'user5');
