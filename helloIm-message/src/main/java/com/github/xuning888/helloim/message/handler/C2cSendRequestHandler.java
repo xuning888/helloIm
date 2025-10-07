@@ -10,6 +10,7 @@ import com.github.xuning888.helloim.contract.kafka.Topics;
 import com.github.xuning888.helloim.contract.protobuf.C2cMessage;
 import com.github.xuning888.helloim.contract.protobuf.MsgCmd;
 import com.github.xuning888.helloim.message.rpc.DubboAdapter;
+import com.github.xuning888.helloim.message.service.OfflineMessageService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -28,6 +29,9 @@ public class C2cSendRequestHandler implements MsgHandler {
 
     @Resource
     private DubboAdapter dubboAdapter;
+
+    @Resource
+    private OfflineMessageService offlineMessageService;
 
     @Override
     public int getCmdId() {
@@ -52,12 +56,14 @@ public class C2cSendRequestHandler implements MsgHandler {
             return;
         }
 
+        ChatMessage chatMessage = convertChatMessage(msgContext, c2cSendRequest);
         // 消息持久化
-        if (!saveMessage(msgContext, c2cSendRequest)) {
+        if (!saveMessage(chatMessage, traceId)) {
             logger.error("c2cSendMessage saveMessage error: traceId: {}", traceId);
             return;
         }
-
+        // 保存离线消息
+        offlineMessageService.saveOfflineMessage(chatMessage);
         // 构造下行消息, 发送消息
         Frame c2cPushRequestFrame = buildC2cPushRequestFrame(msgContext, c2cSendRequest);
         msgContext.setFrame(c2cPushRequestFrame);
@@ -65,9 +71,8 @@ public class C2cSendRequestHandler implements MsgHandler {
     }
 
 
-    private boolean saveMessage(MsgContext msgContext, C2cMessage.C2cSendRequest c2cSendRequest) {
-        ChatMessage chatMessage = convertChatMessage(msgContext, c2cSendRequest);
-        int raw = this.dubboAdapter.msgStoreService().saveMessage(chatMessage, msgContext.getTraceId());
+    private boolean saveMessage(ChatMessage chatMessage, String traceId) {
+        int raw = this.dubboAdapter.msgStoreService().saveMessage(chatMessage, traceId);
         return raw > 0;
     }
 

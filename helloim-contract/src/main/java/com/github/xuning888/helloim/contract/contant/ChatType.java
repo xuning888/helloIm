@@ -13,7 +13,7 @@ public enum ChatType implements Serializable {
 
     C2G(2, "群聊会话");
 
-    private final int type;
+    private final Integer type;
     private final String description;
 
     ChatType(int type, String description) {
@@ -21,7 +21,7 @@ public enum ChatType implements Serializable {
         this.description = description;
     }
 
-    public int getType() {
+    public Integer getType() {
         return this.type;
     }
 
@@ -38,6 +38,6 @@ public enum ChatType implements Serializable {
         if (type == null) {
             return false;
         }
-        return this.type == type;
+        return this.type.equals(type);
     }
 }
