@@ -18,16 +18,6 @@
     id, user_id, chat_id, chat_type, chat_top, chat_del, update_timestamp, del_timestamp, 
     chat_mute, created_at, updated_at
   </sql>
-  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
-    select 
-    <include refid="Base_Column_List" />
-    from im_chat
-    where id = #{id,jdbcType=BIGINT}
-  </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
-    delete from im_chat
-    where id = #{id,jdbcType=BIGINT}
-  </delete>
   <insert id="insert" parameterType="com.github.xuning888.helloim.contract.entity.ImChat">
     insert into im_chat (id, user_id, chat_id, 
       chat_type, chat_top, chat_del, 
@@ -161,4 +151,11 @@
       updated_at = #{updatedAt,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=BIGINT}
   </update>
+
+
+  <select id="getChat" resultType="com.github.xuning888.helloim.contract.entity.ImChat">
+    select <include refid="Base_Column_List"/>
+    from im_chat
+    where user_id = #{userId} and chat_id = #{chatId}
+  </select>
 </mapper>

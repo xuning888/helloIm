@@ -41,7 +41,7 @@ public class UpMessageUtils {
         script.setScriptText(SCRIPT);
         script.setResultType(Boolean.class);
         String key = duplicateKey(msgContext);
-        Boolean lock = redisTemplate.execute(script, Collections.singletonList(key), "", 60);
+        Boolean lock = redisTemplate.execute(script, Collections.singletonList(key), "", 120);
         if (lock) {
             // 加锁成功，说明消息没有重复
             return false;

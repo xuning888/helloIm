@@ -9,4 +9,6 @@ import com.github.xuning888.helloim.contract.entity.ImMessage;
 public interface ImMessageService {
 
     int saveMessage(ImMessage imMessage, String traceId);
+
+    Long maxServerSeq(String from, String to, String traceId);
 }

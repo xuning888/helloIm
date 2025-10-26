@@ -8,6 +8,8 @@ import java.io.Serializable;
  */
 public class PullOfflineMsgRequest implements Serializable {
 
+    public static int DEFAULT_SIZE = 50;
+
     private Long fromUserId;
 
     private Long chatId;

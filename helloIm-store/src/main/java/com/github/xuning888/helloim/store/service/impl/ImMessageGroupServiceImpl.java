@@ -1,5 +1,6 @@
 package com.github.xuning888.helloim.store.service.impl;
 
+import com.github.xuning888.helloim.contract.contant.CommonConstant;
 import com.github.xuning888.helloim.contract.entity.ImMessageGroup;
 import com.github.xuning888.helloim.store.config.ShardingContextHolder;
 import com.github.xuning888.helloim.store.mapper.ImMessageGroupMapper;
@@ -25,6 +26,21 @@ public class ImMessageGroupServiceImpl implements ImMessageGroupService {
         ShardingContextHolder.setDatasource(ShardingUtils.shardingFor4(groupId));
         try {
             return imMessageGroupMapper.insertSelective(imMessageGroup);
+        } finally {
+            ShardingContextHolder.clear();
+        }
+    }
+
+    @Override
+    public Long maxServerSeq(String groupId, String traceId) {
+        long groupIdInt64 = Long.parseLong(groupId);
+        ShardingContextHolder.setDatasource(ShardingUtils.shardingFor4(groupIdInt64));
+        try {
+            Long serverSeq = imMessageGroupMapper.selectMaxServerSeq(groupIdInt64);
+            if (serverSeq == null) {
+                return CommonConstant.ERROR_SERVER_SEQ;
+            }
+            return serverSeq;
         } finally {
             ShardingContextHolder.clear();
         }

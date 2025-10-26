@@ -2,6 +2,7 @@ package com.github.xuning888.helloim.store.service.impl;
 
 import com.github.xuning888.helloim.contract.api.service.MsgStoreService;
 import com.github.xuning888.helloim.contract.contant.ChatType;
+import com.github.xuning888.helloim.contract.contant.CommonConstant;
 import com.github.xuning888.helloim.contract.dto.ChatMessage;
 import com.github.xuning888.helloim.contract.entity.ImMessage;
 import com.github.xuning888.helloim.contract.entity.ImMessageGroup;
@@ -67,5 +68,20 @@ public class MsgStoreServiceImpl implements MsgStoreService {
                     chatMessage.getMsgId(), chatMessage.getChatType(), traceId);
         }
         return raw;
+    }
+
+    @Override
+    public Long maxServerSeq(String from, String to, Integer chatType, String traceId) {
+        logger.info("maxServerSeq from: {}, to: {}, chatType: {}, traceId: {}", from, to, chatType, traceId);
+        Long serverSeq = CommonConstant.ERROR_SERVER_SEQ;;
+        if (ChatType.C2C.match(chatType)) {
+            serverSeq = this.imMessageService.maxServerSeq(from, to, traceId);
+        } else if (ChatType.C2G.match(chatType)) {
+            serverSeq = this.imMessageGroupService.maxServerSeq(to, traceId);
+        } else {
+            logger.error("maxServerSeq, unknown chatType: {}, traceId: {}", chatType, traceId);
+        }
+        logger.info("maxServerSeq from: {}, to: {}, chatType: {}, serverSeq: {}, traceId: {}", from, to, serverSeq, chatType, traceId);
+        return serverSeq;
     }
 }

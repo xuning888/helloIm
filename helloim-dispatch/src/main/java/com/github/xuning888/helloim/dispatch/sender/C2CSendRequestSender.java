@@ -2,6 +2,7 @@ package com.github.xuning888.helloim.dispatch.sender;
 
 import com.github.xuning888.helloim.contract.api.service.ChatService;
 import com.github.xuning888.helloim.contract.contant.ChatType;
+import com.github.xuning888.helloim.contract.contant.CommonConstant;
 import com.github.xuning888.helloim.contract.dto.MsgContext;
 import com.github.xuning888.helloim.contract.frame.Frame;
 import com.github.xuning888.helloim.contract.kafka.MsgKafkaProducer;
@@ -63,7 +64,7 @@ public class C2CSendRequestSender implements MessageSender {
         Long serverSeq = null;
         try {
             serverSeq = chatService.serverSeq(msgFrom, msgTo, ChatType.C2C, traceId);
-            if (Objects.equals(serverSeq, ChatService.ERROR_SERVER_SEQ)) {
+            if (Objects.equals(serverSeq, CommonConstant.ERROR_SERVER_SEQ)) {
                 logger.error("c2cSendRequest 获取serverSeq异常, from: {}, to: {}, traceId: {}", msgFrom, msgTo, traceId);
                 UpMessageUtils.deleteDuplicate(redisTemplate, msgContext);
                 return;

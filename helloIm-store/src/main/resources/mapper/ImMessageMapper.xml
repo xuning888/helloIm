@@ -28,7 +28,7 @@
     where msg_id = #{msgId,jdbcType=BIGINT}
   </select>
 
-  <insert id="insertSelective" parameterType="com.github.xuning888.helloim.contract.entity.ImMessage">
+    <insert id="insertSelective" parameterType="com.github.xuning888.helloim.contract.entity.ImMessage">
     insert into im_message
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="msgId != null">
@@ -164,4 +164,12 @@
     </set>
     where msg_id = #{msgId,jdbcType=BIGINT}
   </update>
+
+  <select id="selectMaxServerSeq" resultType="java.lang.Long">
+    select server_seq
+    from im_message
+    where msg_from = #{msgFrom}
+      and msg_to = #{msgTo}
+    order by server_seq desc limit 1
+  </select>
 </mapper>

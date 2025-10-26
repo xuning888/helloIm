@@ -1,6 +1,7 @@
 package com.github.xuning888.helloim.store.mapper;
 
 import com.github.xuning888.helloim.contract.entity.ImMessageGroup;
+import org.apache.ibatis.annotations.Param;
 
 public interface ImMessageGroupMapper {
     int deleteByPrimaryKey(Long msgId);
@@ -14,4 +15,7 @@ public interface ImMessageGroupMapper {
     int updateByPrimaryKeySelective(ImMessageGroup record);
 
     int updateByPrimaryKey(ImMessageGroup record);
+
+
+    Long selectMaxServerSeq(@Param("groupId") Long groupId);
 }

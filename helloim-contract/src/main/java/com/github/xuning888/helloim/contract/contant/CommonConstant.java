@@ -9,4 +9,7 @@ public interface CommonConstant {
     interface WorkerIdKey {
         String dispatchWorkerIdKey = "dispatchWorkerIdKey";
     }
+
+
+    Long ERROR_SERVER_SEQ = -1L;
 }

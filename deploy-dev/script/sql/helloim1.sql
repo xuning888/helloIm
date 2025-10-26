@@ -38,7 +38,7 @@ create table if not exists im_message
     created_at     timestamp      not null default current_timestamp comment '创建时间',
     updated_at     timestamp      not null default current_timestamp on update current_timestamp comment '更新时间',
     primary key (msg_id),
-    index idx_from_to (msg_from, msg_to) comment '查询消息的场景'
+    index idx_from_to (msg_from, msg_to, server_seq) comment '查询消息的场景'
 ) engine InnoDB
   default charset utf8mb4 comment '单聊消息表';
 

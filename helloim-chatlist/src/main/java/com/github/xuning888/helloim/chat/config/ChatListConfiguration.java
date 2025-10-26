@@ -1,5 +1,7 @@
 package com.github.xuning888.helloim.chat.config;
 
+import com.github.xuning888.helloim.contract.kafka.KafkaProperties;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
@@ -14,6 +16,12 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
  */
 @Configuration
 public class ChatListConfiguration {
+
+    @Bean
+    @ConfigurationProperties(prefix = "im.kafka")
+    public KafkaProperties kafkaProperties() {
+        return new KafkaProperties();
+    }
 
     @Bean
     public RedisTemplate redisTemplate(RedisConnectionFactory redisConnectionFactory) {

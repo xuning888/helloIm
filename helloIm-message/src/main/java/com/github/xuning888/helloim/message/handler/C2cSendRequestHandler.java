@@ -46,15 +46,16 @@ public class C2cSendRequestHandler implements MsgHandler {
         try {
             c2cSendRequest = C2cMessage.C2cSendRequest.parseFrom(frame.getBody());
         } catch (Exception ex) {
-            logger.error("parse c2cSendRequest failed, from: {}, to: {}, traceId: {}",
+            logger.error("handleMessage parse c2cSendRequest failed, from: {}, to: {}, traceId: {}",
                     msgContext.getMsgFrom(), msgContext.getMsgTo(), traceId);
             return;
         }
 
         if (c2cSendRequest == null) {
-            logger.error("c2cSendRequest is null, traceId: {}", traceId);
+            logger.error("handleMessage c2cSendRequest is null, traceId: {}", traceId);
             return;
         }
+        logger.info("handleMessage serverSeq: {} traceId: {}", msgContext.getServerSeq(), traceId);
 
         ChatMessage chatMessage = convertChatMessage(msgContext, c2cSendRequest);
         // 消息持久化
@@ -63,7 +64,7 @@ public class C2cSendRequestHandler implements MsgHandler {
             return;
         }
         // 保存离线消息
-        offlineMessageService.saveOfflineMessage(chatMessage);
+        offlineMessageService.saveOfflineMessage(chatMessage, traceId);
         // 构造下行消息, 发送消息
         Frame c2cPushRequestFrame = buildC2cPushRequestFrame(msgContext, c2cSendRequest);
         msgContext.setFrame(c2cPushRequestFrame);
