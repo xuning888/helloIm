@@ -1,7 +1,7 @@
 package com.github.xuning888.helloim.contract.kafka;
 
 import com.github.xuning888.helloim.contract.dto.MsgContext;
-import com.github.xuning888.helloim.contract.protobuf.MsgCmd;
+import com.github.xuning888.helloim.protocol.protobuf.MsgCmd;
 import com.github.xuning888.helloim.contract.util.ProtoStuffUtils;
 import org.apache.kafka.clients.producer.*;
 import org.apache.kafka.common.PartitionInfo;

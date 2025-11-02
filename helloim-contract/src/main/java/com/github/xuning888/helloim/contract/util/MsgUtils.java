@@ -3,7 +3,7 @@ package com.github.xuning888.helloim.contract.util;
 import com.github.xuning888.helloim.contract.dto.MsgContext;
 import com.github.xuning888.helloim.contract.frame.Frame;
 import com.github.xuning888.helloim.contract.frame.Header;
-import com.github.xuning888.helloim.contract.protobuf.C2cMessage;
+import com.github.xuning888.helloim.protocol.protobuf.C2cMessage;
 
 /**
  * @author xuning

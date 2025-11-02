@@ -6,7 +6,7 @@ import com.github.xuning888.helloim.contract.meta.Endpoint;
 import com.github.xuning888.helloim.contract.meta.GateType;
 import com.github.xuning888.helloim.contract.meta.GateUser;
 import com.github.xuning888.helloim.contract.meta.ImSession;
-import com.github.xuning888.helloim.contract.protobuf.MsgCmd;
+import com.github.xuning888.helloim.protocol.protobuf.MsgCmd;
 import com.github.xuning888.helloim.contract.util.GatewayUtils;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.slf4j.Logger;

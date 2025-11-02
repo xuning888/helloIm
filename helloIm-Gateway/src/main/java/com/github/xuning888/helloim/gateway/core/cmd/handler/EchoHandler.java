@@ -2,7 +2,7 @@ package com.github.xuning888.helloim.gateway.core.cmd.handler;
 
 import com.github.xuning888.helloim.contract.frame.Frame;
 import com.github.xuning888.helloim.contract.frame.Header;
-import com.github.xuning888.helloim.contract.protobuf.Echo;
+import com.github.xuning888.helloim.protocol.protobuf.Echo;
 import com.github.xuning888.helloim.gateway.core.cmd.CmdEvent;
 import com.github.xuning888.helloim.gateway.core.cmd.CmdHandler;
 import com.github.xuning888.helloim.gateway.core.cmd.DownCmdEvent;

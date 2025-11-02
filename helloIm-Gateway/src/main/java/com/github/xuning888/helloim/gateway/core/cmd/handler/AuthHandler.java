@@ -7,7 +7,7 @@ import com.github.xuning888.helloim.contract.contant.GateSessionEvent;
 import com.github.xuning888.helloim.contract.frame.Frame;
 import com.github.xuning888.helloim.contract.frame.Header;
 import com.github.xuning888.helloim.contract.meta.GateUser;
-import com.github.xuning888.helloim.contract.protobuf.Auth;
+import com.github.xuning888.helloim.protocol.protobuf.Auth;
 import com.github.xuning888.helloim.gateway.adapter.UpMsgServiceAdapter;
 import com.github.xuning888.helloim.gateway.config.GateAddr;
 import com.github.xuning888.helloim.gateway.core.cmd.CmdEvent;

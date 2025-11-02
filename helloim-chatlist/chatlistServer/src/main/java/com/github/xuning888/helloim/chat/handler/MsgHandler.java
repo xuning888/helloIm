@@ -5,7 +5,7 @@ import com.github.xuning888.helloim.chat.api.service.ChatServiceTriple;
 import com.github.xuning888.helloim.contract.contant.ChatType;
 import com.github.xuning888.helloim.contract.dto.MsgContext;
 import com.github.xuning888.helloim.contract.frame.Frame;
-import com.github.xuning888.helloim.contract.protobuf.MsgCmd;
+import com.github.xuning888.helloim.protocol.protobuf.MsgCmd;
 import com.github.xuning888.helloim.contract.util.ProtoStuffUtils;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.slf4j.Logger;

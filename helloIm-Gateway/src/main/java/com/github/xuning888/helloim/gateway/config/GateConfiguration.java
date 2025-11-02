@@ -1,6 +1,6 @@
 package com.github.xuning888.helloim.gateway.config;
 
-import com.github.xuning888.helloim.contract.protobuf.MsgCmd;
+import com.github.xuning888.helloim.protocol.protobuf.MsgCmd;
 import com.github.xuning888.helloim.gateway.adapter.UpMsgServiceAdapter;
 import com.github.xuning888.helloim.gateway.core.ImChannelPipeFactory;
 import com.github.xuning888.helloim.gateway.core.ImChannelUpStreamHandler;

@@ -7,7 +7,7 @@ import com.github.xuning888.helloim.contract.frame.Frame;
 import com.github.xuning888.helloim.contract.frame.Header;
 import com.github.xuning888.helloim.contract.meta.Endpoint;
 import com.github.xuning888.helloim.contract.meta.GateUser;
-import com.github.xuning888.helloim.contract.protobuf.MsgCmd;
+import com.github.xuning888.helloim.protocol.protobuf.MsgCmd;
 import org.apache.dubbo.rpc.model.ApplicationModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
