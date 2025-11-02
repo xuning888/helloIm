@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.github.xuning888.helloim.message.mapper.ImGroupMapper">
+  <resultMap id="BaseResultMap" type="com.github.xuning888.helloim.contract.entity.ImGroup">
+    <id column="group_id" jdbcType="BIGINT" property="groupId" />
+    <result column="group_name" jdbcType="VARCHAR" property="groupName" />
+    <result column="group_icon" jdbcType="VARCHAR" property="groupIcon" />
+    <result column="create_user" jdbcType="BIGINT" property="createUser" />
+    <result column="create_user_type" jdbcType="INTEGER" property="createUserType" />
+    <result column="owner_user" jdbcType="BIGINT" property="ownerUser" />
+    <result column="owner_user_type" jdbcType="INTEGER" property="ownerUserType" />
+    <result column="announcement" jdbcType="VARCHAR" property="announcement" />
+    <result column="atall_enable" jdbcType="TINYINT" property="atallEnable" />
+    <result column="mute_status" jdbcType="TINYINT" property="muteStatus" />
+    <result column="group_type" jdbcType="TINYINT" property="groupType" />
+    <result column="group_version" jdbcType="BIGINT" property="groupVersion" />
+    <result column="extra" jdbcType="VARCHAR" property="extra" />
+    <result column="created_at" jdbcType="TIMESTAMP" property="createdAt" />
+    <result column="updated_at" jdbcType="TIMESTAMP" property="updatedAt" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    group_id, group_name, group_icon, create_user, create_user_type, owner_user, owner_user_type, 
+    announcement, atall_enable, mute_status, group_type, group_version, extra, created_at, 
+    updated_at
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from im_group
+    where group_id = #{groupId,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from im_group
+    where group_id = #{groupId,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.github.xuning888.helloim.contract.entity.ImGroup">
+    <selectKey keyProperty="groupId" order="AFTER" resultType="java.lang.Long">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into im_group (group_name, group_icon, create_user, 
+      create_user_type, owner_user, owner_user_type, 
+      announcement, atall_enable, mute_status, 
+      group_type, group_version, extra, 
+      created_at, updated_at)
+    values (#{groupName,jdbcType=VARCHAR}, #{groupIcon,jdbcType=VARCHAR}, #{createUser,jdbcType=BIGINT}, 
+      #{createUserType,jdbcType=INTEGER}, #{ownerUser,jdbcType=BIGINT}, #{ownerUserType,jdbcType=INTEGER}, 
+      #{announcement,jdbcType=VARCHAR}, #{atallEnable,jdbcType=TINYINT}, #{muteStatus,jdbcType=TINYINT}, 
+      #{groupType,jdbcType=TINYINT}, #{groupVersion,jdbcType=BIGINT}, #{extra,jdbcType=VARCHAR}, 
+      #{createdAt,jdbcType=TIMESTAMP}, #{updatedAt,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.github.xuning888.helloim.contract.entity.ImGroup">
+    <selectKey keyProperty="groupId" order="AFTER" resultType="java.lang.Long">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into im_group
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="groupName != null">
+        group_name,
+      </if>
+      <if test="groupIcon != null">
+        group_icon,
+      </if>
+      <if test="createUser != null">
+        create_user,
+      </if>
+      <if test="createUserType != null">
+        create_user_type,
+      </if>
+      <if test="ownerUser != null">
+        owner_user,
+      </if>
+      <if test="ownerUserType != null">
+        owner_user_type,
+      </if>
+      <if test="announcement != null">
+        announcement,
+      </if>
+      <if test="atallEnable != null">
+        atall_enable,
+      </if>
+      <if test="muteStatus != null">
+        mute_status,
+      </if>
+      <if test="groupType != null">
+        group_type,
+      </if>
+      <if test="groupVersion != null">
+        group_version,
+      </if>
+      <if test="extra != null">
+        extra,
+      </if>
+      <if test="createdAt != null">
+        created_at,
+      </if>
+      <if test="updatedAt != null">
+        updated_at,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="groupName != null">
+        #{groupName,jdbcType=VARCHAR},
+      </if>
+      <if test="groupIcon != null">
+        #{groupIcon,jdbcType=VARCHAR},
+      </if>
+      <if test="createUser != null">
+        #{createUser,jdbcType=BIGINT},
+      </if>
+      <if test="createUserType != null">
+        #{createUserType,jdbcType=INTEGER},
+      </if>
+      <if test="ownerUser != null">
+        #{ownerUser,jdbcType=BIGINT},
+      </if>
+      <if test="ownerUserType != null">
+        #{ownerUserType,jdbcType=INTEGER},
+      </if>
+      <if test="announcement != null">
+        #{announcement,jdbcType=VARCHAR},
+      </if>
+      <if test="atallEnable != null">
+        #{atallEnable,jdbcType=TINYINT},
+      </if>
+      <if test="muteStatus != null">
+        #{muteStatus,jdbcType=TINYINT},
+      </if>
+      <if test="groupType != null">
+        #{groupType,jdbcType=TINYINT},
+      </if>
+      <if test="groupVersion != null">
+        #{groupVersion,jdbcType=BIGINT},
+      </if>
+      <if test="extra != null">
+        #{extra,jdbcType=VARCHAR},
+      </if>
+      <if test="createdAt != null">
+        #{createdAt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updatedAt != null">
+        #{updatedAt,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.github.xuning888.helloim.contract.entity.ImGroup">
+    update im_group
+    <set>
+      <if test="groupName != null">
+        group_name = #{groupName,jdbcType=VARCHAR},
+      </if>
+      <if test="groupIcon != null">
+        group_icon = #{groupIcon,jdbcType=VARCHAR},
+      </if>
+      <if test="createUser != null">
+        create_user = #{createUser,jdbcType=BIGINT},
+      </if>
+      <if test="createUserType != null">
+        create_user_type = #{createUserType,jdbcType=INTEGER},
+      </if>
+      <if test="ownerUser != null">
+        owner_user = #{ownerUser,jdbcType=BIGINT},
+      </if>
+      <if test="ownerUserType != null">
+        owner_user_type = #{ownerUserType,jdbcType=INTEGER},
+      </if>
+      <if test="announcement != null">
+        announcement = #{announcement,jdbcType=VARCHAR},
+      </if>
+      <if test="atallEnable != null">
+        atall_enable = #{atallEnable,jdbcType=TINYINT},
+      </if>
+      <if test="muteStatus != null">
+        mute_status = #{muteStatus,jdbcType=TINYINT},
+      </if>
+      <if test="groupType != null">
+        group_type = #{groupType,jdbcType=TINYINT},
+      </if>
+      <if test="groupVersion != null">
+        group_version = #{groupVersion,jdbcType=BIGINT},
+      </if>
+      <if test="extra != null">
+        extra = #{extra,jdbcType=VARCHAR},
+      </if>
+      <if test="createdAt != null">
+        created_at = #{createdAt,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updatedAt != null">
+        updated_at = #{updatedAt,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where group_id = #{groupId,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.github.xuning888.helloim.contract.entity.ImGroup">
+    update im_group
+    set group_name = #{groupName,jdbcType=VARCHAR},
+      group_icon = #{groupIcon,jdbcType=VARCHAR},
+      create_user = #{createUser,jdbcType=BIGINT},
+      create_user_type = #{createUserType,jdbcType=INTEGER},
+      owner_user = #{ownerUser,jdbcType=BIGINT},
+      owner_user_type = #{ownerUserType,jdbcType=INTEGER},
+      announcement = #{announcement,jdbcType=VARCHAR},
+      atall_enable = #{atallEnable,jdbcType=TINYINT},
+      mute_status = #{muteStatus,jdbcType=TINYINT},
+      group_type = #{groupType,jdbcType=TINYINT},
+      group_version = #{groupVersion,jdbcType=BIGINT},
+      extra = #{extra,jdbcType=VARCHAR},
+      created_at = #{createdAt,jdbcType=TIMESTAMP},
+      updated_at = #{updatedAt,jdbcType=TIMESTAMP}
+    where group_id = #{groupId,jdbcType=BIGINT}
+  </update>
+</mapper>
