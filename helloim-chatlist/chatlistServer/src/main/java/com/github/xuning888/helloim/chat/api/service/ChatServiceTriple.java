@@ -102,6 +102,7 @@ public class ChatServiceTriple extends DubboChatServiceTriple.ChatServiceImplBas
         } else {
             imChat = imChat.toBuilder()
                     .setUpdateTimestamp(System.currentTimeMillis())
+                    .setVersion(System.currentTimeMillis())
                     .setChatDel(false)
                     .build();
             updateChat(imChat, traceId);
