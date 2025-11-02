@@ -25,7 +25,7 @@ public class OfflineMessageService {
     private static final Logger logger = LoggerFactory.getLogger(OfflineMessageService.class);
 
     @Autowired
-    private RedisTemplate<String, Msg.ChatMessage> redisTemplate;
+    private RedisTemplate<String, byte[]> redisTemplate;
 
     // 存储离线消息
     public void saveOfflineMessage(Msg.ChatMessage chatMessage, String traceId) {
@@ -42,7 +42,7 @@ public class OfflineMessageService {
         String offlineMsgKey = RedisKeyUtils.offlineMsgKey(fromUserId, toUserId, groupId, chatType);
         logger.info("saveOfflineMessage, msgId: {}, serverSeq: {}, offlineMsgKey: {}", msgId, serverSeq, offlineMsgKey);
         // TODO 策略: 单聊存储近100条消息, 群聊记录下key, 半夜清理
-        redisTemplate.opsForZSet().add(offlineMsgKey, chatMessage, serverSeq);
+        redisTemplate.opsForZSet().add(offlineMsgKey, chatMessage.toByteArray(), serverSeq);
     }
 
     // 拉取离线消息
@@ -65,12 +65,12 @@ public class OfflineMessageService {
             return new ArrayList<>();
         }
         // 按 score 范围获取消息，带 score 信息
-        Set<ZSetOperations.TypedTuple<Msg.ChatMessage>> set = redisTemplate.opsForZSet().rangeByScoreWithScores(msgKey, minServerSeq, maxServerSeq);
+        Set<ZSetOperations.TypedTuple<byte[]>> set = redisTemplate.opsForZSet().rangeByScoreWithScores(msgKey, minServerSeq, maxServerSeq);
 
         // 转换为 List<ChatMessage>
         List<Msg.ChatMessage> messages = null;
         if (set != null && !set.isEmpty()) {
-            messages = extratChatMessage(set);
+            messages = extratChatMessage(set, traceId);
         } else {
             messages = new ArrayList<>();
         }
@@ -98,11 +98,11 @@ public class OfflineMessageService {
             return Collections.emptyList();
         }
         // 获取最新的消息
-        Set<ZSetOperations.TypedTuple<Msg.ChatMessage>> set = redisTemplate.opsForZSet().reverseRangeWithScores(msgKey, 0, size - 1);
+        Set<ZSetOperations.TypedTuple<byte[]>> set = redisTemplate.opsForZSet().reverseRangeWithScores(msgKey, 0, size - 1);
 
         List<Msg.ChatMessage> messages = null;
         if (set != null && !set.isEmpty()) {
-            messages = extratChatMessage(set);
+            messages = extratChatMessage(set, traceId);
             // 因为是倒序获取的，需要反转一下顺序
             Collections.reverse(messages);
         } else {
@@ -129,13 +129,18 @@ public class OfflineMessageService {
         }
     }
 
-    private List<Msg.ChatMessage> extratChatMessage(Set<ZSetOperations.TypedTuple<Msg.ChatMessage>> set) {
+    private List<Msg.ChatMessage> extratChatMessage(Set<ZSetOperations.TypedTuple<byte[]>> set, String traceId) {
         List<Msg.ChatMessage> messages = new ArrayList<>();
-        for (ZSetOperations.TypedTuple<Msg.ChatMessage> tuple : set) {
-            Msg.ChatMessage message = tuple.getValue();
-            if (message != null) {
-                message = message.toBuilder().setServerSeq(tuple.getScore().longValue()).build();
-                messages.add(message);
+        for (ZSetOperations.TypedTuple<byte[]> tuple : set) {
+            byte[] value = tuple.getValue();
+            try {
+                Msg.ChatMessage message = Msg.ChatMessage.parseFrom(value);
+                if (message != null) {
+                    message = message.toBuilder().setServerSeq(tuple.getScore().longValue()).build();
+                    messages.add(message);
+                }
+            } catch (Exception ex) {
+                logger.error("extratChatMessage error traceId: {}", traceId, ex);
             }
         }
         return messages;
