@@ -43,5 +43,11 @@
             <version>2.1</version>
             <scope>compile</scope>
         </dependency>
+
+        <dependency>
+            <groupId>com.github.xuning888.helloim</groupId>
+            <artifactId>messageApi</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
     </dependencies>
 </project>

@@ -19,21 +19,34 @@
         <module>helloIm-user</module>
         <module>helloIm-session</module>
         <module>helloIm-store</module>
+        <module>helloim-protocol</module>
+        <module>helloim-chatlist/chatlistServer</module>
+        <module>helloim-chatlist/chatlistApi</module>
+        <module>helloIm-store/storeApi</module>
+        <module>helloIm-store/storeServer</module>
+        <module>helloIm-message/messageApi</module>
+        <module>helloIm-message/messageServer</module>
     </modules>
 
     <properties>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
+        <maven.compiler.source>8</maven.compiler.source>
+        <maven.compiler.target>8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <dubbo.version>3.3.4</dubbo.version>
         <spring-boot.version>2.7.18</spring-boot.version>
         <mybatis.version>1.3.2</mybatis.version>
         <mysql.version>8.0.30</mysql.version>
+        <grpc.version>1.58.0</grpc.version>
+        <protoc.version>3.22.2</protoc.version>
+        <protobuf-java.version>3.24.3</protobuf-java.version>
+        <kafka.version>3.8.0</kafka.version>
+        <maven-compiler-plugin.version>3.7.0</maven-compiler-plugin.version>
     </properties>
 
 
     <dependencyManagement>
         <dependencies>
+            <!--springboot begin-->
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-dependencies</artifactId>
@@ -52,6 +65,9 @@
                     </exclusion>
                 </exclusions>
             </dependency>
+            <!--springboot end-->
+
+            <!--dubbo begin-->
             <dependency>
                 <groupId>org.apache.dubbo</groupId>
                 <artifactId>dubbo-bom</artifactId>
@@ -59,6 +75,16 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+            <dependency>
+                <groupId>io.grpc</groupId>
+                <artifactId>grpc-bom</artifactId>
+                <version>${grpc.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <!--dubbo end-->
+
+            <!--datasource begin-->
             <dependency>
                 <groupId>org.mybatis.spring.boot</groupId>
                 <artifactId>mybatis-spring-boot-starter</artifactId>
@@ -69,6 +95,7 @@
                 <artifactId>mysql-connector-java</artifactId>
                 <version>${mysql.version}</version>
             </dependency>
+            <!--datasource end-->
         </dependencies>
     </dependencyManagement>
 </project>

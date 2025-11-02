@@ -1,0 +1,11 @@
+dubbo:
+  config:
+    multiple: true
+  protocol:
+    name: tri
+    threadpool: fixed
+    port: 50053
+    threads: 200
+logging:
+  level:
+    root: INFO

@@ -1,0 +1,47 @@
+syntax = "proto3";
+
+package helloim.chat.api;
+
+
+option java_package = "com.github.xuning888.helloim.chat.api";
+
+
+message ServerSeqRequest {
+  string from = 1; // fromUserId
+  string to = 2; // toUserId 或者 groupId
+  int32 chatType = 3; // 会话类型
+  string traceId = 4; // traceId
+}
+
+message ServerSeqResponse {
+  int64 serverSeq = 1; // serverSeq
+}
+
+message CreateOrActivateChatRequest {
+  int64  userId = 1; // userId
+  int64  chatId = 2; // 会话id
+  int32 chatType = 3; // 会话类型
+  string traceId = 4; // traceId
+}
+
+message ImChat {
+  string chatId = 1; // 会话id
+  int32 chatType = 2; // 会话类型
+  bool chatMute = 3; // 静默会话
+  bool chatTop = 4; // 会话置顶
+  bool chatDel = 5; // 会话逻辑删除
+  int64 delTimestamp = 6; // 会话的删除时间
+  int64 version = 7; // 会话版本号
+  int64 lastMsgId = 8; // 会话最后一条消息的ID
+  string lastMsgIdStr = 9; // 会话最后一条消息ID的string
+  string userId = 10; // 用户id
+  int64 updateTimestamp = 11; // 更新时间
+}
+
+service ChatService {
+  // 获取服务端seq
+  rpc ServerSeq(ServerSeqRequest) returns (ServerSeqResponse);
+
+  // 创建或激活会话
+  rpc CreateOrActivateChat(CreateOrActivateChatRequest) returns (ImChat);
+}

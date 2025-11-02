@@ -40,4 +40,13 @@ public enum ChatType implements Serializable {
         }
         return this.type.equals(type);
     }
+
+    public static ChatType convert(int chatType) {
+        for (ChatType value : ChatType.values()) {
+            if (value.getType() == chatType) {
+                return value;
+            }
+        }
+        return null;
+    }
 }

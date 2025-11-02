@@ -13,7 +13,7 @@ public interface MsgPipeline {
     /**
      * 添加事件处理器
      * @param name name
-     * @param msgHandler handler
+     * @param msgHandler com.xuning888.helloim.chat.handler
      */
     void addLast(String name, MsgHandler msgHandler);
 

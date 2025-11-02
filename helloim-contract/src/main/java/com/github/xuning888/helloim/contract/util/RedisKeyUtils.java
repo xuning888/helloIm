@@ -1,7 +1,7 @@
 package com.github.xuning888.helloim.contract.util;
 
-import com.github.xuning888.helloim.contract.contant.RedisConstant;
 import com.github.xuning888.helloim.contract.contant.ChatType;
+import com.github.xuning888.helloim.contract.contant.RedisConstant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,7 +37,22 @@ public class RedisKeyUtils {
      * 会话索引的key
      */
     public static String chatIndexKey(String userId) {
-        return RedisConstant.CHAT_INDEX_KEY_PREFIX + "_" + userId;
+        return RedisConstant.CHAT_INDEX_KEY_PREFIX + userId;
+    }
+
+    /**
+     *  会话最后一条消息
+     */
+    public static String lastMessageKey(String userId) {
+        return RedisConstant.CHAT_LAST_MESSAGE_PREFIX + userId;
+    }
+
+    /**
+     * 群聊会话最后一条消息
+     */
+    public static String c2gLastMessageKey(Long groupId) {
+        long index = groupId % 64;
+        return RedisConstant.GROUP_CHAT_LAST_MESSAGE_PREFIX + index;
     }
 
     /**

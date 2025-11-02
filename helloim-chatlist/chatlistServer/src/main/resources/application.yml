@@ -1,0 +1,44 @@
+server:
+  port: 8082
+
+spring:
+  profiles:
+    active: dev
+  application:
+    name: helloim-chatlist
+  redis:
+    host: ${REDIS_ADDR:127.0.0.1}
+dubbo:
+  application:
+    name: helloim-chatlist
+    logger: slf4j
+    qos-enable: false
+  metadata-report:
+    address: ${ZK_ADDRESS:zookeeper://127.0.0.1:2181}
+  registry:
+    address: ${ZK_ADDRESS:zookeeper://127.0.0.1:2181}
+    group: helloim
+    timeout: 10000
+  consumer:
+    check: false
+
+
+im:
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:127.0.0.1:9092}
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.ByteArraySerializer
+      acks: all
+      max-inflight-requests-per-connection: 1
+      retries: 2
+      batch-size: 1000
+      buffer-memory: 3000000
+      linger-ms: 10
+    consumer:
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.ByteArrayDeserializer
+      max-poll-records: 10
+      group-id: helloim-chatlist
+      enable-autocommit: false
+      auto-offset-reset: latest

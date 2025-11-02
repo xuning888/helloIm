@@ -17,6 +17,24 @@
 
     <dependencies>
 
+        <dependency>
+            <groupId>com.github.xuning888.helloim</groupId>
+            <artifactId>chatlistApi</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.dubbo</groupId>
+                    <artifactId>dubbo</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.xuning888.helloim</groupId>
+            <artifactId>helloim-protocol</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+
         <!--contract-->
         <dependency>
             <groupId>com.github.xuning888.helloim</groupId>

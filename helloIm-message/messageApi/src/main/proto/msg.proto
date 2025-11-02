@@ -1,0 +1,52 @@
+syntax = "proto3";
+
+package helloim.message.api;
+
+
+option java_package = "com.github.xuning888.helloim.message.api";
+
+
+// 拉取离线消息请求
+message PullOfflineMsgRequest {
+  int64 fromUserId = 1;
+  int64 chatId = 2;
+  int32 chatType = 3;
+  int64 minServerSeq = 4;
+  int64 maxServerSeq = 5;
+  int32 size = 6;
+  string traceId = 7;
+}
+
+// 聊天消息
+message ChatMessage {
+  int32 chatType = 1;
+  int64 msgId = 2;
+  int64 msgFrom = 3;
+  int32 fromUserType = 4;
+  int64 msgTo = 5;
+  int32 toUserType = 6;
+  int64 groupId = 7;
+  int32 msgSeq = 8;
+  string msgContent = 9;
+  int32 contentType = 10;
+  int32 cmdId = 11;
+  int64 sendTime = 12;
+  int32 receiptStatus = 13;
+  int64 serverSeq = 14;
+  int64 createdAt = 15;
+  int64 updatedAt = 16;
+}
+
+// 聊天消息列表包装类
+message ChatMessageList {
+  repeated ChatMessage messages = 1;
+}
+
+// 消息服务接口
+service MessageService {
+  // 拉取离线消息
+  rpc PullOfflineMsg(PullOfflineMsgRequest) returns (ChatMessageList);
+
+  // 获取最新离线消息
+  rpc GetLatestOfflineMessages(PullOfflineMsgRequest) returns (ChatMessageList);
+}

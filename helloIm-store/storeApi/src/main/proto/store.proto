@@ -1,0 +1,102 @@
+syntax = "proto3";
+
+
+import "google/protobuf/timestamp.proto";
+
+package helloim.store.api;
+option java_package = "com.github.xuning888.helloim.store.api";
+
+
+message ChatMessage {
+  int32 chatType = 1;
+  int64 msgId = 2;
+  int64 msgFrom = 3;
+  int32 fromUserType = 4;
+  int64 msgTo = 5;
+  int32 toUserType = 6;
+  int64 groupId = 7;
+  int32 msgSeq = 8;
+  string msgContent = 9;
+  int32 contentType = 10;
+  int32 cmdId = 11;
+  int64 sendTime = 12;
+  int32 receiptStatus = 13;
+  int64 serverSeq = 14;
+}
+
+
+message ImChat {
+  int64 id = 1;
+  int64 userId = 2;
+  int64 chatId = 3;
+  int32 chatType = 4;
+  int32 chatTop = 5;
+  int32 chatDel = 6;
+  int32 chatMute = 7;
+  int64 updateTimestamp = 8;
+  int64 delTimestamp = 9;
+}
+
+message SaveMessageRequest {
+  ChatMessage chatMessage = 1;
+  string traceId = 2;
+}
+
+
+message SaveMessageResponse {
+  int32 raw = 1;
+}
+
+message MaxServerSeqRequest {
+  string from = 1;
+  string to = 2;
+  int32 chatType = 3;
+  string traceId = 4;
+}
+
+
+message MaxServerSeqResponse {
+  int64 serverSeq = 1;
+}
+
+message ChatItem {
+  int32 chatType = 1;
+  int64 ChatId = 2;
+}
+
+message LastMessageRequest {
+  int64 userId = 1;
+  repeated ChatItem chaItems = 2;
+}
+
+message LastMessageResponse {
+  repeated ChatMessage messages = 1;
+}
+
+
+// 消息存储服务
+service MsgStoreService {
+
+  rpc SaveMessage(SaveMessageRequest) returns (SaveMessageResponse);
+
+  rpc MaxServerSeq(MaxServerSeqRequest) returns (MaxServerSeqResponse);
+
+  rpc LastMessageId(LastMessageRequest) returns (LastMessageResponse);
+}
+
+
+message CreateOrUpdateChatRequest {
+  ImChat imChat = 1;
+  string traceId = 2;
+}
+
+message CreateOrUpdateChatResponse {
+  int32 raw = 1;
+}
+
+// 会话存储服务
+service ChatStoreService {
+  rpc createOrUpdate(CreateOrUpdateChatRequest) returns (CreateOrUpdateChatResponse);
+}
+
+
