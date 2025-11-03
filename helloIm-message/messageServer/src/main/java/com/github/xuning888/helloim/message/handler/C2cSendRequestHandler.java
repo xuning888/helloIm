@@ -1,7 +1,6 @@
 package com.github.xuning888.helloim.message.handler;
 
 import com.github.xuning888.helloim.contract.contant.ChatType;
-import com.github.xuning888.helloim.contract.dto.ChatMessage;
 import com.github.xuning888.helloim.contract.dto.MsgContext;
 import com.github.xuning888.helloim.contract.frame.Frame;
 import com.github.xuning888.helloim.contract.frame.Header;
@@ -19,7 +18,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
-import java.util.Date;
 
 /**
  * @author xuning
@@ -98,6 +96,8 @@ public class C2cSendRequestHandler implements MsgHandler {
         builder.setSendTime(System.currentTimeMillis()); // TODO 这个时间不准确
         builder.setReceiptStatus(0);
         builder.setServerSeq(msgContext.getServerSeq());
+        builder.setUpdatedAt(System.currentTimeMillis());
+        builder.setCreatedAt(System.currentTimeMillis());
         return builder.build();
     }
 

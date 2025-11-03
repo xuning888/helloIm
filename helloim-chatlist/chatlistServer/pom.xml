@@ -83,6 +83,13 @@
                     <mainClass>com.github.xuning888.helloim.chat.ChatApplication</mainClass>
                     <finalName>${artifactId}</finalName>
                 </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

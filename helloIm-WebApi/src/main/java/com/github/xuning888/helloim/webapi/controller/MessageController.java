@@ -4,6 +4,8 @@ import com.github.xuning888.helloim.contract.contant.RestResultStatus;
 import com.github.xuning888.helloim.contract.dto.RestResult;
 import com.github.xuning888.helloim.contract.util.RestResultUtils;
 import com.github.xuning888.helloim.message.api.Msg;
+import com.github.xuning888.helloim.webapi.convert.WebApiConvert;
+import com.github.xuning888.helloim.webapi.dto.ChatMessage;
 import com.github.xuning888.helloim.webapi.rpc.MessageServiceRpc;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.annotation.Resource;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 /**
  * @author xuning
@@ -36,6 +39,8 @@ public class MessageController {
                                       @RequestParam("minServerSeq") Long minServerSeq,
                                       @RequestParam("maxServerSeq") Long maxServerSeq) {
         String traceId = UUID.randomUUID().toString();
+        logger.info("/message/pullOfflineMsg fromUserId: {}, chatId: {}, chatType: {}, minServerSeq: {}, maxServerSeq: {}, traceId: {}",
+                fromUserId, chatId, chatType, minServerSeq, maxServerSeq, traceId);
         Msg.PullOfflineMsgRequest.Builder builder = Msg.PullOfflineMsgRequest.newBuilder();
         builder.setFromUserId(Long.parseLong(fromUserId));
         builder.setChatId(Long.parseLong(chatId));
@@ -45,11 +50,10 @@ public class MessageController {
         builder.setSize(0);
         builder.setTraceId(traceId);
         Msg.PullOfflineMsgRequest request = builder.build();
-        logger.info("/message/pullOfflineMsg request: {}, traceId: {}", request, traceId);
         try {
             Msg.ChatMessageList response = messageServiceRpc.pullOfflineMsg(request);
-            List<Msg.ChatMessage> chatMessages = response.getMessagesList();
-            return RestResultUtils.success(chatMessages);
+            List<ChatMessage> messages = response.getMessagesList().stream().map(WebApiConvert::chatMessageFromProtobuf).collect(Collectors.toList());
+            return RestResultUtils.success(messages);
         } catch (IllegalArgumentException illegalArgumentException) {
             logger.error("pullOfflineMsg illegalArgumentException traceId: {}", traceId, illegalArgumentException);
             return RestResultUtils.withStatus(RestResultStatus.INVALID);
@@ -66,6 +70,8 @@ public class MessageController {
                                                        @RequestParam("chatType") Integer chatType,
                                                        @RequestParam(value = "size", defaultValue = "50", required = false) Integer size) {
         String traceId = UUID.randomUUID().toString();
+        logger.info("/message/getLatestOfflineMessages fromUserId: {}, chatId: {}, chatType: {}, size: {}, traceId: {}",
+                fromUserId, chatId, chatType, size, traceId);
         Msg.PullOfflineMsgRequest.Builder builder = Msg.PullOfflineMsgRequest.newBuilder();
         builder.setFromUserId(Long.parseLong(fromUserId));
         builder.setChatId(Long.parseLong(chatId));
@@ -75,10 +81,9 @@ public class MessageController {
         builder.setSize(size);
         builder.setTraceId(traceId);
         Msg.PullOfflineMsgRequest request = builder.build();
-        logger.info("/message/getLatestOfflineMessages request: {}, traceId: {}", request, traceId);
         try {
             Msg.ChatMessageList response = messageServiceRpc.getLatestOfflineMessages(request);
-            List<Msg.ChatMessage> messages = response.getMessagesList();
+            List<ChatMessage> messages = response.getMessagesList().stream().map(WebApiConvert::chatMessageFromProtobuf).collect(Collectors.toList());
             return RestResultUtils.success(messages);
         } catch (IllegalArgumentException illegalArgumentException) {
             logger.error("getLatestOfflineMessages illegalArgumentException traceId: {}", traceId, illegalArgumentException);
