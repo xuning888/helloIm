@@ -14,8 +14,7 @@ public interface ImMessageGroupMapper {
 
     int updateByPrimaryKeySelective(ImMessageGroup record);
 
-    int updateByPrimaryKey(ImMessageGroup record);
-
-
     Long selectMaxServerSeq(@Param("groupId") Long groupId);
+
+    ImMessageGroup selectLastMessage(@Param("groupId") Long groupId);
 }

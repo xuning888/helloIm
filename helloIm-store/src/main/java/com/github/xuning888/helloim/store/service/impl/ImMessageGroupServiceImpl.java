@@ -6,6 +6,7 @@ import com.github.xuning888.helloim.store.config.ShardingContextHolder;
 import com.github.xuning888.helloim.store.mapper.ImMessageGroupMapper;
 import com.github.xuning888.helloim.store.service.ImMessageGroupService;
 import com.github.xuning888.helloim.store.utils.ShardingUtils;
+import org.apache.kafka.common.protocol.types.Field;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -38,9 +39,20 @@ public class ImMessageGroupServiceImpl implements ImMessageGroupService {
         try {
             Long serverSeq = imMessageGroupMapper.selectMaxServerSeq(groupIdInt64);
             if (serverSeq == null) {
-                return CommonConstant.ERROR_SERVER_SEQ;
+                return 0L;
             }
             return serverSeq;
+        } finally {
+            ShardingContextHolder.clear();
+        }
+    }
+
+    @Override
+    public ImMessageGroup lastMessage(String groupId, String traceId) {
+        long groupIdInt64 = Long.parseLong(groupId);
+        ShardingContextHolder.setDatasource(ShardingUtils.shardingFor4(groupIdInt64));
+        try {
+            return imMessageGroupMapper.selectLastMessage(groupIdInt64);
         } finally {
             ShardingContextHolder.clear();
         }

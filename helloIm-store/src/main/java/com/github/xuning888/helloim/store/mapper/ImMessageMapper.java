@@ -13,4 +13,6 @@ public interface ImMessageMapper {
     int updateByPrimaryKeySelective(ImMessage record);
 
     Long selectMaxServerSeq(@Param("msgFrom") Long msgFrom, @Param("msgTo") Long msgTo);
+
+    ImMessage lastMessage(@Param("msgFrom") Long msgFrom, @Param("msgTo") Long msgTo);
 }

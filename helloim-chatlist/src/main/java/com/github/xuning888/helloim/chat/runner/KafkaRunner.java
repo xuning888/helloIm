@@ -1,5 +1,6 @@
 package com.github.xuning888.helloim.chat.runner;
 
+import com.github.xuning888.helloim.chat.component.ChatMessageComponent;
 import com.github.xuning888.helloim.chat.consumer.MessageConsumer;
 import com.github.xuning888.helloim.contract.api.service.ChatService;
 import com.github.xuning888.helloim.contract.kafka.KafkaProperties;
@@ -8,6 +9,8 @@ import com.google.common.collect.ImmutableList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
+
+import javax.annotation.Resource;
 
 /**
  * @author xuning
@@ -19,13 +22,16 @@ public class KafkaRunner implements CommandLineRunner {
     @Autowired
     private ChatService chatService;
 
+    @Resource
+    private ChatMessageComponent chatMessageComponent;
+
     @Autowired
     private KafkaProperties kafkaProperties;
 
     @Override
     public void run(String... args) throws Exception {
         MessageConsumer messageConsumer = new MessageConsumer(
-                chatService,
+                chatService, chatMessageComponent,
                 kafkaProperties.buildConsumerProperties(),
                 ImmutableList.of(
                         Topics.C2C.C2C_SEND_REQ // 单聊下行

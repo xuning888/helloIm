@@ -157,21 +157,6 @@
     </set>
     where msg_id = #{msgId,jdbcType=BIGINT}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.github.xuning888.helloim.contract.entity.ImMessageGroup">
-    update im_message_group
-    set msg_from = #{msgFrom,jdbcType=BIGINT},
-      from_user_type = #{fromUserType,jdbcType=TINYINT},
-      group_id = #{groupId,jdbcType=BIGINT},
-      msg_seq = #{msgSeq,jdbcType=INTEGER},
-      msg_content = #{msgContent,jdbcType=VARCHAR},
-      content_type = #{contentType,jdbcType=INTEGER},
-      cmd_id = #{cmdId,jdbcType=INTEGER},
-      send_time = #{sendTime,jdbcType=TIMESTAMP},
-      server_seq = #{serverSeq,jdbcType=BIGINT},
-      created_at = #{createdAt,jdbcType=TIMESTAMP},
-      updated_at = #{updatedAt,jdbcType=TIMESTAMP}
-    where msg_id = #{msgId,jdbcType=BIGINT}
-  </update>
 
   <select id="selectMaxServerSeq" resultType="java.lang.Long">
     select server_seq
@@ -179,4 +164,11 @@
     where group_id = #{groupId}
     order by msg_id limit 1
   </select>
+
+    <select id="selectLastMessage" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List"/>
+        from im_message_group
+        where group_id = #{groupId}
+        order by msg_id limit 1
+    </select>
 </mapper>

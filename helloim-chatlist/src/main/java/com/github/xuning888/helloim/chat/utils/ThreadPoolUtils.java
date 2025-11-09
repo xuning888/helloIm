@@ -12,4 +12,9 @@ public class ThreadPoolUtils {
 
     public static ThreadPoolExecutor requestPool = new ThreadPoolExecutor(200, 200,
             5, TimeUnit.MINUTES, new LinkedBlockingDeque<>(5000));
+
+
+    // 不重要的任务，慢慢跑
+    public static ThreadPoolExecutor slowPool = new ThreadPoolExecutor(10, 100,
+            5, TimeUnit.MINUTES, new LinkedBlockingDeque<>(10000));
 }

@@ -2,7 +2,7 @@ package com.github.xuning888.helloim.message.service;
 
 import com.github.xuning888.helloim.contract.api.request.PullOfflineMsgRequest;
 import com.github.xuning888.helloim.contract.api.service.MessageService;
-import com.github.xuning888.helloim.contract.dto.ChatMessage;
+import com.github.xuning888.helloim.contract.dto.ChatMessageDto;
 import org.apache.dubbo.config.annotation.DubboService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,21 +25,21 @@ public class MessageServiceImpl implements MessageService {
     private OfflineMessageService offlineMessageService;
 
     @Override
-    public List<ChatMessage> pullOfflineMsg(PullOfflineMsgRequest request, String traceId) {
+    public List<ChatMessageDto> pullOfflineMsg(PullOfflineMsgRequest request, String traceId) {
         logger.info("pullOfflineMsg, request: {}, traceId: {}", request, traceId);
-        List<ChatMessage> chatMessages = offlineMessageService.pullOfflineMessage(request, traceId);
-        if (CollectionUtils.isEmpty(chatMessages)) {
+        List<ChatMessageDto> chatMessageDtos = offlineMessageService.pullOfflineMessage(request, traceId);
+        if (CollectionUtils.isEmpty(chatMessageDtos)) {
             logger.debug("pullOfflineMsg chatMessages is empty, traceId: {}", traceId);
             return Collections.emptyList();
         }
-        logger.info("pullOfflineMsg, chatMessages.size: {}, traceId: {}", chatMessages.size(), traceId);
-        return chatMessages;
+        logger.info("pullOfflineMsg, chatMessages.size: {}, traceId: {}", chatMessageDtos.size(), traceId);
+        return chatMessageDtos;
     }
 
     @Override
-    public List<ChatMessage> getLatestOfflineMessages(PullOfflineMsgRequest request, String traceId) {
+    public List<ChatMessageDto> getLatestOfflineMessages(PullOfflineMsgRequest request, String traceId) {
         logger.info("getLatestOfflineMessages, request: {}, traceId: {}", request, traceId);
-        List<ChatMessage> messages = offlineMessageService.getLatestOfflineMessages(request, traceId);
+        List<ChatMessageDto> messages = offlineMessageService.getLatestOfflineMessages(request, traceId);
         if (CollectionUtils.isEmpty(messages)) {
             logger.debug("getLatestOfflineMessages message is empty, traceId: {}", traceId);
             return Collections.emptyList();

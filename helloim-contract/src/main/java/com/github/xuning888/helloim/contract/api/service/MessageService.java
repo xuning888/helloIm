@@ -1,7 +1,7 @@
 package com.github.xuning888.helloim.contract.api.service;
 
 import com.github.xuning888.helloim.contract.api.request.PullOfflineMsgRequest;
-import com.github.xuning888.helloim.contract.dto.ChatMessage;
+import com.github.xuning888.helloim.contract.dto.ChatMessageDto;
 
 import java.util.List;
 
@@ -11,9 +11,9 @@ import java.util.List;
  */
 public interface MessageService {
 
-    List<ChatMessage> pullOfflineMsg(PullOfflineMsgRequest request, String traceId);
+    List<ChatMessageDto> pullOfflineMsg(PullOfflineMsgRequest request, String traceId);
 
 
-    List<ChatMessage> getLatestOfflineMessages(PullOfflineMsgRequest request, String traceId);
+    List<ChatMessageDto> getLatestOfflineMessages(PullOfflineMsgRequest request, String traceId);
 
 }

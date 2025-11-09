@@ -11,23 +11,16 @@
     <result column="update_timestamp" jdbcType="TIMESTAMP" property="updateTimestamp" />
     <result column="del_timestamp" jdbcType="TIMESTAMP" property="delTimestamp" />
     <result column="chat_mute" jdbcType="TINYINT" property="chatMute" />
+    <result column="sub_status" jdbcType="TINYINT" property="subStatus" />
+      <result column="join_group_timestamp" jdbcType="TIMESTAMP" property="joinGroupTimestamp" />
     <result column="created_at" jdbcType="TIMESTAMP" property="createdAt" />
     <result column="updated_at" jdbcType="TIMESTAMP" property="updatedAt" />
   </resultMap>
   <sql id="Base_Column_List">
     id, user_id, chat_id, chat_type, chat_top, chat_del, update_timestamp, del_timestamp, 
-    chat_mute, created_at, updated_at
+    chat_mute, sub_status, join_group_timestamp,
+      created_at, updated_at
   </sql>
-  <insert id="insert" parameterType="com.github.xuning888.helloim.contract.entity.ImChat">
-    insert into im_chat (id, user_id, chat_id, 
-      chat_type, chat_top, chat_del, 
-      update_timestamp, del_timestamp, chat_mute, 
-      created_at, updated_at)
-    values (#{id,jdbcType=BIGINT}, #{userId,jdbcType=BIGINT}, #{chatId,jdbcType=BIGINT}, 
-      #{chatType,jdbcType=TINYINT}, #{chatTop,jdbcType=TINYINT}, #{chatDel,jdbcType=TINYINT}, 
-      #{updateTimestamp,jdbcType=TIMESTAMP}, #{delTimestamp,jdbcType=TIMESTAMP}, #{chatMute,jdbcType=TINYINT}, 
-      #{createdAt,jdbcType=TIMESTAMP}, #{updatedAt,jdbcType=TIMESTAMP})
-  </insert>
   <insert id="insertSelective" parameterType="com.github.xuning888.helloim.contract.entity.ImChat">
     insert into im_chat
     <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -58,6 +51,12 @@
       <if test="chatMute != null">
         chat_mute,
       </if>
+        <if test="subStatus != null">
+            sub_status,
+        </if>
+        <if test="joinGroupTimestamp != null">
+            join_group_timestamp,
+        </if>
       <if test="createdAt != null">
         created_at,
       </if>
@@ -93,6 +92,12 @@
       <if test="chatMute != null">
         #{chatMute,jdbcType=TINYINT},
       </if>
+        <if test="subStatus != null">
+            #{subStatus,jdbcType=TINYINT},
+        </if>
+        <if test="joinGroupTimestamp != null">
+            #{joinGroupTimestamp,jdbcType=TIMESTAMP},
+        </if>
       <if test="createdAt != null">
         #{createdAt,jdbcType=TIMESTAMP},
       </if>
@@ -128,6 +133,12 @@
       <if test="chatMute != null">
         chat_mute = #{chatMute,jdbcType=TINYINT},
       </if>
+        <if test="subStatus != null">
+           sub_status = #{subStatus,jdbcType=TINYINT},
+        </if>
+        <if test="joinGroupTimestamp != null">
+            join_group_timestamp = #{joinGroupTimestamp,jdbcType=TIMESTAMP},
+        </if>
       <if test="createdAt != null">
         created_at = #{createdAt,jdbcType=TIMESTAMP},
       </if>
@@ -137,25 +148,16 @@
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.github.xuning888.helloim.contract.entity.ImChat">
-    update im_chat
-    set user_id = #{userId,jdbcType=BIGINT},
-      chat_id = #{chatId,jdbcType=BIGINT},
-      chat_type = #{chatType,jdbcType=TINYINT},
-      chat_top = #{chatTop,jdbcType=TINYINT},
-      chat_del = #{chatDel,jdbcType=TINYINT},
-      update_timestamp = #{updateTimestamp,jdbcType=TIMESTAMP},
-      del_timestamp = #{delTimestamp,jdbcType=TIMESTAMP},
-      chat_mute = #{chatMute,jdbcType=TINYINT},
-      created_at = #{createdAt,jdbcType=TIMESTAMP},
-      updated_at = #{updatedAt,jdbcType=TIMESTAMP}
-    where id = #{id,jdbcType=BIGINT}
-  </update>
 
-
-  <select id="getChat" resultType="com.github.xuning888.helloim.contract.entity.ImChat">
+  <select id="getChat" resultMap="BaseResultMap">
     select <include refid="Base_Column_List"/>
     from im_chat
     where user_id = #{userId} and chat_id = #{chatId}
   </select>
+
+    <select id="selectAllChat" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List"/>
+        from im_chat
+        where user_id = #{userId}
+    </select>
 </mapper>

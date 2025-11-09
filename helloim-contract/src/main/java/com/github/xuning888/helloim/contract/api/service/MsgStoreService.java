@@ -1,7 +1,6 @@
 package com.github.xuning888.helloim.contract.api.service;
 
-import com.github.xuning888.helloim.contract.contant.CommonConstant;
-import com.github.xuning888.helloim.contract.dto.ChatMessage;
+import com.github.xuning888.helloim.contract.dto.ChatMessageDto;
 
 /**
  * @author xuning
@@ -12,9 +11,9 @@ public interface MsgStoreService {
     /**
      * 存储消息
      */
-    int saveMessage(ChatMessage chatMessage, String traceId);
+    int saveMessage(ChatMessageDto chatMessageDto, String traceId);
 
-    default Long maxServerSeq(String from, String to, Integer chatType, String traceId) {
-        return CommonConstant.ERROR_SERVER_SEQ;
-    }
+    Long maxServerSeq(String from, String to, Integer chatType, String traceId);
+
+    ChatMessageDto lastMessage(String userId, String chatId, Integer chatType, String traceId);
 }

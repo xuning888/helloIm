@@ -11,4 +11,6 @@ public interface ImMessageService {
     int saveMessage(ImMessage imMessage, String traceId);
 
     Long maxServerSeq(String from, String to, String traceId);
+
+    ImMessage lastMessage(String userId, String toUserId, String traceId);
 }

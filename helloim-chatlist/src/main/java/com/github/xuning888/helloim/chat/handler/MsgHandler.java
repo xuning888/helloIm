@@ -1,10 +1,14 @@
 package com.github.xuning888.helloim.chat.handler;
 
+import com.github.xuning888.helloim.chat.component.ChatMessageComponent;
 import com.github.xuning888.helloim.contract.api.service.ChatService;
 import com.github.xuning888.helloim.contract.contant.ChatType;
+import com.github.xuning888.helloim.contract.convert.MessageConvert;
+import com.github.xuning888.helloim.contract.dto.ChatMessageDto;
 import com.github.xuning888.helloim.contract.dto.MsgContext;
 import com.github.xuning888.helloim.contract.entity.ImChat;
 import com.github.xuning888.helloim.contract.frame.Frame;
+import com.github.xuning888.helloim.contract.protobuf.C2cMessage;
 import com.github.xuning888.helloim.contract.protobuf.MsgCmd;
 import com.github.xuning888.helloim.contract.util.ProtoStuffUtils;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -23,11 +27,16 @@ public class MsgHandler implements Runnable {
 
     private final ConsumerRecord<String, byte[]> record;
     private final ChatService chatService;
+    private final ChatMessageComponent chatMessageComponent;
     private final String traceId;
 
-    public MsgHandler(ConsumerRecord<String, byte[]> record, ChatService chatService, String traceId) {
+    public MsgHandler(ConsumerRecord<String, byte[]> record,
+                      ChatService chatService,
+                      ChatMessageComponent chatMessageComponent,
+                      String traceId) {
         this.record = record;
         this.chatService = chatService;
+        this.chatMessageComponent = chatMessageComponent;
         this.traceId = traceId;
     }
 
@@ -64,16 +73,19 @@ public class MsgHandler implements Runnable {
         Long msgTo = Long.parseLong(msgContext.getMsgTo());
         logger.info("processC2c, msgFrom: {}, msgTo: {}, traceId: {}", msgFrom, msgTo, traceId);
 
-        // 消息发送者的会话
-        ImChat imFromChat = new ImChat();
-        imFromChat.setUserId(msgFrom);
-        imFromChat.setChatId(msgTo);
-        imFromChat.setChatType(ChatType.C2C.getType());
-        imFromChat.setChatTop(0);
-        imFromChat.setChatDel(0);
-        imFromChat.setUpdateTimestamp(new Date()); // 更新时间
-        imFromChat.setDelTimestamp(new Date()); // 会话删除时间
-        imFromChat.setChatMute(0); // 会话静默
+        C2cMessage.C2cSendRequest c2cSendRequest = null;
+        Frame frame = msgContext.getFrame();
+        try {
+            c2cSendRequest = C2cMessage.C2cSendRequest.parseFrom(frame.getBody());
+        } catch (Exception ex) {
+            logger.error("handleMessage parse c2cSendRequest failed, from: {}, to: {}, traceId: {}",
+                    msgContext.getMsgFrom(), msgContext.getMsgTo(), traceId);
+            return;
+        }
+        ChatMessageDto chatMessage = MessageConvert.buildC2CChatMessage(msgContext, c2cSendRequest);
+        // 更新会话的最后一条消息
+        chatMessageComponent.updateLastChatMessage(String.valueOf(msgFrom), chatMessage, traceId);
+        chatMessageComponent.updateLastChatMessage(String.valueOf(msgTo), chatMessage, traceId);
 
         // 构建会话缓存
         chatService.createOrActivateChat(msgFrom, msgFrom, ChatType.C2C, traceId);

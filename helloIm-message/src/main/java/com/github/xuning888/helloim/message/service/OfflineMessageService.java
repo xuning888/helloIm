@@ -2,7 +2,7 @@ package com.github.xuning888.helloim.message.service;
 
 import com.github.xuning888.helloim.contract.api.request.PullOfflineMsgRequest;
 import com.github.xuning888.helloim.contract.contant.ChatType;
-import com.github.xuning888.helloim.contract.dto.ChatMessage;
+import com.github.xuning888.helloim.contract.dto.ChatMessageDto;
 import com.github.xuning888.helloim.contract.util.RedisKeyUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,28 +23,28 @@ public class OfflineMessageService {
     private static final Logger logger = LoggerFactory.getLogger(OfflineMessageService.class);
 
     @Autowired
-    private RedisTemplate<String, ChatMessage> redisTemplate;
+    private RedisTemplate<String, ChatMessageDto> redisTemplate;
 
     // 存储离线消息
-    public void saveOfflineMessage(ChatMessage chatMessage, String traceId) {
-        if (chatMessage == null) {
+    public void saveOfflineMessage(ChatMessageDto chatMessageDto, String traceId) {
+        if (chatMessageDto == null) {
             logger.error("saveOfflineMessage chatMessage is null traceId: {}", traceId);
             return;
         }
-        Long fromUserId = chatMessage.getMsgFrom();
-        Long toUserId = chatMessage.getMsgTo();
-        Long groupId = chatMessage.getGroupId();
-        Integer chatType = chatMessage.getChatType();
-        Long msgId = chatMessage.getMsgId();
-        Long serverSeq = chatMessage.getServerSeq();
+        Long fromUserId = chatMessageDto.getMsgFrom();
+        Long toUserId = chatMessageDto.getMsgTo();
+        Long groupId = chatMessageDto.getGroupId();
+        Integer chatType = chatMessageDto.getChatType();
+        Long msgId = chatMessageDto.getMsgId();
+        Long serverSeq = chatMessageDto.getServerSeq();
         String offlineMsgKey = RedisKeyUtils.offlineMsgKey(fromUserId, toUserId, groupId, chatType);
         logger.info("saveOfflineMessage, msgId: {}, serverSeq: {}, offlineMsgKey: {}", msgId, serverSeq, offlineMsgKey);
         // TODO 策略: 单聊存储近100条消息, 群聊记录下key, 半夜清理
-        redisTemplate.opsForZSet().add(offlineMsgKey, chatMessage, serverSeq);
+        redisTemplate.opsForZSet().add(offlineMsgKey, chatMessageDto, serverSeq);
     }
 
     // 拉取离线消息
-    public List<ChatMessage> pullOfflineMessage(PullOfflineMsgRequest request, String traceId) {
+    public List<ChatMessageDto> pullOfflineMessage(PullOfflineMsgRequest request, String traceId) {
         logger.info("pullOfflineMessage, request: {}, traceId: {}", request, traceId);
         validPullOfflineMsgRequest(request, traceId, false);
         Long chatId = request.getChatId();
@@ -62,14 +62,14 @@ public class OfflineMessageService {
             return new ArrayList<>();
         }
         // 按 score 范围获取消息，带 score 信息
-        Set<ZSetOperations.TypedTuple<ChatMessage>> set =
+        Set<ZSetOperations.TypedTuple<ChatMessageDto>> set =
                 redisTemplate.opsForZSet().rangeByScoreWithScores(msgKey, minServerSeq, maxServerSeq);
 
         // 转换为 List<ChatMessage>
-        List<ChatMessage> messages = new ArrayList<>();
+        List<ChatMessageDto> messages = new ArrayList<>();
         if (set != null && !set.isEmpty()) {
-            for (ZSetOperations.TypedTuple<ChatMessage> tuple : set) {
-                ChatMessage message = tuple.getValue();
+            for (ZSetOperations.TypedTuple<ChatMessageDto> tuple : set) {
+                ChatMessageDto message = tuple.getValue();
                 if (message != null) {
                     // 可以在这里设置 serverSeq，确保数据完整性
                     message.setServerSeq(tuple.getScore().longValue());
@@ -80,7 +80,7 @@ public class OfflineMessageService {
         return messages;
     }
 
-    public List<ChatMessage> getLatestOfflineMessages(PullOfflineMsgRequest request, String traceId) {
+    public List<ChatMessageDto> getLatestOfflineMessages(PullOfflineMsgRequest request, String traceId) {
         logger.info("getLatestOfflineMessages, request: {}, traceId: {}", request, traceId);
         validPullOfflineMsgRequest(request, traceId, true);
         Long chatId = request.getChatId();
@@ -97,13 +97,13 @@ public class OfflineMessageService {
             return new ArrayList<>();
         }
         // 获取最新的消息
-        Set<ZSetOperations.TypedTuple<ChatMessage>> set =
+        Set<ZSetOperations.TypedTuple<ChatMessageDto>> set =
                 redisTemplate.opsForZSet().reverseRangeWithScores(msgKey, 0, size - 1);
 
-        List<ChatMessage> messages = new ArrayList<>();
+        List<ChatMessageDto> messages = new ArrayList<>();
         if (set != null && !set.isEmpty()) {
-            for (ZSetOperations.TypedTuple<ChatMessage> tuple : set) {
-                ChatMessage message = tuple.getValue();
+            for (ZSetOperations.TypedTuple<ChatMessageDto> tuple : set) {
+                ChatMessageDto message = tuple.getValue();
                 if (message != null) {
                     message.setServerSeq(tuple.getScore().longValue());
                     messages.add(message);

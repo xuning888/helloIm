@@ -3,7 +3,7 @@ package com.github.xuning888.helloim.webapi.controller;
 import com.github.xuning888.helloim.contract.api.request.PullOfflineMsgRequest;
 import com.github.xuning888.helloim.contract.api.service.MessageService;
 import com.github.xuning888.helloim.contract.contant.RestResultStatus;
-import com.github.xuning888.helloim.contract.dto.ChatMessage;
+import com.github.xuning888.helloim.contract.dto.ChatMessageDto;
 import com.github.xuning888.helloim.contract.dto.RestResult;
 import com.github.xuning888.helloim.contract.util.RestResultUtils;
 import org.apache.dubbo.config.annotation.DubboReference;
@@ -45,8 +45,8 @@ public class MessageController {
         pullOfflineMsgRequest.setMaxServerSeq(maxServerSeq);
         logger.info("/message/pullOfflineMsg request: {}, traceId: {}", pullOfflineMsgRequest, traceId);
         try {
-            List<ChatMessage> chatMessages = messageService.pullOfflineMsg(pullOfflineMsgRequest, traceId);
-            return RestResultUtils.success(chatMessages);
+            List<ChatMessageDto> chatMessageDtos = messageService.pullOfflineMsg(pullOfflineMsgRequest, traceId);
+            return RestResultUtils.success(chatMessageDtos);
         } catch (IllegalArgumentException illegalArgumentException) {
             logger.error("pullOfflineMsg illegalArgumentException traceId: {}", traceId, illegalArgumentException);
             return RestResultUtils.withStatus(RestResultStatus.INVALID);
@@ -70,7 +70,7 @@ public class MessageController {
         request.setSize(size);
         logger.info("/message/getLatestOfflineMessages request: {}, traceId: {}", request, traceId);
         try {
-            List<ChatMessage> messages = messageService.getLatestOfflineMessages(request, UUID.randomUUID().toString());
+            List<ChatMessageDto> messages = messageService.getLatestOfflineMessages(request, UUID.randomUUID().toString());
             return RestResultUtils.success(messages);
         } catch (IllegalArgumentException illegalArgumentException) {
             logger.error("getLatestOfflineMessages illegalArgumentException traceId: {}", traceId, illegalArgumentException);

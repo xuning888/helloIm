@@ -22,6 +22,10 @@ public class ImChat implements Serializable {
 
     private Integer chatMute;
 
+    private Integer subStatus;
+
+    private Date joinGroupTimestamp;
+
     private Date createdAt;
 
     private Date updatedAt;
@@ -112,5 +116,21 @@ public class ImChat implements Serializable {
 
     public void setUpdatedAt(Date updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public Date getJoinGroupTimestamp() {
+        return joinGroupTimestamp;
+    }
+
+    public void setJoinGroupTimestamp(Date joinGroupTimestamp) {
+        this.joinGroupTimestamp = joinGroupTimestamp;
+    }
+
+    public Integer getSubStatus() {
+        return subStatus;
+    }
+
+    public void setSubStatus(Integer subStatus) {
+        this.subStatus = subStatus;
     }
 }

@@ -1,7 +1,7 @@
 package com.github.xuning888.helloim.message.handler;
 
-import com.github.xuning888.helloim.contract.contant.ChatType;
-import com.github.xuning888.helloim.contract.dto.ChatMessage;
+import com.github.xuning888.helloim.contract.convert.MessageConvert;
+import com.github.xuning888.helloim.contract.dto.ChatMessageDto;
 import com.github.xuning888.helloim.contract.dto.MsgContext;
 import com.github.xuning888.helloim.contract.frame.Frame;
 import com.github.xuning888.helloim.contract.frame.Header;
@@ -16,7 +16,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
-import java.util.Date;
 
 /**
  * @author xuning
@@ -57,14 +56,14 @@ public class C2cSendRequestHandler implements MsgHandler {
         }
         logger.info("handleMessage serverSeq: {} traceId: {}", msgContext.getServerSeq(), traceId);
 
-        ChatMessage chatMessage = convertChatMessage(msgContext, c2cSendRequest);
+        ChatMessageDto chatMessageDto = MessageConvert.buildC2CChatMessage(msgContext, c2cSendRequest);
         // 消息持久化
-        if (!saveMessage(chatMessage, traceId)) {
+        if (!saveMessage(chatMessageDto, traceId)) {
             logger.error("c2cSendMessage saveMessage error: traceId: {}", traceId);
             return;
         }
         // 保存离线消息
-        offlineMessageService.saveOfflineMessage(chatMessage, traceId);
+        offlineMessageService.saveOfflineMessage(chatMessageDto, traceId);
         // 构造下行消息, 发送消息
         Frame c2cPushRequestFrame = buildC2cPushRequestFrame(msgContext, c2cSendRequest);
         msgContext.setFrame(c2cPushRequestFrame);
@@ -72,28 +71,9 @@ public class C2cSendRequestHandler implements MsgHandler {
     }
 
 
-    private boolean saveMessage(ChatMessage chatMessage, String traceId) {
-        int raw = this.dubboAdapter.msgStoreService().saveMessage(chatMessage, traceId);
+    private boolean saveMessage(ChatMessageDto chatMessageDto, String traceId) {
+        int raw = this.dubboAdapter.msgStoreService().saveMessage(chatMessageDto, traceId);
         return raw > 0;
-    }
-
-    private ChatMessage convertChatMessage(MsgContext msgContext, C2cMessage.C2cSendRequest c2cSendRequest) {
-        ChatMessage chatMessage = new ChatMessage();
-        chatMessage.setCmdId(MsgCmd.CmdId.CMD_ID_C2CSEND_VALUE);
-        chatMessage.setChatType(ChatType.C2C.getType());
-        chatMessage.setMsgId(msgContext.getMsgId());
-        chatMessage.setMsgFrom(Long.parseLong(msgContext.getMsgFrom()));
-        chatMessage.setFromUserType(msgContext.getFromUserType());
-        chatMessage.setMsgTo(Long.parseLong(msgContext.getMsgTo()));
-        chatMessage.setToUserType(msgContext.getToUserType());
-        chatMessage.setGroupId(0L);
-        chatMessage.setMsgSeq(msgContext.getMsgSeq());
-        chatMessage.setMsgContent(c2cSendRequest.getContent());
-        chatMessage.setContentType(c2cSendRequest.getContentType());
-        chatMessage.setSendTime(new Date()); // TODO 这个时间不准确
-        chatMessage.setReceiptStatus(0);
-        chatMessage.setServerSeq(msgContext.getServerSeq());
-        return chatMessage;
     }
 
     private String msgKey(MsgContext msgContext) {

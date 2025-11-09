@@ -2,8 +2,8 @@ package com.github.xuning888.helloim.store.service.impl;
 
 import com.github.xuning888.helloim.contract.api.service.MsgStoreService;
 import com.github.xuning888.helloim.contract.contant.ChatType;
-import com.github.xuning888.helloim.contract.contant.CommonConstant;
-import com.github.xuning888.helloim.contract.dto.ChatMessage;
+import com.github.xuning888.helloim.contract.convert.MessageConvert;
+import com.github.xuning888.helloim.contract.dto.ChatMessageDto;
 import com.github.xuning888.helloim.contract.entity.ImMessage;
 import com.github.xuning888.helloim.contract.entity.ImMessageGroup;
 import com.github.xuning888.helloim.store.service.ImMessageGroupService;
@@ -30,42 +30,21 @@ public class MsgStoreServiceImpl implements MsgStoreService {
     private ImMessageGroupService imMessageGroupService;
 
     @Override
-    public int saveMessage(ChatMessage chatMessage, String traceId) {
+    public int saveMessage(ChatMessageDto chatMessageDto, String traceId) {
         int raw = 0;
-        if (ChatType.C2C.match(chatMessage.getChatType())) {
-            ImMessage imMessage = new ImMessage();
-            imMessage.setMsgId(chatMessage.getMsgId());
-            imMessage.setMsgFrom(chatMessage.getMsgFrom());
-            imMessage.setFromUserType(chatMessage.getFromUserType());
-            imMessage.setMsgTo(chatMessage.getMsgTo());
-            imMessage.setToUserType(chatMessage.getToUserType());
-            imMessage.setMsgSeq(chatMessage.getMsgSeq());
-            imMessage.setMsgContent(chatMessage.getMsgContent());
-            imMessage.setContentType(chatMessage.getContentType());
-            imMessage.setCmdId(chatMessage.getCmdId());
-            imMessage.setSendTime(chatMessage.getSendTime());
-            imMessage.setServerSeq(chatMessage.getServerSeq());
-            imMessage.setReceiptStatus(chatMessage.getReceiptStatus());
+        if (ChatType.C2C.match(chatMessageDto.getChatType())) {
+            ImMessage imMessage = MessageConvert.convertImMessage(chatMessageDto);
             raw = this.imMessageService.saveMessage(imMessage, traceId);
-        } else if (ChatType.C2G.match(chatMessage.getChatType())) {
-            ImMessageGroup imMessageGroup = new ImMessageGroup();
-            imMessageGroup.setMsgId(chatMessage.getMsgId());
-            imMessageGroup.setMsgFrom(chatMessage.getMsgFrom());
-            imMessageGroup.setFromUserType(chatMessage.getFromUserType());
-            imMessageGroup.setGroupId(chatMessage.getGroupId());
-            imMessageGroup.setMsgSeq(chatMessage.getMsgSeq());
-            imMessageGroup.setMsgContent(chatMessage.getMsgContent());
-            imMessageGroup.setCmdId(chatMessage.getCmdId());
-            imMessageGroup.setSendTime(chatMessage.getSendTime());
-            imMessageGroup.setServerSeq(chatMessage.getServerSeq());
+        } else if (ChatType.C2G.match(chatMessageDto.getChatType())) {
+            ImMessageGroup imMessageGroup = MessageConvert.convertImMessageGroup(chatMessageDto);
             raw = this.imMessageGroupService.saveMessage(imMessageGroup, traceId);
         }
         if (raw > 0) {
             logger.info("saveMessage success, msgId: {}, raw: {}, chatType: {}, traceId: {}",
-                    chatMessage.getMsgId(), chatMessage.getChatType(), raw, traceId);
+                    chatMessageDto.getMsgId(), chatMessageDto.getChatType(), raw, traceId);
         } else {
             logger.warn("saveMessage failed, msgId: {}, chatType: {}, traceId: {}",
-                    chatMessage.getMsgId(), chatMessage.getChatType(), traceId);
+                    chatMessageDto.getMsgId(), chatMessageDto.getChatType(), traceId);
         }
         return raw;
     }
@@ -73,7 +52,7 @@ public class MsgStoreServiceImpl implements MsgStoreService {
     @Override
     public Long maxServerSeq(String from, String to, Integer chatType, String traceId) {
         logger.info("maxServerSeq from: {}, to: {}, chatType: {}, traceId: {}", from, to, chatType, traceId);
-        Long serverSeq = CommonConstant.ERROR_SERVER_SEQ;;
+        Long serverSeq = null;
         if (ChatType.C2C.match(chatType)) {
             serverSeq = this.imMessageService.maxServerSeq(from, to, traceId);
         } else if (ChatType.C2G.match(chatType)) {
@@ -81,7 +60,29 @@ public class MsgStoreServiceImpl implements MsgStoreService {
         } else {
             logger.error("maxServerSeq, unknown chatType: {}, traceId: {}", chatType, traceId);
         }
+        if (serverSeq == null) {
+            serverSeq = 0L;
+        }
         logger.info("maxServerSeq from: {}, to: {}, chatType: {}, serverSeq: {}, traceId: {}", from, to, serverSeq, chatType, traceId);
         return serverSeq;
+    }
+
+    @Override
+    public ChatMessageDto lastMessage(String userId, String chatId, Integer chatType, String traceId) {
+        ChatMessageDto chatMessageDto = null;
+        if (ChatType.C2C.match(chatType)) {
+            ImMessage imMessage = this.imMessageService.lastMessage(userId, chatId, traceId);
+            if (imMessage != null) {
+                chatMessageDto = MessageConvert.convert2ChatMessage(imMessage);
+            }
+        } else if (ChatType.C2G.match(chatType)) {
+            ImMessageGroup imMessageGroup = this.imMessageGroupService.lastMessage(chatId, traceId);
+            if (imMessageGroup != null) {
+                chatMessageDto = MessageConvert.convert2ChatMessage(imMessageGroup);
+            }
+        } else {
+            logger.error("lastMessage, unknown chatType: {}, traceId: {}", chatType, traceId);
+        }
+        return chatMessageDto;
     }
 }

@@ -172,4 +172,12 @@
       and msg_to = #{msgTo}
     order by server_seq desc limit 1
   </select>
+
+    <select id="lastMessage" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List"/>
+        from im_message
+        where msg_from = #{msgFrom}
+        and msg_to = #{msgTo}
+        limit 1
+    </select>
 </mapper>

@@ -1,5 +1,6 @@
 package com.github.xuning888.helloim.chat.consumer;
 
+import com.github.xuning888.helloim.chat.component.ChatMessageComponent;
 import com.github.xuning888.helloim.chat.handler.MsgHandler;
 import com.github.xuning888.helloim.chat.utils.ThreadPoolUtils;
 import com.github.xuning888.helloim.contract.api.service.ChatService;
@@ -17,14 +18,20 @@ public class MessageConsumer extends MsgKafkaConsumer {
 
     private final ChatService chatService;
 
-    public MessageConsumer(ChatService chatService, Properties properties, List<String> topics) {
+    private final ChatMessageComponent chatMessageComponent;
+
+    public MessageConsumer(ChatService chatService, ChatMessageComponent chatMessageComponent,
+                           Properties properties, List<String> topics) {
         super(properties, topics);
         this.chatService = chatService;
+        this.chatMessageComponent = chatMessageComponent;
     }
 
     @Override
     public void processRecord(ConsumerRecord<String, byte[]> record, String traceId) {
-        MsgHandler msgHandler = new MsgHandler(record, chatService, traceId);
+        MsgHandler msgHandler = new MsgHandler(record, chatService,
+                chatMessageComponent,
+                traceId);
         ThreadPoolUtils.requestPool.submit(msgHandler);
     }
 }

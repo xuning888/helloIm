@@ -2,6 +2,7 @@ package com.github.xuning888.helloim.webapi.service;
 
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -12,6 +13,8 @@ import java.util.List;
 public class IndexService {
 
     public List<String> getIpList() {
-        return List.of("127.0.0.1:9300");
+        List<String> list = new ArrayList<>();
+        list.add("127.0.0.1:9300");
+        return list;
     }
 }

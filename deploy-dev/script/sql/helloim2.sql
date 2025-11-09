@@ -13,6 +13,8 @@ create table if not exists im_chat
     update_timestamp timestamp  not null default current_timestamp comment '会话的更新时间',
     del_timestamp    timestamp  not null default current_timestamp comment '会话的删除时间',
     chat_mute        tinyint(4) not null default 0 comment '会话静默: 1-静默',
+    sub_status           tinyint(4) not null default 0 comment '会话子状态',
+    join_group_timestamp timestamp  not null default current_timestamp comment '加入群聊的时间',
     created_at       timestamp  not null default current_timestamp comment '创建时间',
     updated_at       timestamp  not null default current_timestamp on update current_timestamp comment '更新时间',
     primary key (id),
