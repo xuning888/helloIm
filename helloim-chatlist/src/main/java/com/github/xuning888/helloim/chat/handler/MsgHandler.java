@@ -6,7 +6,6 @@ import com.github.xuning888.helloim.contract.contant.ChatType;
 import com.github.xuning888.helloim.contract.convert.MessageConvert;
 import com.github.xuning888.helloim.contract.dto.ChatMessageDto;
 import com.github.xuning888.helloim.contract.dto.MsgContext;
-import com.github.xuning888.helloim.contract.entity.ImChat;
 import com.github.xuning888.helloim.contract.frame.Frame;
 import com.github.xuning888.helloim.contract.protobuf.C2cMessage;
 import com.github.xuning888.helloim.contract.protobuf.MsgCmd;
@@ -14,8 +13,6 @@ import com.github.xuning888.helloim.contract.util.ProtoStuffUtils;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.Date;
 
 /**
  * @author xuning
@@ -83,12 +80,15 @@ public class MsgHandler implements Runnable {
             return;
         }
         ChatMessageDto chatMessage = MessageConvert.buildC2CChatMessage(msgContext, c2cSendRequest);
-        // 更新会话的最后一条消息
-        chatMessageComponent.updateLastChatMessage(String.valueOf(msgFrom), String.valueOf(msgTo), chatMessage, traceId);
-        chatMessageComponent.updateLastChatMessage(String.valueOf(msgTo), String.valueOf(msgFrom), chatMessage, traceId);
+        // 单聊会话写扩散
+        updateC2c(msgFrom, msgTo, chatMessage, traceId);
+        updateC2c(msgTo, msgFrom, chatMessage, traceId);
+    }
 
-        // 构建会话缓存
-        chatService.createOrActivateChat(msgFrom, msgTo, ChatType.C2C, traceId);
-        chatService.createOrActivateChat(msgTo, msgFrom, ChatType.C2C, traceId);
+    private void updateC2c(Long from, Long to, ChatMessageDto chatMessageDto, String traceId) {
+        // 更新会话的最后一条消息
+        chatMessageComponent.updateLastChatMessage(String.valueOf(from), String.valueOf(to), chatMessageDto, traceId);
+        // 创建或激活会话
+        chatService.createOrActivateChat(from, to, ChatType.C2C, traceId);
     }
 }

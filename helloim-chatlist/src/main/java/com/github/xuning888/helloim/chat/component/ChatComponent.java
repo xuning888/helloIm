@@ -55,10 +55,6 @@ public class ChatComponent {
         imChatDto.setChatDel(false);
         imChatDto.setUpdateTimestamp(System.currentTimeMillis());
         imChatDto.setDelTimestamp(System.currentTimeMillis());
-        ChatMessageDto lastMessage = chatMessageComponent.getLastMessage(userId.toString(), chatId.toString(), chatType, traceId);
-        if (lastMessage != null) {
-            updateChatDto(imChatDto, lastMessage);
-        }
         if (ChatType.C2G.match(chatType)) {
             Date userJoinGroupTime = userGroupService.getUserJoinGroupTime(chatId, String.valueOf(userId), traceId);
             Long updateTimestamp = null;
@@ -66,9 +62,13 @@ public class ChatComponent {
                 updateTimestamp = System.currentTimeMillis();
             } else {
                 updateTimestamp = userJoinGroupTime.getTime();
+                imChatDto.setSubStatus(ChatSubStatus.IN_GROUP.getCode());
             }
             imChatDto.setUpdateTimestamp(updateTimestamp);
-            imChatDto.setSubStatus(ChatSubStatus.IN_GROUP.getCode());
+        }
+        ChatMessageDto lastMessage = chatMessageComponent.getLastMessage(userId.toString(), chatId.toString(), chatType, traceId);
+        if (lastMessage != null) {
+            updateChatDto(imChatDto, lastMessage);
         }
         return imChatDto;
     }
