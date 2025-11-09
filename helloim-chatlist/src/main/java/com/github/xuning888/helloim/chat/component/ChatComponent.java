@@ -15,6 +15,7 @@ import org.apache.commons.collections.MapUtils;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.Cursor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ScanOptions;
@@ -32,7 +33,7 @@ public class ChatComponent {
 
     private static final Logger logger = LoggerFactory.getLogger(ChatComponent.class);
 
-    @Resource
+    @Autowired
     private RedisTemplate redisTemplate;
 
     @DubboReference
@@ -93,7 +94,7 @@ public class ChatComponent {
     public void putChat(ImChatDto imChat, String traceId) {
         String chatIndexKey = RedisKeyUtils.chatIndexKey(String.valueOf(imChat.getUserId()));
         logger.info("putChat key: {}, traceId: {}", chatIndexKey, traceId);
-        redisTemplate.opsForHash().put(chatIndexKey, imChat.getChatId(), imChat);
+        redisTemplate.opsForHash().put(chatIndexKey, imChat.getChatId().toString(), imChat);
     }
 
     public List<ImChatDto> getAllChat(String userId, String traceId) {

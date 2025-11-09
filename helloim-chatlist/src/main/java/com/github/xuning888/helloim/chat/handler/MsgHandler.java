@@ -84,11 +84,11 @@ public class MsgHandler implements Runnable {
         }
         ChatMessageDto chatMessage = MessageConvert.buildC2CChatMessage(msgContext, c2cSendRequest);
         // 更新会话的最后一条消息
-        chatMessageComponent.updateLastChatMessage(String.valueOf(msgFrom), chatMessage, traceId);
-        chatMessageComponent.updateLastChatMessage(String.valueOf(msgTo), chatMessage, traceId);
+        chatMessageComponent.updateLastChatMessage(String.valueOf(msgFrom), String.valueOf(msgTo), chatMessage, traceId);
+        chatMessageComponent.updateLastChatMessage(String.valueOf(msgTo), String.valueOf(msgFrom), chatMessage, traceId);
 
         // 构建会话缓存
-        chatService.createOrActivateChat(msgFrom, msgFrom, ChatType.C2C, traceId);
+        chatService.createOrActivateChat(msgFrom, msgTo, ChatType.C2C, traceId);
         chatService.createOrActivateChat(msgTo, msgFrom, ChatType.C2C, traceId);
     }
 }

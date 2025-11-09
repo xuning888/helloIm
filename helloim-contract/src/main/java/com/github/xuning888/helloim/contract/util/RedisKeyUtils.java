@@ -37,7 +37,7 @@ public class RedisKeyUtils {
      * 会话索引的key
      */
     public static String chatIndexKey(String userId) {
-        return RedisConstant.CHAT_INDEX_KEY_PREFIX + "_" + userId;
+        return RedisConstant.CHAT_INDEX_KEY_PREFIX + userId;
     }
 
     public static String c2cLastMessageKey(String msgFrom) {

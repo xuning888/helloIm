@@ -38,11 +38,11 @@ public class ChatMessageComponent {
     private MsgStoreService msgStoreService;
 
 
-    public void updateLastChatMessage(String userId, ChatMessageDto chatMessageDto, String traceId) {
+    public void updateLastChatMessage(String userId, String chatId, ChatMessageDto chatMessageDto, String traceId) {
         Integer chatType = chatMessageDto.getChatType();
         try {
             if (ChatType.C2C.match(chatType)) {
-                updateC2cLastMessage(userId, chatMessageDto, traceId);
+                updateC2cLastMessage(userId, chatId, chatMessageDto, traceId);
             } else if (ChatType.C2G.match(chatType)) {
                 updateC2gLastMessage(chatMessageDto, traceId);
             } else {
@@ -63,7 +63,7 @@ public class ChatMessageComponent {
             // 有可能查询不到
             return null;
         }
-        updateLastChatMessage(userId, chatMessageDto, traceId);
+        updateLastChatMessage(userId, chatId, chatMessageDto, traceId);
         return chatMessageDto;
     }
 
@@ -137,7 +137,7 @@ public class ChatMessageComponent {
             chatMessageDto = this.msgStoreService.lastMessage(userId, chatId, chatType, traceId);
             if (chatMessageDto != null) {
                 result.put(chatMessageDto.getChatIdStr(), chatMessageDto);
-                this.updateLastChatMessage(userId, chatMessageDto, traceId);
+                this.updateLastChatMessage(userId, chatId, chatMessageDto, traceId);
             }
         }
         return result;
@@ -145,27 +145,28 @@ public class ChatMessageComponent {
 
     private ChatMessageDto getLastMessageFromCache(String userId, String chatId, Integer chatType, String traceId) {
         Object value = null;
+        String key = null;
         if (ChatType.C2C.match(chatType)) {
-            String key = RedisKeyUtils.c2cLastMessageKey(userId);
+            key = RedisKeyUtils.c2cLastMessageKey(userId);
             value = this.redisTemplate.opsForHash().get(key, chatId);
         } else if (ChatType.C2G.match(chatType)) {
-            String key = RedisKeyUtils.c2gLastMessageKey(Long.parseLong(chatId));
+            key = RedisKeyUtils.c2gLastMessageKey(Long.parseLong(chatId));
             value = this.redisTemplate.opsForHash().get(key, chatId);
         } else {
             logger.error("getLastMessage, 未知的会话类型， userId: {}, chatId: {}, chatType: {}, traceId: {}", userId, chatId, chatType, traceId);
             throw new IllegalArgumentException("未知的会话类型: " + chatType);
         }
         if (value == null) {
-            logger.warn("getLastMessage value is null, traceId: {}", traceId);
+            logger.warn("getLastMessage value is null, key: {}, traceId: {}", key, traceId);
             return null;
         }
         return (ChatMessageDto) value;
     }
 
-    private void updateC2cLastMessage(String userId, ChatMessageDto chatMessageDto, String traceId) {
+    private void updateC2cLastMessage(String userId, String toUserId, ChatMessageDto chatMessageDto, String traceId) {
         String key = RedisKeyUtils.c2cLastMessageKey(userId);
         logger.info("updateC2cLastMessage key: {}, traceId: {}", key, traceId);
-        this.redisTemplate.opsForHash().put(key, chatMessageDto.getMsgToStr(), chatMessageDto);
+        this.redisTemplate.opsForHash().put(key, toUserId, chatMessageDto);
     }
 
     private void updateC2gLastMessage(ChatMessageDto chatMessageDto, String traceId) {
