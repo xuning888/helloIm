@@ -23,7 +23,7 @@ public class RedisKeyUtils {
         if (ChatType.C2C.equals(chatType)) {
             List<String> list = Arrays.asList(from, to);
             list.sort(String::compareTo);
-            return RedisConstant.SERVER_SEQ_KEY_PREFIX + String.join("_", list) + chatType;
+            return RedisConstant.SERVER_SEQ_KEY_PREFIX + String.join("_", list) + "_" + chatType;
         } else if (ChatType.C2G.equals(chatType)) {
             return RedisConstant.SERVER_SEQ_KEY_PREFIX + to + "_" + chatType;
         } else {
