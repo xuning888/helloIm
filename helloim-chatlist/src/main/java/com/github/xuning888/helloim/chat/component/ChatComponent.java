@@ -141,7 +141,7 @@ public class ChatComponent {
         if (CollectionUtils.isEmpty(imChats)) {
             return Collections.emptyList();
         }
-        List<ImChatDto> imChatDtos = new ArrayList<>();
+        List<ImChatDto> imChatDtos = new ArrayList<>(imChats.size());
         for (ImChat imChat : imChats) {
             ImChatDto imChatDto = ChatConvert.convertToimChatDto(imChat);
             imChatDtos.add(imChatDto);
@@ -164,7 +164,6 @@ public class ChatComponent {
             if (this.updateChatDto(imChatDto, lastMessage)) {
                 updated.add(imChatDto);
             }
-            updated.add(imChatDto);
         }
         batchUpdateChat(updated, traceId);
     }
