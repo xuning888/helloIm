@@ -1,8 +1,8 @@
 package com.github.xuning888.helloim.contract.api.service;
 
 import com.github.xuning888.helloim.contract.contant.ChatType;
+import com.github.xuning888.helloim.contract.dto.ChatMessageDto;
 import com.github.xuning888.helloim.contract.dto.ImChatDto;
-import com.github.xuning888.helloim.contract.entity.ImChat;
 
 import java.util.List;
 
@@ -25,4 +25,9 @@ public interface ChatService {
      * 拉去所有的会话
      */
     List<ImChatDto> getALlChat(Long userId, String traceId);
+
+    /**
+     * 获取会话最后一条消息
+     */
+    ChatMessageDto lastMessage(String userId, String chatId, Integer chatType, String traceId);
 }

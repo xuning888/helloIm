@@ -1,6 +1,7 @@
 package com.github.xuning888.helloim.webapi.controller;
 
 import com.github.xuning888.helloim.contract.api.service.ChatService;
+import com.github.xuning888.helloim.contract.dto.ChatMessageDto;
 import com.github.xuning888.helloim.contract.dto.ImChatDto;
 import com.github.xuning888.helloim.contract.dto.RestResult;
 import com.github.xuning888.helloim.contract.util.RestResultUtils;
@@ -34,5 +35,14 @@ public class ChatController {
         logger.info("/chat/getAllChat, userId: {}, traceId: {}", userId, traceId);
         List<ImChatDto> aLlChat = this.chatService.getALlChat(Long.parseLong(userId), traceId);
         return RestResultUtils.success(aLlChat);
+    }
+
+    @GetMapping("/lastMessage")
+    public RestResult<Object> lastMessage(@RequestParam("userId") String userId,
+                                          @RequestParam("chatId") String chatId,
+                                          @RequestParam("chatType") Integer chatType) {
+        String traceId = UUID.randomUUID().toString();
+        ChatMessageDto chatMessageDto = chatService.lastMessage(userId, chatId, chatType, traceId);
+        return RestResultUtils.success(chatMessageDto);
     }
 }

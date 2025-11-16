@@ -1,6 +1,7 @@
 package com.github.xuning888.helloim.chat.service;
 
 import com.github.xuning888.helloim.chat.component.ChatComponent;
+import com.github.xuning888.helloim.chat.component.ChatMessageComponent;
 import com.github.xuning888.helloim.chat.utils.ServerSeqUtils;
 import com.github.xuning888.helloim.contract.api.service.ChatService;
 import com.github.xuning888.helloim.contract.api.service.ChatStoreService;
@@ -8,6 +9,7 @@ import com.github.xuning888.helloim.contract.api.service.MsgStoreService;
 import com.github.xuning888.helloim.contract.contant.ChatType;
 import com.github.xuning888.helloim.contract.contant.CommonConstant;
 import com.github.xuning888.helloim.contract.convert.ChatConvert;
+import com.github.xuning888.helloim.contract.dto.ChatMessageDto;
 import com.github.xuning888.helloim.contract.dto.ImChatDto;
 import com.github.xuning888.helloim.contract.entity.ImChat;
 import com.github.xuning888.helloim.contract.util.RedisKeyUtils;
@@ -41,6 +43,9 @@ public class ChatServiceImpl implements ChatService {
 
     @Resource
     private ChatComponent chatComponent;
+
+    @Resource
+    private ChatMessageComponent chatMessageComponent;
 
     @Override
     public Long serverSeq(String from, String to, ChatType chatType, String traceId) {
@@ -93,6 +98,12 @@ public class ChatServiceImpl implements ChatService {
     public List<ImChatDto> getALlChat(Long userId, String traceId) {
         return chatComponent.getAllChat(String.valueOf(userId), traceId);
     }
+
+    @Override
+    public ChatMessageDto lastMessage(String userId, String chatId, Integer chatType, String traceId) {
+        return chatMessageComponent.getLastMessage(userId, chatId, chatType, traceId);
+    }
+
 
     private ImChatDto createChat(Long userId, Long chatId, ChatType chatType, String traceId) {
         ImChatDto imChatDto = chatComponent.createImChatDto(userId, chatId, chatType.getType(), traceId);
