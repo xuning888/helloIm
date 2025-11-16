@@ -79,9 +79,9 @@ public class ChatMessageComponent {
             Integer chatType = entry.getKey();
             List<ImChatDto> imChatDtos = entry.getValue();
             if (ChatType.C2C.match(chatType)) {
-                String key = RedisKeyUtils.c2cLastMessageKey(userId);
-                List<String> chatIds = imChatDtos.stream().map(item -> String.valueOf(item.getChatId())).collect(Collectors.toList());
-                List<ChatMessageDto> list = (List<ChatMessageDto>) hashOperations.multiGet(key, chatIds);
+                List<String> chatIds = imChatDtos.stream().map(item -> item.getChatId().toString()).collect(Collectors.toList());
+                List<String> keys = chatIds.stream().map(item -> RedisKeyUtils.c2cLastMessageKey(userId, item)).collect(Collectors.toList());
+                List<ChatMessageDto> list = redisTemplate.opsForValue().multiGet(keys);
                 if (CollectionUtils.isEmpty(list)) {
                     for (String chatId : chatIds) {
                         String chatKey = ChatUtils.chatKey(chatId, chatType);
@@ -147,8 +147,8 @@ public class ChatMessageComponent {
         Object value = null;
         String key = null;
         if (ChatType.C2C.match(chatType)) {
-            key = RedisKeyUtils.c2cLastMessageKey(userId);
-            value = this.redisTemplate.opsForHash().get(key, chatId);
+            key = RedisKeyUtils.c2cLastMessageKey(userId, chatId);
+            value = this.redisTemplate.opsForValue().get(key);
         } else if (ChatType.C2G.match(chatType)) {
             key = RedisKeyUtils.c2gLastMessageKey(Long.parseLong(chatId));
             value = this.redisTemplate.opsForHash().get(key, chatId);
@@ -164,14 +164,18 @@ public class ChatMessageComponent {
     }
 
     private void updateC2cLastMessage(String userId, String toUserId, ChatMessageDto chatMessageDto, String traceId) {
-        String key = RedisKeyUtils.c2cLastMessageKey(userId);
-        logger.info("updateC2cLastMessage key: {}, traceId: {}", key, traceId);
-        this.redisTemplate.opsForHash().put(key, toUserId, chatMessageDto);
+        String key = RedisKeyUtils.c2cLastMessageKey(userId, toUserId);
+        Long msgId = chatMessageDto.getMsgId();
+        Long serverSeq = chatMessageDto.getServerSeq();
+        logger.info("updateC2cLastMessage key: {}, msgId: {}, serverSeq: {}, traceId: {}", key, msgId, serverSeq, traceId);
+        this.redisTemplate.opsForValue().set(key, chatMessageDto);
     }
 
     private void updateC2gLastMessage(ChatMessageDto chatMessageDto, String traceId) {
         String key = RedisKeyUtils.c2gLastMessageKey(chatMessageDto.getGroupId());
-        logger.info("updateC2gLastMessage key: {}, traceId: {}", key, traceId);
+        Long msgId = chatMessageDto.getMsgId();
+        Long serverSeq = chatMessageDto.getServerSeq();
+        logger.info("updateC2gLastMessage key: {}, msgId: {}, serverSeq: {} traceId: {}", key, msgId, serverSeq, traceId);
         this.redisTemplate.opsForHash().put(key, chatMessageDto.getGroupIdStr(), chatMessageDto);
     }
 }

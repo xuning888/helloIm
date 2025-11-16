@@ -40,8 +40,10 @@ public class RedisKeyUtils {
         return RedisConstant.CHAT_INDEX_KEY_PREFIX + userId;
     }
 
-    public static String c2cLastMessageKey(String msgFrom) {
-        return RedisConstant.C2C_LAST_MESSAGE_KEY_PREFIX + msgFrom;
+    public static String c2cLastMessageKey(String msgFrom, String msgTo) {
+        List<String> list = Arrays.asList(msgFrom, msgTo);
+        list.sort(String::compareTo);
+        return RedisConstant.C2C_LAST_MESSAGE_KEY_PREFIX + list.get(0) + "_" + list.get(1);
     }
 
     public static String c2gLastMessageKey(Long groupId) {
