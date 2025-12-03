@@ -37,6 +37,15 @@ public class ChatController {
         return RestResultUtils.success(aLlChat);
     }
 
+    @GetMapping("/getChat")
+    public RestResult<Object> getChat(@RequestParam("userId") String userId,
+                                      @RequestParam("chatId") String chatId) {
+        String traceId = UUID.randomUUID().toString();
+        logger.info("/chat/getChat, userId: {}, chatId: {} traceId: {}", userId, chatId, traceId);
+        ImChatDto imChatDto = this.chatService.getChat(Long.parseLong(userId), Long.parseLong(chatId), traceId);
+        return RestResultUtils.success(imChatDto);
+    }
+
     @GetMapping("/lastMessage")
     public RestResult<Object> lastMessage(@RequestParam("userId") String userId,
                                           @RequestParam("chatId") String chatId,

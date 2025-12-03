@@ -21,21 +21,6 @@
     role, mute_status, del_status, created_at, updated_at
   </sql>
 
-  <insert id="insert" parameterType="com.github.xuning888.helloim.contract.entity.ImGroupUser">
-    <selectKey keyProperty="groupId" order="AFTER" resultType="java.lang.Long">
-      SELECT LAST_INSERT_ID()
-    </selectKey>
-    insert into im_group_user (user_id, user_type, group_name, 
-      group_icon, nick_name, join_time, 
-      exit_time, role, mute_status, 
-      del_status, created_at, updated_at
-      )
-    values (#{userId,jdbcType=BIGINT}, #{userType,jdbcType=INTEGER}, #{groupName,jdbcType=VARCHAR}, 
-      #{groupIcon,jdbcType=VARCHAR}, #{nickName,jdbcType=VARCHAR}, #{joinTime,jdbcType=TIMESTAMP}, 
-      #{exitTime,jdbcType=TIMESTAMP}, #{role,jdbcType=INTEGER}, #{muteStatus,jdbcType=INTEGER}, 
-      #{delStatus,jdbcType=TINYINT}, #{createdAt,jdbcType=TIMESTAMP}, #{updatedAt,jdbcType=TIMESTAMP}
-      )
-  </insert>
   <insert id="insertSelective" parameterType="com.github.xuning888.helloim.contract.entity.ImGroupUser">
     <selectKey keyProperty="groupId" order="AFTER" resultType="java.lang.Long">
       SELECT LAST_INSERT_ID()
@@ -172,4 +157,10 @@
       and user_id = #{userId,jdbcType=BIGINT}
       and user_type = #{userType,jdbcType=INTEGER}
   </update>
+
+    <select id="selectJoinGroupTime" resultType="java.util.Date">
+        select join_time
+        from im_group_user
+        where group_id = #{groupId} and user_id = #{userId}
+    </select>
 </mapper>

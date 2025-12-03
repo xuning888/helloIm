@@ -8,6 +8,12 @@ spring:
     name: helloim-message
   redis:
     host: ${REDIS_ADDR:127.0.0.1}
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    username: root
+    password: root
+    url: jdbc:mysql://127.0.0.1:3306/helloim0?useSSL=false&useUnicode=true&characterEncoding=utf-8&allowMultiQueries=true&autoReconnect=true
+    type: com.zaxxer.hikari.HikariDataSource
 dubbo:
   application:
     name: helloim-message
@@ -26,6 +32,10 @@ dubbo:
     threadpool: fixed
     threads: 200
     port: 28805
+
+
+mybatis:
+  mapper-locations: classpath:mapper/*.xml
 
 im:
   kafka:

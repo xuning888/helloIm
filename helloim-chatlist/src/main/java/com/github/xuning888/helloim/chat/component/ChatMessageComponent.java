@@ -127,6 +127,7 @@ public class ChatMessageComponent {
             ChatMessageDto chatMessageDto = chatMessageMap.get(chatKey);
             if (chatMessageDto != null) {
                 result.put(chatMessageDto.getChatIdStr(), chatMessageDto);
+                continue;
             }
             Pair<String, Integer> subInfo = ChatUtils.getSubInfo(chatKey);
             if (subInfo == null) {

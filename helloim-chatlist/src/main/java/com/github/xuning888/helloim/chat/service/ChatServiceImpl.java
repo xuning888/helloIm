@@ -104,6 +104,17 @@ public class ChatServiceImpl implements ChatService {
         return chatMessageComponent.getLastMessage(userId, chatId, chatType, traceId);
     }
 
+    @Override
+    public ImChatDto getChat(Long userId, Long chatId, String traceId) {
+        logger.info("getChat userId: {}, chatId: {}, traceId: {}", userId, chatId, traceId);
+        ImChatDto imChatDto = chatComponent.getChat(String.valueOf(userId), String.valueOf(chatId), traceId);
+        if (imChatDto == null) {
+            logger.info("getChat result is null, traceId: {}", traceId);
+            return null;
+        }
+        return imChatDto;
+    }
+
 
     private ImChatDto createChat(Long userId, Long chatId, ChatType chatType, String traceId) {
         ImChatDto imChatDto = chatComponent.createImChatDto(userId, chatId, chatType.getType(), traceId);

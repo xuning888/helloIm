@@ -30,4 +30,9 @@ public interface ChatService {
      * 获取会话最后一条消息
      */
     ChatMessageDto lastMessage(String userId, String chatId, Integer chatType, String traceId);
+
+    /**
+     * 获取会话
+     */
+    ImChatDto getChat(Long userId, Long chatId, String traceId);
 }

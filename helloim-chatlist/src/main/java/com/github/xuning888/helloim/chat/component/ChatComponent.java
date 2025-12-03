@@ -73,7 +73,11 @@ public class ChatComponent {
         return imChatDto;
     }
 
-
+    /**
+     * 获取会话
+     * 1. 并根据会话的最后一条消息更新会话版本
+     * 2. 如果会话版本发生变化, 更新缓存, 然后异步更新数据库
+     */
     public ImChatDto getChat(String userId, String chatId, String traceId) {
         String chatIndexKey = RedisKeyUtils.chatIndexKey(userId);
         Object value = redisTemplate.opsForHash().get(chatIndexKey, chatId);
@@ -98,8 +102,10 @@ public class ChatComponent {
     }
 
     public List<ImChatDto> getAllChat(String userId, String traceId) {
+        logger.info("getAllChat userId: {}, traceId: {}", userId, traceId);
         List<ImChatDto> imChatDtos = this.getAllChatFromRedis(userId, traceId);
         if (CollectionUtils.isEmpty(imChatDtos)) {
+            logger.info("getAllChat getFromCache is empty traceId: {}", traceId);
             // 从DB查询全量会话
             imChatDtos = getAlLChatFromDB(userId, traceId);
         }
@@ -168,6 +174,9 @@ public class ChatComponent {
         batchUpdateChat(updated, traceId);
     }
 
+    /**
+     * 批量更新缓存, 批量异步更新DB
+     */
     private void batchUpdateChat(Set<ImChatDto> updated, String traceId) {
         if (CollectionUtils.isEmpty(updated)) {
             return;
@@ -210,6 +219,9 @@ public class ChatComponent {
         });
     }
 
+    /**
+     * 更新会话的最后一条消息, 更新会话版本
+     */
     private boolean updateChatDto(ImChatDto imChatDto, ChatMessageDto lastMessage) {
         boolean updated = false;
         if (imChatDto == null || lastMessage == null) {
