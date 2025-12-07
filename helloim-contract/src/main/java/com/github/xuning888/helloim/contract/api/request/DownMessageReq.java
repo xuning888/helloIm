@@ -14,6 +14,8 @@ public class DownMessageReq implements Serializable {
 
     private Frame frame;
 
+    private boolean needAck;
+
     private List<GateUser> users;
 
     private String traceId;
@@ -21,7 +23,12 @@ public class DownMessageReq implements Serializable {
     public DownMessageReq() {}
 
     public DownMessageReq(Frame frame, List<GateUser> users, String traceId) {
+        this(frame, false, users, traceId);
+    }
+
+    public DownMessageReq(Frame frame, boolean needAck, List<GateUser> users, String traceId) {
         this.frame = frame;
+        this.needAck = needAck;
         this.users = users;
         this.traceId = traceId;
     }
@@ -50,10 +57,18 @@ public class DownMessageReq implements Serializable {
         this.traceId = traceId;
     }
 
+    public boolean getNeedAck() {
+        return needAck;
+    }
+
+    public void setNeedAck(boolean needAck) {
+        this.needAck = needAck;
+    }
+
     @Override
     public String toString() {
         return "DownMessageReq{" +
-                "frame=" + frame +
+                ", needAck=" + needAck +
                 ", users=" + users +
                 ", traceId='" + traceId + '\'' +
                 '}';

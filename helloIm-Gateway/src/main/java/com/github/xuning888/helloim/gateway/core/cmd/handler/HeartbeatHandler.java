@@ -2,6 +2,7 @@ package com.github.xuning888.helloim.gateway.core.cmd.handler;
 
 import com.github.xuning888.helloim.gateway.core.cmd.CmdEvent;
 import com.github.xuning888.helloim.gateway.core.cmd.CmdHandler;
+import com.github.xuning888.helloim.gateway.core.conn.Conn;
 import com.github.xuning888.helloim.gateway.core.session.Session;
 import com.github.xuning888.helloim.gateway.core.session.SessionManager;
 import com.github.xuning888.helloim.gateway.utils.CommonUtils;
@@ -31,8 +32,11 @@ public class HeartbeatHandler implements CmdHandler {
         if (session == null) {
             // 长连接不合法
             CommonUtils.writeEmpty(cmdEvent);
+            Conn conn = cmdEvent.getConn();
             // 关闭长连接
-            cmdEvent.getConn().close();
+            conn.close();
+            // 清理下行待ACK的消息
+            conn.clearInFlightMessage();
             logger.error("HeartbeatHandler session not found, sessionId: {}, traceId: {}", sessionId, cmdEvent.getTraceId());
             return;
         }

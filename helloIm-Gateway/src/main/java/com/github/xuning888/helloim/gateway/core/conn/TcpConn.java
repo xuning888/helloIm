@@ -11,29 +11,13 @@ import org.jboss.netty.channel.ChannelFuture;
  * @author xuning
  * @date 2025/8/10 23:29
  */
-public class TcpConn implements Conn {
+public class TcpConn extends AbstractConn {
 
     private final Channel channel;
 
-    private final String id;
-
-    private final MsgPipeline msgPipeline;
-
     public TcpConn(Channel channel, MsgPipeline msgPipeline) {
+        super(channel, msgPipeline);
         this.channel = channel;
-        this.id = String.valueOf(channel.getId());
-        this.msgPipeline = msgPipeline;
-    }
-
-
-    @Override
-    public String getId() {
-        return id;
-    }
-
-    @Override
-    public Channel channel() {
-        return channel;
     }
 
     @Override
@@ -53,10 +37,5 @@ public class TcpConn implements Conn {
         ChannelBuffer channelBuffer = ChannelBuffers.wrappedBuffer(byteArray);
         ChannelFuture future = channel.write(channelBuffer);
         future.syncUninterruptibly();
-    }
-
-    @Override
-    public MsgPipeline getMsgPipeline() {
-        return msgPipeline;
     }
 }

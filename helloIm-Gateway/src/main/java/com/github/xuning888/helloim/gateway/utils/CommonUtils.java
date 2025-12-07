@@ -16,6 +16,6 @@ public class CommonUtils {
         Header copy = header.copy();
         copy.setBodyLength(0);
         Frame response = new Frame(copy, new byte[0]);
-        cmdEvent.getConn().write(response, cmdEvent.getTraceId());
+        cmdEvent.getConn().writeMessage(response, false, cmdEvent.getTraceId());
     }
 }

@@ -41,7 +41,8 @@ public class C2cPushRequestHandler implements MsgDeliverHandler {
             Endpoint endpoint = imSession.getEndpoint();
             logger.info("handle message, session: {}, toUser: {}, traceId: {}, kTraceId: {}", imSession, gateUser,
                     msgContext.getTraceId(), kTraceId);
-            GatewayUtils.pushMessage(msgContext.getFrame(), gateUser, endpoint, msgContext.getTraceId());
+            // 单聊下行消息, 需要客户端给返回ACK
+            GatewayUtils.pushMessageNeedAck(msgContext.getFrame(), gateUser, endpoint, msgContext.getTraceId());
         }
     }
 

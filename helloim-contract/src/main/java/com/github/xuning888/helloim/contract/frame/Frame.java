@@ -80,5 +80,12 @@ public class Frame implements Serializable {
                 '}';
     }
 
-
+    /**
+     * 在一个conn上可以表示一个唯一的msg
+     */
+    public String key() {
+        int seq = header.getSeq();
+        int cmdId = header.getCmdId();
+        return String.format("%d_%d", seq, cmdId);
+    }
 }

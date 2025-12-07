@@ -48,7 +48,7 @@ public class AuthHandler implements CmdHandler {
             sessionManager.putSession(session, cmdEvent.getTraceId());
             // 构造auth的Response
             Frame response = buildAuthResponse(cmdEvent.getFrame(), authResponse.getGateUser());
-            DownCmdEvent downCmdEvent = new DownCmdEvent(response, cmdEvent.getConn(), cmdEvent.getTraceId());
+            DownCmdEvent downCmdEvent = new DownCmdEvent(response, cmdEvent.getConn(), false, cmdEvent.getTraceId());
             // 发送下行消息
             cmdEvent.getConn().getMsgPipeline().sendDown(downCmdEvent);
         } else {

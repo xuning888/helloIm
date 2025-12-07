@@ -30,7 +30,7 @@ public class DownMsgServiceImpl implements DownMsgService {
 
     @Override
     public void pushMessage(DownMessageReq req) {
-        logger.info("pushMessage req: {}", req);
+        logger.debug("pushMessage req: {}", req);
         Frame frame = req.getFrame();
         byte[] body = frame.getBody();
         C2cMessage.C2cSendResponse c2cSendResponse = null;
@@ -40,13 +40,14 @@ public class DownMsgServiceImpl implements DownMsgService {
             logger.error("error traceId: {}", req.getTraceId(), ex);
             return;
         }
-        logger.info("pushMessage: {}, seq: {}", c2cSendResponse, frame.getHeader().getSeq());
+        boolean needAck = req.getNeedAck();
+        logger.debug("pushMessage: {}, seq: {}, needAck: {},", c2cSendResponse, frame.getHeader().getSeq(), needAck);
         for (GateUser user : req.getUsers()) {
-            sendMessage(frame, user, req.getTraceId());
+            sendMessage(frame, user,  needAck, req.getTraceId());
         }
     }
 
-    private void sendMessage(Frame frame, GateUser user, String traceId) {
+    private void sendMessage(Frame frame, GateUser user, boolean needAck, String traceId) {
         if (user == null) {
             logger.error("pushMessage user is null, traceId: {}", traceId);
             return;
@@ -62,6 +63,6 @@ public class DownMsgServiceImpl implements DownMsgService {
             return;
         }
         // 投递下行事件
-        session.getConn().getMsgPipeline().sendDown(new DownCmdEvent(frame, session.getConn(), traceId));
+        session.getConn().getMsgPipeline().sendDown(new DownCmdEvent(frame, session.getConn(), needAck, traceId));
     }
 }

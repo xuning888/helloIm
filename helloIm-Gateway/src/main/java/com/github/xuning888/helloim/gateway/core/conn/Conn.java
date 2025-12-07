@@ -36,11 +36,19 @@ public interface Conn {
     void close();
 
     /**
-     * 写出数据到peer
-     * @param frame 数据帧
-     * @param traceId traceId
+     * ack
      */
-    void write(Frame frame, String traceId);
+    void ack(Frame frame);
+
+    /**
+     * 清理待ack的消息
+     */
+    void clearInFlightMessage();
+
+    /**
+     * 写出数据到peer, 并标记下行消息是否需要ACK
+     */
+    void writeMessage(Frame frame, boolean needAck, String traceId);
 
     /**
      * 获取channel关联的pipeline

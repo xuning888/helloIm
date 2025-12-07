@@ -64,6 +64,17 @@ public class GatewayUtils {
         downMsgService.pushMessage(downMessageReq);
     }
 
+    public static void pushMessageNeedAck(Frame frame, GateUser gateUser, Endpoint endpoint, String traceId) {
+        String appName = ApplicationModel.getApplicationConfig().getName();
+        DownMsgService downMsgService = DubboUtils.downMsgService(appName, endpoint, traceId);
+        if (downMsgService == null) {
+            logger.error("pushMessageNeedAck error, downMsgService is null, traceId: {}", traceId);
+            return;
+        }
+        DownMessageReq downMessageReq = new DownMessageReq(frame, true, Collections.singletonList(gateUser), traceId);
+        downMsgService.pushMessage(downMessageReq);
+    }
+
     public static void batchPushMessage(Frame frame, List<GateUser> users, Endpoint endpoint, String traceId){
         String appName = ApplicationModel.getApplicationConfig().getName();
         DownMsgService downMsgService = DubboUtils.downMsgService(appName, endpoint, traceId);
