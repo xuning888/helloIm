@@ -17,7 +17,7 @@ docker tag  swr.cn-north-4.myhuaweicloud.com/ddn-k8s/docker.io/bitnami/kafka:2.8
 ```
 第二步:
 
-使用任意一个可以连接mysql的工具，连接一下刚才启动的mysql服务，因为事先连接下，store服务就连不上它，我也不知道为啥，懒得探究。
+使用任意一个可以连接mysql的工具，连接一下刚才启动的mysql服务，因为得事先连接下，不然store服务就连不上它，我也不知道为啥，懒得探究。
 username: root, password: root
 
 第三步:
