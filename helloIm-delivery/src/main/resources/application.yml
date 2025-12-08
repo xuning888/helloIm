@@ -25,7 +25,7 @@ dubbo:
     name: tri
     threadpool: fixed
     threads: 200
-    port: 28806
+    port: 28809
 
 im:
   kafka:
