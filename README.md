@@ -37,6 +37,7 @@ username: root, password: root
 
 跳转到[helloImCli](https://github.com/xuning888/helloIMClient), 按照readme安装cli和启动它。
 
-然后你就有一个可以消遣的玩具:
+然后就看到如下图所示的TUI:
+目前只实现了的单聊和会话管理
 ![截图](./docs/img/show.png)
 
