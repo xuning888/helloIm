@@ -3,8 +3,8 @@ package com.github.xuning888.helloim.gateway.core.conn;
 
 import com.github.xuning888.helloim.contract.frame.Frame;
 import com.github.xuning888.helloim.gateway.core.pipeline.MsgPipeline;
+import com.github.xuning888.helloim.gateway.utils.TimeWheelUtils;
 import org.jboss.netty.channel.Channel;
-import org.jboss.netty.util.HashedWheelTimer;
 import org.jboss.netty.util.Timeout;
 import org.jboss.netty.util.TimerTask;
 import org.slf4j.Logger;
@@ -35,15 +35,12 @@ public abstract class AbstractConn implements Conn {
 
     private final String id;
 
-    private final HashedWheelTimer hashedWheelTimer;
-
     private final ConcurrentMap<String, InFlightMessage> inFlightMessages = new ConcurrentHashMap<>();
 
     public AbstractConn(Channel channel, MsgPipeline msgPipeline) {
         this.channel = channel;
         this.msgPipeline = msgPipeline;
         this.id = String.valueOf(channel.getId());
-        this.hashedWheelTimer = new HashedWheelTimer();
     }
 
     @Override
@@ -96,7 +93,7 @@ public abstract class AbstractConn implements Conn {
         }
         int retryTimes = 1;
         MessageTask messageTask = new MessageTask(frame, traceId, retryTimes);
-        Timeout timeout = this.hashedWheelTimer.newTimeout(messageTask, delayMills, TimeUnit.MILLISECONDS);
+        Timeout timeout = TimeWheelUtils.addTask(messageTask, delayMills, TimeUnit.MILLISECONDS);
         InFlightMessage inFlightMessage = new InFlightMessage(frame, traceId, retryTimes, timeout);
         inFlightMessages.put(key, inFlightMessage);
     }
@@ -111,7 +108,7 @@ public abstract class AbstractConn implements Conn {
         }
         retryTimes++;
         MessageTask messageTask = new MessageTask(frame, traceId, retryTimes);
-        Timeout timeout = this.hashedWheelTimer.newTimeout(messageTask, delayMills * 10, TimeUnit.MILLISECONDS);
+        Timeout timeout = TimeWheelUtils.addTask(messageTask, delayMills * 10, TimeUnit.MILLISECONDS);
         String key = frame.key();
         InFlightMessage inFlightMessage = new InFlightMessage(frame, traceId, retryTimes, timeout);
         inFlightMessages.put(key, inFlightMessage);
