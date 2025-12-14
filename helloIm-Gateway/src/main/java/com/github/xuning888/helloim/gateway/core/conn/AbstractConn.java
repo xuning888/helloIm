@@ -67,9 +67,9 @@ public abstract class AbstractConn implements Conn {
     }
 
     @Override
-    public void ack(Frame frame) {
+    public boolean ack(Frame frame) {
         String key = frame.key();
-        removeInFlight(key);
+        return removeInFlight(key);
     }
 
     @Override
@@ -87,6 +87,7 @@ public abstract class AbstractConn implements Conn {
 
     private void appendMessage(Frame frame, String traceId) {
         String key = frame.key();
+        logger.info("appendMessage, key: {}", key);
         if (inFlightMessages.containsKey(key)) {
             logger.warn("Duplicate message, key: {}, connId: {}, traceId: {}", key, id, traceId);
             return;
@@ -114,11 +115,13 @@ public abstract class AbstractConn implements Conn {
         inFlightMessages.put(key, inFlightMessage);
     }
 
-    private void removeInFlight(String key) {
+    private boolean removeInFlight(String key) {
         InFlightMessage inFlightMessage = inFlightMessages.remove(key);
         if (inFlightMessage != null) {
             inFlightMessage.timeout.cancel();
+            return true;
         }
+        return false;
     }
 
 

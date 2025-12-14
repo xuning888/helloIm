@@ -38,7 +38,7 @@ public interface Conn {
     /**
      * ack
      */
-    void ack(Frame frame);
+    boolean ack(Frame frame);
 
     /**
      * 清理待ack的消息

@@ -12,6 +12,7 @@ import com.github.xuning888.helloim.contract.frame.Frame;
 import com.github.xuning888.helloim.contract.meta.Endpoint;
 import com.github.xuning888.helloim.contract.meta.GateUser;
 import com.github.xuning888.helloim.contract.meta.ImSession;
+import com.github.xuning888.helloim.contract.protobuf.MsgCmd;
 import com.github.xuning888.helloim.contract.util.GatewayUtils;
 import com.github.xuning888.helloim.contract.util.IdGenerator;
 import com.github.xuning888.helloim.dispatch.util.UpMessageUtils;
@@ -67,30 +68,33 @@ public class UpMessageServiceImpl implements UpMsgService {
         GateUser gateUser = req.getGateUser();
         logger.info("sendMessage user: {}, cmdId: {}, frameSize: {}, traceId: {}", gateUser, cmdId,
                 frame.getHeader().getBodyLength(), traceId);
+        if (
+                cmdId == MsgCmd.CmdId.CMD_ID_C2CSEND_VALUE // 单聊上行
+        ) {
+            MsgContext msgContext = new MsgContext();
+            msgContext.setTraceId(traceId); // 设置traceId
+            msgContext.setMsgFrom(String.valueOf(gateUser.getUid())); // 消息发送者
+            msgContext.setFromUserType(gateUser.getUserType()); // 消息发送者到用户类型
+            msgContext.setEndpoint(endpoint); // 消息来自哪个网关机
+            msgContext.setSessionId(gateUser.getSessionId());
+            msgContext.setFrame(frame); // 数据帧
 
-        MsgContext msgContext = new MsgContext();
-        msgContext.setTraceId(traceId); // 设置traceId
-        msgContext.setMsgFrom(String.valueOf(gateUser.getUid())); // 消息发送者
-        msgContext.setFromUserType(gateUser.getUserType()); // 消息发送者到用户类型
-        msgContext.setEndpoint(endpoint); // 消息来自哪个网关机
-        msgContext.setSessionId(gateUser.getSessionId());
-        msgContext.setFrame(frame); // 数据帧
+            // 分配并设置消息ID
+            Long msgId = getMsgId(msgContext);
+            msgContext.setMsgId(msgId);
 
-        // 分配并设置消息ID
-        Long msgId = getMsgId(msgContext);
-        msgContext.setMsgId(msgId);
+            // 判断消息是否重复
+            if (UpMessageUtils.isDuplicate(redisTemplate, msgContext)) {
+                logger.warn("sendMessage 上行消息重推, from: {}, cmdId: {}, seq: {}, traceId: {}", gateUser, cmdId,
+                        frame.getHeader().getSeq(), traceId);
+                // 客户端重推消息，回复ACK
+                GatewayUtils.pushResponse(msgContext, endpoint, traceId);
+                return;
+            }
 
-        // 判断消息是否重复
-        if (UpMessageUtils.isDuplicate(redisTemplate, msgContext)) {
-            logger.warn("sendMessage 上行消息重推, from: {}, cmdId: {}, seq: {}, traceId: {}", gateUser, cmdId,
-                    frame.getHeader().getSeq(), traceId);
-            // 客户端重推消息，回复ACK
-            GatewayUtils.pushResponse(msgContext, endpoint, traceId);
-            return;
+            // 分发消息
+            dispatchService.dispatch(msgContext, traceId);
         }
-
-        // 分发消息
-        dispatchService.dispatch(msgContext, traceId);
     }
 
     @Override
