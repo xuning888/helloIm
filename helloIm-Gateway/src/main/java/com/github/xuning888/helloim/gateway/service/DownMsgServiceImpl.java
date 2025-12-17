@@ -32,21 +32,15 @@ public class DownMsgServiceImpl implements DownMsgService {
     public void pushMessage(DownMessageReq req) {
         logger.debug("pushMessage req: {}", req);
         Frame frame = req.getFrame();
-        byte[] body = frame.getBody();
-        C2cMessage.C2cSendResponse c2cSendResponse = null;
-        try {
-            c2cSendResponse = C2cMessage.C2cSendResponse.parseFrom(body);
-        } catch (Exception ex) {
-            logger.error("error traceId: {}", req.getTraceId(), ex);
-            return;
-        }
         boolean needAck = req.getNeedAck();
-        logger.debug("pushMessage: {}, seq: {}, needAck: {},", c2cSendResponse, frame.getHeader().getSeq(), needAck);
         for (GateUser user : req.getUsers()) {
             sendMessage(frame, user,  needAck, req.getTraceId());
         }
     }
 
+    /**
+     * 将frame写出到peer, 因为conn的write方法是同步写出, 所以方法会阻塞, 可以考虑放到线程池中
+     */
     private void sendMessage(Frame frame, GateUser user, boolean needAck, String traceId) {
         if (user == null) {
             logger.error("pushMessage user is null, traceId: {}", traceId);

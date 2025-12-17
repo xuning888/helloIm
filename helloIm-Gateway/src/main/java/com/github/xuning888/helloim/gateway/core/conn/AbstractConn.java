@@ -14,6 +14,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @author xuning
@@ -35,11 +36,14 @@ public abstract class AbstractConn implements Conn {
 
     private final String id;
 
+    private final AtomicInteger atomicInteger;
+
     private final ConcurrentMap<String, InFlightMessage> inFlightMessages = new ConcurrentHashMap<>();
 
     public AbstractConn(Channel channel, MsgPipeline msgPipeline) {
         this.channel = channel;
         this.msgPipeline = msgPipeline;
+        this.atomicInteger = new AtomicInteger(0);
         this.id = String.valueOf(channel.getId());
     }
 
@@ -59,7 +63,7 @@ public abstract class AbstractConn implements Conn {
     }
 
     @Override
-    public void writeMessage(Frame frame, boolean needAck, String traceId) {
+    public synchronized void writeMessage(Frame frame, boolean needAck, String traceId) {
         this.write(frame, traceId);
         if (needAck) {
             appendMessage(frame, traceId);
@@ -86,6 +90,8 @@ public abstract class AbstractConn implements Conn {
     public abstract void write(Frame frame, String traceId);
 
     private void appendMessage(Frame frame, String traceId) {
+        int seq = atomicInteger.getAndIncrement(); // 重新分配客户端
+        frame.getHeader().setSeq(seq); // 下行指令 + 下行cmdId拼接key
         String key = frame.key();
         logger.info("appendMessage, key: {}", key);
         if (inFlightMessages.containsKey(key)) {

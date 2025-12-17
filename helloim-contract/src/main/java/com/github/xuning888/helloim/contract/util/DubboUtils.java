@@ -59,6 +59,7 @@ public class DubboUtils {
         referenceConfig.setTimeout(2000);
         MethodConfig methodConfig = new MethodConfig();
         methodConfig.setName("pushMessage");
+        methodConfig.setRetries(0); // 禁止重试
         methodConfig.setReturn(false);
         referenceConfig.setMethods(Collections.singletonList(methodConfig));
         return referenceConfig;
