@@ -64,9 +64,13 @@ public abstract class AbstractConn implements Conn {
 
     @Override
     public synchronized void writeMessage(Frame frame, boolean needAck, String traceId) {
-        this.write(frame, traceId);
         if (needAck) {
+            int seq = atomicInteger.getAndIncrement(); // 重新分配客户端
+            frame.getHeader().setSeq(seq); // 下行指令 + 下行cmdId拼接key
+            this.write(frame, traceId);
             appendMessage(frame, traceId);
+        } else {
+            this.write(frame, traceId);
         }
     }
 
@@ -90,8 +94,6 @@ public abstract class AbstractConn implements Conn {
     public abstract void write(Frame frame, String traceId);
 
     private void appendMessage(Frame frame, String traceId) {
-        int seq = atomicInteger.getAndIncrement(); // 重新分配客户端
-        frame.getHeader().setSeq(seq); // 下行指令 + 下行cmdId拼接key
         String key = frame.key();
         logger.info("appendMessage, key: {}", key);
         if (inFlightMessages.containsKey(key)) {

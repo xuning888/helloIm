@@ -115,7 +115,7 @@ public class ChatComponent {
         // 会话最后一条消息
         Map<String, ChatMessageDto> lastMessagesMap = this.chatMessageComponent.multiLastMessages(userId, imChatDtos, traceId);
         // 根据会话的最后一条消息补偿会话信息
-        updateImChatDto(imChatDtos, lastMessagesMap, traceId);
+        updateImChatDto(userId, imChatDtos, lastMessagesMap, traceId);
         // 获取还存活的会话
         List<ImChatDto> aliveChats = getAliveChats(imChatDtos);
         // 会话排序
@@ -156,14 +156,16 @@ public class ChatComponent {
     }
 
 
-    private void updateImChatDto(List<ImChatDto> imChatDtos, Map<String, ChatMessageDto> lastMessagesMap, String traceId) {
+    private void updateImChatDto(String userId, List<ImChatDto> imChatDtos, Map<String, ChatMessageDto> lastMessagesMap, String traceId) {
         if (CollectionUtils.isEmpty(imChatDtos) || MapUtils.isEmpty(lastMessagesMap)) {
             return;
         }
         Set<ImChatDto> updated = new HashSet<>();
         for (ImChatDto imChatDto : imChatDtos) {
             Long chatId = imChatDto.getChatId();
-            ChatMessageDto lastMessage = lastMessagesMap.get(String.valueOf(chatId));
+            Integer chatType = imChatDto.getChatType();
+            String key = chatMessageComponent.lastMessageKey(userId, String.valueOf(chatId), chatType);
+            ChatMessageDto lastMessage = lastMessagesMap.get(key);
             if (lastMessage == null) {
                 continue;
             }

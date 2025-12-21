@@ -1,16 +1,13 @@
 package com.github.xuning888.helloim.chat.component;
 
-import com.github.xuning888.helloim.chat.utils.ChatUtils;
 import com.github.xuning888.helloim.contract.api.service.MsgStoreService;
 import com.github.xuning888.helloim.contract.contant.ChatType;
 import com.github.xuning888.helloim.contract.dto.ChatMessageDto;
 import com.github.xuning888.helloim.contract.dto.ImChatDto;
 import com.github.xuning888.helloim.contract.util.RedisKeyUtils;
-import org.apache.commons.lang3.tuple.Pair;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
@@ -19,8 +16,6 @@ import javax.annotation.Resource;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * @author xuning
@@ -71,77 +66,15 @@ public class ChatMessageComponent {
         if (CollectionUtils.isEmpty(imChatDtoList)) {
             return new HashMap<>();
         }
-        HashOperations hashOperations = this.redisTemplate.opsForHash();
-        Map<String, ChatMessageDto> chatMessageMap = new HashMap<>();
-        // 按照chatType 分组
-        Map<Integer, List<ImChatDto>> groupByChatType = imChatDtoList.stream().collect(Collectors.groupingBy(ImChatDto::getChatType));
-        for (Map.Entry<Integer, List<ImChatDto>> entry : groupByChatType.entrySet()) {
-            Integer chatType = entry.getKey();
-            List<ImChatDto> imChatDtos = entry.getValue();
-            if (ChatType.C2C.match(chatType)) {
-                List<String> chatIds = imChatDtos.stream().map(item -> item.getChatId().toString()).collect(Collectors.toList());
-                List<String> keys = chatIds.stream().map(item -> RedisKeyUtils.c2cLastMessageKey(userId, item)).collect(Collectors.toList());
-                List<ChatMessageDto> list = redisTemplate.opsForValue().multiGet(keys);
-                if (CollectionUtils.isEmpty(list)) {
-                    for (String chatId : chatIds) {
-                        String chatKey = ChatUtils.chatKey(chatId, chatType);
-                        chatMessageMap.put(chatKey, null);
-                    }
-                } else {
-                    Map<String, ChatMessageDto> map = list.stream().collect(Collectors.toMap(ChatMessageDto::getChatIdStr, x -> x, (x, y) -> x));
-                    for (String chatId : chatIds) {
-                        String chatKey = ChatUtils.chatKey(chatId, chatType);
-                        ChatMessageDto chatMessageDto = map.get(chatId);
-                        chatMessageMap.put(chatKey, chatMessageDto);
-                    }
-                }
-            } else if (ChatType.C2G.match(chatType)) {
-                Map<String, List<Long>> keysGroupIndex = imChatDtos.stream().map(ImChatDto::getChatId).collect(Collectors.groupingBy(RedisKeyUtils::c2gLastMessageKey));
-                for (Map.Entry<String, List<Long>> subEntry : keysGroupIndex.entrySet()) {
-                    String key = subEntry.getKey();
-                    List<String> groupIds = subEntry.getValue().stream().map(String::valueOf).collect(Collectors.toList());
-                    List<ChatMessageDto> list = (List<ChatMessageDto>) hashOperations.multiGet(key, groupIds);
-                    if (CollectionUtils.isEmpty(list)) {
-                        for (String groupId : groupIds) {
-                            String chatKey = ChatUtils.chatKey(String.valueOf(groupId), chatType);
-                            chatMessageMap.put(chatKey, null);
-                        }
-                    } else {
-                        Map<String, ChatMessageDto> map = list.stream().collect(Collectors.toMap(ChatMessageDto::getChatIdStr, x -> x, (x, y) -> x));
-                        for (String groupId : groupIds) {
-                            ChatMessageDto chatMessageDto = map.get(String.valueOf(groupId));
-                            String chatKey = ChatUtils.chatKey(String.valueOf(groupId), chatType);
-                            chatMessageMap.put(chatKey, chatMessageDto);
-                        }
-                    }
-                }
-            } else {
-                logger.error("multiLastMessages 未知的会话类型, traceId: {}", traceId);
-            }
+        Map<String, ChatMessageDto> messageDtoMap = new HashMap<>();
+        for (ImChatDto imChatDto : imChatDtoList) {
+            Long chatId = imChatDto.getChatId();
+            Integer chatType = imChatDto.getChatType();
+            ChatMessageDto lastMessage = getLastMessage(userId, String.valueOf(chatId), chatType, traceId);
+            String key = lastMessageKey(userId, String.valueOf(chatId), chatType);
+            messageDtoMap.put(key, lastMessage);
         }
-        // chatId --> chatMessage
-        Map<String, ChatMessageDto> result = new HashMap<>();
-        // 从缓存没拉到的数据从db拉
-        Set<String> keys = chatMessageMap.keySet();
-        for (String chatKey : keys) {
-            ChatMessageDto chatMessageDto = chatMessageMap.get(chatKey);
-            if (chatMessageDto != null) {
-                result.put(chatMessageDto.getChatIdStr(), chatMessageDto);
-                continue;
-            }
-            Pair<String, Integer> subInfo = ChatUtils.getSubInfo(chatKey);
-            if (subInfo == null) {
-                continue;
-            }
-            String chatId = subInfo.getLeft();
-            Integer chatType = subInfo.getRight();
-            chatMessageDto = this.msgStoreService.lastMessage(userId, chatId, chatType, traceId);
-            if (chatMessageDto != null) {
-                result.put(chatMessageDto.getChatIdStr(), chatMessageDto);
-                this.updateLastChatMessage(userId, chatId, chatMessageDto, traceId);
-            }
-        }
-        return result;
+        return messageDtoMap;
     }
 
     private ChatMessageDto getLastMessageFromCache(String userId, String chatId, Integer chatType, String traceId) {
@@ -178,5 +111,15 @@ public class ChatMessageComponent {
         Long serverSeq = chatMessageDto.getServerSeq();
         logger.info("updateC2gLastMessage key: {}, msgId: {}, serverSeq: {} traceId: {}", key, msgId, serverSeq, traceId);
         this.redisTemplate.opsForHash().put(key, chatMessageDto.getGroupIdStr(), chatMessageDto);
+    }
+
+    public String lastMessageKey(String userId, String chatId, Integer chatType) {
+        if (ChatType.C2C.match(chatType)) {
+            return RedisKeyUtils.c2cLastMessageKey(userId, String.valueOf(chatId));
+        } else if (ChatType.C2G.match(chatType)) {
+            return RedisKeyUtils.c2gLastMessageKey(Long.parseLong(chatId));
+        } else {
+            throw new IllegalArgumentException("未知的会话类型: " + chatType);
+        }
     }
 }
