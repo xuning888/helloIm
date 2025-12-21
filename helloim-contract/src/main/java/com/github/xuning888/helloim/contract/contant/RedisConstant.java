@@ -15,6 +15,9 @@ public class RedisConstant {
     // 离线消息的key的前缀
     public static String OFFLINE_MESSAGE_KEY_PREFIX =  "offline_message_";
 
+    // 活跃会话的离线消息key, 用户存储当日活跃会话的离线消息的key
+    public static String ACTIVATE_OFFLINE_CHAT_KEY_PREFIX = "activate_chat_offline_message_key_";
+
     // 会话最后一条消息缓存key的前缀, 单聊
     public static String C2C_LAST_MESSAGE_KEY_PREFIX = "lastMessage_c2c_";
 

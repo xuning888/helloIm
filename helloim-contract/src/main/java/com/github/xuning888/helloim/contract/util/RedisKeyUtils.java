@@ -2,9 +2,11 @@ package com.github.xuning888.helloim.contract.util;
 
 import com.github.xuning888.helloim.contract.contant.ChatType;
 import com.github.xuning888.helloim.contract.contant.RedisConstant;
+import org.apache.kafka.common.utils.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
 
@@ -15,6 +17,8 @@ import java.util.List;
 public class RedisKeyUtils {
 
     private static final Logger logger = LoggerFactory.getLogger(RedisKeyUtils.class);
+
+    public static final int shardValue = 128;
 
     /**
      * 服务端seq的key
@@ -48,7 +52,7 @@ public class RedisKeyUtils {
 
     public static String c2gLastMessageKey(Long groupId) {
         // 128个分片
-        long index = groupId % 128;
+        long index = groupId % shardValue;
         return RedisConstant.C2G_LAST_MESSAGE_KEY_PREFIX + index;
     }
 
@@ -81,5 +85,18 @@ public class RedisKeyUtils {
      */
     public static String c2gOfflineMsgKey(Long groupId) {
         return RedisConstant.OFFLINE_MESSAGE_KEY_PREFIX + ChatType.C2G + "_" + groupId;
+    }
+
+    /**
+     * 活跃的离线消息key
+     */
+    public static String activateChatOfflineKey(String offlineMsgKey) {
+        // 用kafka的算法选择shard
+        int shard = Utils.toPositive(Utils.murmur2(offlineMsgKey.getBytes(StandardCharsets.UTF_8))) % shardValue;
+        return activateChatOfflineKey(shard);
+    }
+
+    public static String activateChatOfflineKey(int shard) {
+        return RedisConstant.ACTIVATE_OFFLINE_CHAT_KEY_PREFIX + shard;
     }
 }

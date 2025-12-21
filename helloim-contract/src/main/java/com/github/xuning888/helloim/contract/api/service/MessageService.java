@@ -16,4 +16,5 @@ public interface MessageService {
 
     List<ChatMessageDto> getLatestOfflineMessages(PullOfflineMsgRequest request, String traceId);
 
+    void cleanOfflineMessage(String offlineMessageKey);
 }

@@ -3,6 +3,9 @@ package com.github.xuning888.helloim.store.mapper;
 import com.github.xuning888.helloim.contract.entity.ImMessageGroup;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.List;
+import java.util.Set;
+
 public interface ImMessageGroupMapper {
     int deleteByPrimaryKey(Long msgId);
 
@@ -17,4 +20,9 @@ public interface ImMessageGroupMapper {
     Long selectMaxServerSeq(@Param("groupId") Long groupId);
 
     ImMessageGroup selectLastMessage(@Param("groupId") Long groupId);
+
+    List<ImMessageGroup> selectMessageByServerSeqs(@Param("groupId") Long groupId,
+                                                   @Param("serverSeqs") Set<Long> serverSeqs);
+
+    List<ImMessageGroup> selectRecentMessages(@Param("groupId") Long groupId, @Param("limit") Integer limit);
 }

@@ -8,11 +8,13 @@ import com.github.xuning888.helloim.contract.entity.ImMessage;
 import com.github.xuning888.helloim.contract.entity.ImMessageGroup;
 import com.github.xuning888.helloim.store.service.ImMessageGroupService;
 import com.github.xuning888.helloim.store.service.ImMessageService;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.DubboService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Resource;
+import java.util.*;
 
 /**
  * @author xuning
@@ -85,4 +87,57 @@ public class MsgStoreServiceImpl implements MsgStoreService {
         }
         return chatMessageDto;
     }
+
+    @Override
+    public List<ChatMessageDto> selectMessageByServerSeqs(String userId, String chatId, Integer chatType, Set<Long> serverSeqs, String traceId) {
+        if (StringUtils.isEmpty(userId)) {
+            logger.error("selectMessageWithServerSeqs userId is empty, traceId: {}", traceId);
+            return Collections.emptyList();
+        }
+        if (StringUtils.isEmpty(chatId)) {
+            logger.error("selectMessageWithServerSeqs chatId is empty, traceId: {}", traceId);
+            return Collections.emptyList();
+        }
+        if (Objects.isNull(chatType)) {
+            logger.error("selectMessageWithServerSeqs chatType is empty, traceId: {}", traceId);
+            return Collections.emptyList();
+        }
+        if (ChatType.C2C.match(chatType)) {
+            List<ImMessage> imMessages = imMessageService.selectMessageByServerSeqs(userId, chatId, serverSeqs, traceId);
+            return MessageConvert.convertImMessages2ChatMessages(imMessages);
+        } else if (ChatType.C2G.match(chatType)) {
+            List<ImMessageGroup> imMessageGroups = imMessageGroupService.selectMessageByServerSeqs(chatId, serverSeqs, traceId);
+            return MessageConvert.convert2ChatMessages(imMessageGroups);
+        } else {
+            logger.error("selectMessageByServerSeqs, unknown chatType: {}, traceId: {}", chatType, traceId);
+        }
+        return Collections.emptyList();
+    }
+
+    @Override
+    public List<ChatMessageDto> getRecentMessages(String userId, String chatId, Integer chatType, Integer limit, String traceId) {
+        if (StringUtils.isEmpty(userId)) {
+            logger.error("getRecentMessages userId is empty, traceId: {}", traceId);
+            return Collections.emptyList();
+        }
+        if (StringUtils.isEmpty(chatId)) {
+            logger.error("getRecentMessages chatId is empty, traceId: {}", traceId);
+            return Collections.emptyList();
+        }
+        if (Objects.isNull(chatType)) {
+            logger.error("getRecentMessages chatType is empty, traceId: {}", traceId);
+            return Collections.emptyList();
+        }
+        if (ChatType.C2C.match(chatType)) {
+            List<ImMessage> imMessages = imMessageService.selectRecentMessages(userId, chatId, limit, traceId);
+            return MessageConvert.convertImMessages2ChatMessages(imMessages);
+        } else if (ChatType.C2G.match(chatType)) {
+            List<ImMessageGroup> imMessageGroups = imMessageGroupService.selectRecentMessages(chatId, limit, traceId);
+            return MessageConvert.convert2ChatMessages(imMessageGroups);
+        } else {
+            logger.error("getRecentMessages, unknown chatType: {}, traceId: {}", chatType, traceId);
+        }
+        return Collections.emptyList();
+    }
+
 }

@@ -171,4 +171,22 @@
         where group_id = #{groupId}
         order by msg_id limit 1
     </select>
+
+    <select id="selectMessageByServerSeqs"
+            resultMap="BaseResultMap">
+        select <include refid="Base_Column_List"/>
+        from im_message_group
+        where group_id = #{groupId}
+        and server_seq in
+        <foreach collection="serverSeqs" open="(" separator="," close=")" item="serverSeq">
+            #{serverSeq}
+        </foreach>
+    </select>
+
+    <select id="selectRecentMessages" resultType="com.github.xuning888.helloim.contract.entity.ImMessageGroup">
+        select <include refid="Base_Column_List"/>
+        from im_message_group
+        where group_id = #{groupId}
+        order by msg_id limit #{limit}
+    </select>
 </mapper>

@@ -180,4 +180,23 @@
         and msg_to = #{msgTo} order by server_seq desc
         limit 1
     </select>
+
+    <select id="selectMessageBySeqs" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List"/>
+        from im_message
+        where msg_from = #{msgFrom}
+        and msg_to = #{msgTo}
+        and server_seq in
+        <foreach collection="serverSeqs" open="(" separator="," close=")" item="serverSeq">
+            #{serverSeq}
+        </foreach>
+    </select>
+
+    <select id="selectRecentMessages" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List"/>
+        from im_message
+        where msg_from = #{msgFrom}
+        and msg_to = #{msgTo}
+        order by server_seq desc limit #{limit}
+    </select>
 </mapper>

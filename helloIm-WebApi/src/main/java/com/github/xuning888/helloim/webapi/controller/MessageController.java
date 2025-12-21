@@ -80,4 +80,15 @@ public class MessageController {
             return RestResultUtils.withStatus(RestResultStatus.SERVER_ERR);
         }
     }
+
+    @GetMapping("/cleanOfflineMessage")
+    public RestResult<Object> cleanOfflineMessage(@RequestParam(value = "offlineMsgKey", required = false) String offlineMsgKey) {
+        try {
+            messageService.cleanOfflineMessage(offlineMsgKey);
+            return RestResultUtils.success();
+        } catch (Exception ex) {
+            logger.error("getLatestOfflineMessages unknown error", ex);
+            return RestResultUtils.withStatus(RestResultStatus.SERVER_ERR);
+        }
+    }
 }

@@ -4,6 +4,8 @@ import com.github.xuning888.helloim.contract.api.request.PullOfflineMsgRequest;
 import com.github.xuning888.helloim.contract.api.service.MessageService;
 import com.github.xuning888.helloim.contract.dto.ChatMessageDto;
 import org.apache.dubbo.config.annotation.DubboService;
+import org.apache.dubbo.config.annotation.Method;
+import org.apache.zookeeper.common.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.CollectionUtils;
@@ -16,7 +18,11 @@ import java.util.List;
  * @author xuning
  * @date 2025/10/7 02:08
  */
-@DubboService
+@DubboService(
+        methods = {
+                @Method(name = "cleanOfflineMessage", timeout = 10000, retries = 0) // 禁止重试
+        }
+)
 public class MessageServiceImpl implements MessageService {
 
     private static final Logger logger = LoggerFactory.getLogger(MessageServiceImpl.class);
@@ -46,5 +52,14 @@ public class MessageServiceImpl implements MessageService {
         }
         logger.info("getLatestOfflineMessages message.size: {}, traceId: {}", messages.size(), traceId);
         return messages;
+    }
+
+    @Override
+    public void cleanOfflineMessage(String offlineMessageKey) {
+        if (StringUtils.isEmpty(offlineMessageKey)) {
+            offlineMessageService.cleanOfflineMessage();
+        } else {
+            offlineMessageService.doCleanOfflineMessageKey(offlineMessageKey);
+        }
     }
 }

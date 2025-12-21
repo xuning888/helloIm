@@ -8,8 +8,12 @@ import com.github.xuning888.helloim.contract.entity.ImMessageGroup;
 import com.github.xuning888.helloim.contract.frame.Frame;
 import com.github.xuning888.helloim.contract.protobuf.C2cMessage;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.util.CollectionUtils;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 
 /**
  * @author xuning
@@ -122,5 +126,29 @@ public class MessageConvert {
         chatMessageDto.setReceiptStatus(0); // 群聊不关注
         chatMessageDto.setServerSeq(imMessageGroup.getServerSeq());
         return chatMessageDto;
+    }
+
+    public static List<ChatMessageDto> convert2ChatMessages(List<ImMessageGroup> imMessageGroups) {
+        if (CollectionUtils.isEmpty(imMessageGroups)) {
+            return Collections.emptyList();
+        }
+        List<ChatMessageDto> messageDtos = new ArrayList<>(imMessageGroups.size());
+        for (ImMessageGroup imMessageGroup : imMessageGroups) {
+            ChatMessageDto chatMessageDto = convert2ChatMessage(imMessageGroup);
+            messageDtos.add(chatMessageDto);
+        }
+        return messageDtos;
+    }
+
+    public static List<ChatMessageDto> convertImMessages2ChatMessages(List<ImMessage> imMessages) {
+        if (CollectionUtils.isEmpty(imMessages)) {
+            return Collections.emptyList();
+        }
+        List<ChatMessageDto> messageDtos = new ArrayList<>(imMessages.size());
+        for (ImMessage imMessage : imMessages) {
+            ChatMessageDto chatMessageDto = convert2ChatMessage(imMessage);
+            messageDtos.add(chatMessageDto);
+        }
+        return messageDtos;
     }
 }
