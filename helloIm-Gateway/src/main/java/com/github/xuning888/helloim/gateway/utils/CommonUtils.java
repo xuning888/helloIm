@@ -13,6 +13,7 @@ public class CommonUtils {
     public static void writeEmpty(CmdEvent cmdEvent) {
         Frame frame = cmdEvent.getFrame();
         Header header = frame.getHeader();
+        header.setReq(Header.RES);
         Header copy = header.copy();
         copy.setBodyLength(0);
         Frame response = new Frame(copy, new byte[0]);

@@ -85,6 +85,7 @@ public class C2cSendRequestHandler implements MsgHandler {
         C2cMessage.C2cPushRequest c2cPushRequest = buildC2cPushRequest(msgContext, request);
         byte[] body = c2cPushRequest.toByteArray();
         Header header = msgContext.getFrame().getHeader().copy();
+        header.setReq(Header.REQ);
         header.setCmdId(MsgCmd.CmdId.CMD_ID_C2CPUSH_VALUE);
         header.setBodyLength(body.length);
         return new Frame(header, body);

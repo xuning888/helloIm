@@ -26,6 +26,7 @@ public class MsgUtils {
         // 构造数据帧
         Header header = msgContext.getFrame().getHeader();
         Header copy = header.copy();
+        copy.setReq(Header.RES);
         copy.setBodyLength(body.length);
         Frame frame = new Frame();
         frame.setHeader(copy);
@@ -37,7 +38,8 @@ public class MsgUtils {
         Frame frame = msgContext.getFrame();
         Header header = frame.getHeader();
         Header copy = header.copy();
+        copy.setReq(Header.RES);
         copy.setBodyLength(0);
-        return new Frame(copy, new byte[0]);
+        return new Frame(copy, null);
     }
 }

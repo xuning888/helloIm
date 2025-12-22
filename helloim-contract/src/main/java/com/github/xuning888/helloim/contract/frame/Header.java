@@ -12,15 +12,19 @@ public class Header implements Serializable {
     // 固定消息头的长度
     public static final int DEFAULT_HEADER_LENGTH = 20;
 
+    public static final int REQ = 0;
+
+    public static final int RES = 1;
+
     /**
      * 固定消息头的长度
      */
     private int headerLength;
 
     /**
-     * 客户端客户端版本号
+     * 0-req, 1-res
      */
-    private int clientVersion;
+    private int req;
 
     /**
      * 客户端seq
@@ -47,14 +51,6 @@ public class Header implements Serializable {
         this.bodyLength = bodyLength;
     }
 
-    public int getClientVersion() {
-        return clientVersion;
-    }
-
-    public void setClientVersion(int clientVersion) {
-        this.clientVersion = clientVersion;
-    }
-
     public int getCmdId() {
         return cmdId;
     }
@@ -79,20 +75,28 @@ public class Header implements Serializable {
         this.seq = seq;
     }
 
-    @Override
-    public String toString() {
-        return "Header{" +
-                "bodyLength=" + bodyLength +
-                ", headerLength=" + headerLength +
-                ", clientVersion=" + clientVersion +
-                ", seq=" + seq +
-                ", cmdId=" + cmdId +
-                '}';
+    public int getReq() {
+        return req;
+    }
+
+    public void setReq(int req) {
+        this.req = req;
     }
 
     public static Header create(ByteBuffer buffer) {
         byte[] array = buffer.array();
         return create(array);
+    }
+
+    @Override
+    public String toString() {
+        return "Header{" +
+                "bodyLength=" + bodyLength +
+                ", headerLength=" + headerLength +
+                ", req=" + req +
+                ", seq=" + seq +
+                ", cmdId=" + cmdId +
+                '}';
     }
 
     public static Header create(byte[] bytes) {
@@ -103,18 +107,18 @@ public class Header implements Serializable {
                 .order(ByteOrder.BIG_ENDIAN)
                 .put(bytes, 0, DEFAULT_HEADER_LENGTH);
         int headerLength = buff.getInt(0);
-        int clientVersion = buff.getInt(4);
+        int req = buff.getInt(4);
         int seq = buff.getInt(8);
         int cmdId = buff.getInt(12);
         int bodyLength = buff.getInt(16);
         buff.clear();
-        return Header.create(headerLength, clientVersion, seq, cmdId, bodyLength);
+        return Header.create(headerLength, req, seq, cmdId, bodyLength);
     }
 
-    public static Header create(int headerLength, int clientVersion, int seq, int cmdId, int bodyLength) {
+    public static Header create(int headerLength, int req, int seq, int cmdId, int bodyLength) {
         Header header = new Header();
         header.setHeaderLength(headerLength);
-        header.setClientVersion(clientVersion);
+        header.setReq(req);
         header.setSeq(seq);
         header.setCmdId(cmdId);
         header.setBodyLength(bodyLength);
@@ -122,13 +126,13 @@ public class Header implements Serializable {
     }
 
     public Header copy() {
-        return Header.create(this.headerLength, this.clientVersion, this.seq, this.cmdId, this.bodyLength);
+        return Header.create(this.headerLength, this.req, this.seq, this.cmdId, this.bodyLength);
     }
 
     public ByteBuffer toByteBuffer() {
         ByteBuffer buffer = ByteBuffer.allocate(DEFAULT_HEADER_LENGTH).order(ByteOrder.BIG_ENDIAN);
         buffer.putInt(this.headerLength);
-        buffer.putInt(this.clientVersion);
+        buffer.putInt(this.req);
         buffer.putInt(this.seq);
         buffer.putInt(this.cmdId);
         buffer.putInt(this.bodyLength);

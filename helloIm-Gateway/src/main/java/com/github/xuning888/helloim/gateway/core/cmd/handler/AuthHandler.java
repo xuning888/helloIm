@@ -97,6 +97,7 @@ public class AuthHandler implements CmdHandler {
         byte[] body = authResponse.toByteArray();
 
         Header header = frame.getHeader().copy();
+        header.setReq(Header.RES);
         header.setBodyLength(body.length);
         return new Frame(header, body);
     }

@@ -2,6 +2,7 @@ package com.github.xuning888.helloim.gateway.core.conn;
 
 
 import com.github.xuning888.helloim.contract.frame.Frame;
+import com.github.xuning888.helloim.contract.frame.Header;
 import com.github.xuning888.helloim.gateway.core.pipeline.MsgPipeline;
 import com.github.xuning888.helloim.gateway.utils.TimeWheelUtils;
 import org.jboss.netty.channel.Channel;
@@ -77,7 +78,12 @@ public abstract class AbstractConn implements Conn {
     @Override
     public boolean ack(Frame frame) {
         String key = frame.key();
-        return removeInFlight(key);
+        boolean ack = removeInFlight(key);
+        if (ack) {
+            return true;
+        }
+        int req = frame.getHeader().getReq();
+        return Header.RES == req;
     }
 
     @Override
@@ -95,7 +101,6 @@ public abstract class AbstractConn implements Conn {
 
     private void appendMessage(Frame frame, String traceId) {
         String key = frame.key();
-        logger.info("appendMessage, key: {}", key);
         if (inFlightMessages.containsKey(key)) {
             logger.warn("Duplicate message, key: {}, connId: {}, traceId: {}", key, id, traceId);
             return;

@@ -59,6 +59,7 @@ public class EchoHandler implements CmdHandler {
     private Frame buildEchoResponse(Frame frame, String msg) {
         Echo.EchoResponse echoResponse = buildEchoResponse(msg);
         Header header = frame.getHeader().copy();
+        header.setReq(Header.RES);
         byte[] body = echoResponse.toByteArray();
         header.setBodyLength(body.length);
         return new Frame(header, body);
