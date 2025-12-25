@@ -1,0 +1,42 @@
+syntax = "proto3";
+
+package helloim.protocol;
+
+
+option java_package = "com.github.xuning888.helloim.contract.protobuf";
+option java_outer_classname = "C2gMessage";
+option go_package = "github.com/xuning888/helloIMClient/internal/proto;helloim_proto";
+
+
+// C2GSendRequest 群聊上行
+message C2GSendRequest {
+  string from = 1; // 消息发送者
+  int64 groupId = 2; // 群聊id
+  string content = 3; // 消息内容
+  int32 msgContent = 4; // 消息类型
+  int32 fromUserType = 5; // 消息发送者的userType
+}
+
+// C2GSendResponse 群聊上行ACK
+message C2GSendResponse {
+  int64 msgId = 1; // 消息id
+  int64 timestamp = 2; // 收到消息的时间戳
+  int64 serverSeq = 3; // 服务端给消息分配的序号
+}
+
+// C2GPushRequest 群聊下行
+message C2GPushRequest {
+  string from = 1; // 消息发送者
+  int64 groupId = 2; // 群聊id
+  string content = 3; // 消息内容
+  int32 msgContent = 4; // 消息类型
+  int32 fromUserType = 5; // 消息发送者的userType
+  int64 msgId = 6; // 消息ID
+  int64 timestamp = 7; // 服务端收到消息的时间戳
+  int64 serverSeq = 8; // 服务端消息序号
+}
+
+// C2GPushResponse 群聊下行ACK
+message C2GPushResponse {
+  int64 msgId = 1; // msgId
+}
