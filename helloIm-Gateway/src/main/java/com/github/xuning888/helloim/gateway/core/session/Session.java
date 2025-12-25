@@ -66,6 +66,10 @@ public class Session implements Serializable {
         }
     }
 
+    public boolean isOk() {
+        return conn != null && conn.isOk();
+    }
+
     public void addListener(SessionListener sessionListener) {
         this.listeners.add(sessionListener);
     }
