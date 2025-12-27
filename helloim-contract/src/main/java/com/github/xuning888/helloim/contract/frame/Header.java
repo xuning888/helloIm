@@ -10,36 +10,36 @@ import java.nio.ByteOrder;
  */
 public class Header implements Serializable {
     // 固定消息头的长度
-    public static final int DEFAULT_HEADER_LENGTH = 20;
+    public static final byte DEFAULT_HEADER_LENGTH = 14;
 
-    public static final int REQ = 0;
+    public static final byte REQ = 0;
 
-    public static final int RES = 1;
+    public static final byte RES = 1;
 
     /**
      * 固定消息头的长度
      */
-    private int headerLength;
+    private byte headerLength; // 1byte
 
     /**
      * 0-req, 1-res
      */
-    private int req;
+    private byte req; // 1byte
 
     /**
      * 客户端seq
      */
-    private int seq;
+    private int seq; // 4byte
 
     /**
      * 消息指令
      */
-    private int cmdId;
+    private int cmdId; // 4byte
 
     /**
      * 消息体的长度
      */
-    private int bodyLength;
+    private int bodyLength; // 4byte
 
     public Header() {}
 
@@ -59,11 +59,11 @@ public class Header implements Serializable {
         this.cmdId = cmdId;
     }
 
-    public int getHeaderLength() {
+    public byte getHeaderLength() {
         return headerLength;
     }
 
-    public void setHeaderLength(int headerLength) {
+    public void setHeaderLength(byte headerLength) {
         this.headerLength = headerLength;
     }
 
@@ -75,11 +75,11 @@ public class Header implements Serializable {
         this.seq = seq;
     }
 
-    public int getReq() {
+    public byte getReq() {
         return req;
     }
 
-    public void setReq(int req) {
+    public void setReq(byte req) {
         this.req = req;
     }
 
@@ -103,19 +103,19 @@ public class Header implements Serializable {
         if (bytes == null || bytes.length < DEFAULT_HEADER_LENGTH) {
             throw new IllegalArgumentException("bytes is null or bytes length less than 20");
         }
-        ByteBuffer buff = ByteBuffer.allocate(20)
+        ByteBuffer buff = ByteBuffer.allocate(DEFAULT_HEADER_LENGTH)
                 .order(ByteOrder.BIG_ENDIAN)
                 .put(bytes, 0, DEFAULT_HEADER_LENGTH);
-        int headerLength = buff.getInt(0);
-        int req = buff.getInt(4);
-        int seq = buff.getInt(8);
-        int cmdId = buff.getInt(12);
-        int bodyLength = buff.getInt(16);
+        byte headerLength = buff.get(0); // 0
+        byte req = buff.get(1); // 1
+        int seq = buff.getInt(2); // 2,3,4,5
+        int cmdId = buff.getInt(6); // 6,7,8,9
+        int bodyLength = buff.getInt(10); // 10,11,12,13
         buff.clear();
         return Header.create(headerLength, req, seq, cmdId, bodyLength);
     }
 
-    public static Header create(int headerLength, int req, int seq, int cmdId, int bodyLength) {
+    public static Header create(byte headerLength, byte req, int seq, int cmdId, int bodyLength) {
         Header header = new Header();
         header.setHeaderLength(headerLength);
         header.setReq(req);
@@ -127,15 +127,5 @@ public class Header implements Serializable {
 
     public Header copy() {
         return Header.create(this.headerLength, this.req, this.seq, this.cmdId, this.bodyLength);
-    }
-
-    public ByteBuffer toByteBuffer() {
-        ByteBuffer buffer = ByteBuffer.allocate(DEFAULT_HEADER_LENGTH).order(ByteOrder.BIG_ENDIAN);
-        buffer.putInt(this.headerLength);
-        buffer.putInt(this.req);
-        buffer.putInt(this.seq);
-        buffer.putInt(this.cmdId);
-        buffer.putInt(this.bodyLength);
-        return buffer;
     }
 }

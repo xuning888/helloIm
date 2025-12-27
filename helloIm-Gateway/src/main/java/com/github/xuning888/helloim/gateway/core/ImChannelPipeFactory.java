@@ -31,7 +31,7 @@ public class ImChannelPipeFactory implements ChannelPipelineFactory {
                         0, 0));
         // 解码器
         channelPipeline.addLast("decoder",
-                new LengthFieldBasedFrameDecoder(gateServerProperties.getMaxFrameSize(), 16, 4,
+                new LengthFieldBasedFrameDecoder(gateServerProperties.getMaxFrameSize(), 10, 4,
                         0, 0, true));
         // 添加业务处理器
         channelPipeline.addLast("imBiz", imChannelUpStreamHandler);

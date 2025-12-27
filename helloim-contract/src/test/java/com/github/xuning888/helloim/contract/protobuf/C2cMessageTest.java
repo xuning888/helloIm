@@ -24,8 +24,8 @@ public class C2cMessageTest {
         byte[] body = c2cSendRequest.toByteArray();
 
         Header header = new Header();
-        header.setHeaderLength(20);
-        header.setReq(1);
+        header.setHeaderLength((byte) 14);
+        header.setReq((byte) 1);
         header.setCmdId(MsgCmd.CmdId.CMD_ID_C2CSEND_VALUE);
         header.setSeq(1);
         header.setBodyLength(body.length);

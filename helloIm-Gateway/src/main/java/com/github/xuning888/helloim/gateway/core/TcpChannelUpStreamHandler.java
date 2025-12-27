@@ -65,12 +65,9 @@ public class TcpChannelUpStreamHandler extends ImChannelUpStreamHandler {
             logger.error("received message, message can't convert to Frame, conn: {}, traceId: {}", conn.getId(), traceId);
             return;
         }
-
-        if (logger.isDebugEnabled()) {
-            Header header = frame.getHeader();
-            logger.info("received message, conn: {}, cmdId:{}, seq:{}, traceId: {}",
-                    conn.getId(), header.getCmdId(), header.getSeq(), traceId);
-        }
+        Header header = frame.getHeader();
+        logger.debug("received message, conn: {}, cmdId:{}, seq:{}, traceId: {}",
+                conn.getId(), header.getCmdId(), header.getSeq(), traceId);
         // 尝试ACK消息
         if (conn.ack(frame)) {
             return;

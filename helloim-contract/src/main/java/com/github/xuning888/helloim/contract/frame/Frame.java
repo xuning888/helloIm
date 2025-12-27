@@ -42,8 +42,8 @@ public class Frame implements Serializable {
         ByteBuffer buffer = ByteBuffer
                 .allocate(Header.DEFAULT_HEADER_LENGTH + (body == null ? 0 : body.length))
                 .order(ByteOrder.BIG_ENDIAN);
-        buffer.putInt(header.getHeaderLength());
-        buffer.putInt(header.getReq());
+        buffer.put(header.getHeaderLength());
+        buffer.put(header.getReq());
         buffer.putInt(header.getSeq());
         buffer.putInt(header.getCmdId());
         buffer.putInt(header.getBodyLength());
