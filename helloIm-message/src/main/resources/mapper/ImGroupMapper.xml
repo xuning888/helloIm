@@ -23,7 +23,7 @@
     announcement, atall_enable, mute_status, group_type, group_version, extra, created_at, 
     updated_at
   </sql>
-  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+  <select id="selectByGroupId" parameterType="java.lang.Long" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
     from im_group

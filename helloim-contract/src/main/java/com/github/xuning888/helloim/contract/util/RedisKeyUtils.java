@@ -99,4 +99,11 @@ public class RedisKeyUtils {
     public static String activateChatOfflineKey(int shard) {
         return RedisConstant.ACTIVATE_OFFLINE_CHAT_KEY_PREFIX + shard;
     }
+
+    /**
+     * 群聊信息缓存的key
+     */
+    public static String groupInfoKey(Long groupId) {
+        return RedisConstant.C2G_GROUP_INFO_PREFIX + groupId;
+    }
 }

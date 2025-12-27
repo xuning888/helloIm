@@ -29,33 +29,30 @@ public class DubboUtils {
             synchronized (DubboUtils.class) {
                 ref = cache.get(key);
                 if (ref == null) {
-                    ref = buildReferenceConfig(application, endpoint);
+                    ref = buildReferenceConfig(application);
                     cache.put(key, ref);
                 }
             }
         }
         DownMsgService downMsgService = null;
         try {
-            downMsgService = ref.get();
+            downMsgService = ref.get(true);
             if (downMsgService == null) {
                 logger.error("downMsgService 获取downMsgService对象失败, traceId: {}", traceId);
             }
         } catch (Exception ex) {
             logger.error("downMsgService 获取downMsgService对象失败2, traceId: {}", traceId, ex);
         }
-
         return downMsgService;
     }
 
 
-    private static ReferenceConfig<DownMsgService> buildReferenceConfig(String application, Endpoint endpoint) {
+    private static ReferenceConfig<DownMsgService> buildReferenceConfig(String application) {
         ApplicationConfig applicationConfig = new ApplicationConfig();
         applicationConfig.setName(application);
         ReferenceConfig<DownMsgService> referenceConfig = new ReferenceConfig<>();
         referenceConfig.setApplication(applicationConfig);
         referenceConfig.setInterface(DownMsgService.class);
-        String serviceUrl = serviceUrl(DownMsgService.class.getName(), endpoint);
-        referenceConfig.setUrl(serviceUrl);
         referenceConfig.setTimeout(2000);
         MethodConfig methodConfig = new MethodConfig();
         methodConfig.setName("pushMessage");
@@ -64,12 +61,6 @@ public class DubboUtils {
         referenceConfig.setMethods(Collections.singletonList(methodConfig));
         return referenceConfig;
     }
-
-    private static String serviceUrl(String interfaceName, Endpoint endpoint) {
-        return String.format("tri://%s:%d/%s?reconnect=false&send.reconnect=true",
-                endpoint.getHost(), endpoint.getPort(), interfaceName);
-    }
-
 
     private static String key(Endpoint endpoint) {
         return String.format("%s_%d", endpoint.getHost(), endpoint.getPort());

@@ -17,7 +17,7 @@ import java.util.Properties;
  * @date 2025/8/23 0:46
  */
 @Component
-public class KafkaRunner implements CommandLineRunner {
+public class MsgKafkaRunner implements CommandLineRunner {
 
     @Autowired
     private KafkaProperties kafkaProperties;
@@ -34,7 +34,7 @@ public class KafkaRunner implements CommandLineRunner {
         Properties properties = kafkaProperties.buildConsumerProperties();
         MessageConsumer messageConsumer = new MessageConsumer(msgDispatchService, properties, ImmutableList.of(
                 Topics.C2C.C2C_SEND_REQ, // 单聊上行
-                Topics.C2C.C2C_SEND_RES // 单聊ACK上行
+                Topics.C2G.C2G_SEND_REQ // 群聊上行
         ));
         messageConsumer.start();
         Runtime.getRuntime().addShutdownHook(new Thread(messageConsumer::stop));

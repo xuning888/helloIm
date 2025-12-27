@@ -9,4 +9,6 @@ import java.util.Date;
 public interface UserGroupService {
 
     Date getUserJoinGroupTime(Long groupId, String userId, String traceId);
+
+    boolean checkUserGroup(Long groupId, String userId, String traceId);
 }

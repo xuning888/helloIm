@@ -5,6 +5,7 @@ import com.github.xuning888.helloim.contract.meta.GateUser;
 import com.github.xuning888.helloim.contract.meta.ImSession;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author xuning
@@ -27,6 +28,10 @@ public interface SessionService {
      */
     List<ImSession> batchGetSession(List<GateUser> users, GateType gateType, String traceId);
 
+    /**
+     * 批量获取session
+     */
+    Map<GateUser, ImSession> batchGetSessionMap(List<GateUser> users, GateType gateType, String traceId);
 
     /**
      * 移除session

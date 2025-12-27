@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
  * @date 2025/8/23 1:08
  */
 @Component
-public class KafkaRunner implements CommandLineRunner {
+public class DeliveryKafkaRunner implements CommandLineRunner {
 
     @Autowired
     private KafkaProperties kafkaProperties;
@@ -28,7 +28,8 @@ public class KafkaRunner implements CommandLineRunner {
                 msgDispatchService,
                 kafkaProperties.buildConsumerProperties(),
                 ImmutableList.of(
-                        Topics.C2C.C2C_PUSH_RES // 单聊下行
+                        Topics.C2C.C2C_PUSH_REQ, // 单聊下行
+                        Topics.C2G.C2G_PUSH_REQ // 群聊下行
                 )
         );
         deliverConsumer.start();

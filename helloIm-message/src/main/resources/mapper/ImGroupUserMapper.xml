@@ -163,4 +163,10 @@
         from im_group_user
         where group_id = #{groupId} and user_id = #{userId}
     </select>
+
+    <select id="selectImGroupUsers" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List"/>
+        from im_group_user
+        where group_id = #{groupId} and del_status = 0
+    </select>
 </mapper>

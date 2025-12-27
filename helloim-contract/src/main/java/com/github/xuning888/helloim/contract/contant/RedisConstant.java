@@ -23,4 +23,7 @@ public class RedisConstant {
 
     //会话最后一条消息缓存key的前缀, 群聊
     public static String C2G_LAST_MESSAGE_KEY_PREFIX = "lastMessage_c2g_";
+
+    // 群聊信息缓存的key前缀
+    public static String C2G_GROUP_INFO_PREFIX = "im_group_info_";
 }

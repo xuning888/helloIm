@@ -25,14 +25,17 @@ public class UserGroupServiceImpl implements UserGroupService {
     @Resource
     private ImGroupUserMapper imGroupUserMapper;
 
+    @Resource
+    private UserGroupCommonService userGroupCommonService;
+
     @Override
     public Date getUserJoinGroupTime(Long groupId, String userId, String traceId) {
-        logger.info("getUserJoinGroupTime, groupId: {}, userId: {}, traceId: {}", groupId, userId, traceId);
-        Date joinGroupTime = imGroupUserMapper.selectJoinGroupTime(groupId, Long.parseLong(userId));
-        if (joinGroupTime == null) {
-            logger.warn("getUserJoinGroupTime joinGroupTime is null, traceId: {}", traceId);
-            return null;
-        }
-        return joinGroupTime;
+        return userGroupCommonService.getUserJoinGroupTime(groupId, userId, traceId);
+    }
+
+    @Override
+    public boolean checkUserGroup(Long groupId, String userId, String traceId) {
+
+        return false;
     }
 }

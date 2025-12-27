@@ -13,7 +13,7 @@ message C2GSendRequest {
   string from = 1; // 消息发送者
   int64 groupId = 2; // 群聊id
   string content = 3; // 消息内容
-  int32 msgContent = 4; // 消息类型
+  int32 contentType = 4; // 消息类型
   int32 fromUserType = 5; // 消息发送者的userType
 }
 
@@ -29,7 +29,7 @@ message C2GPushRequest {
   string from = 1; // 消息发送者
   int64 groupId = 2; // 群聊id
   string content = 3; // 消息内容
-  int32 msgContent = 4; // 消息类型
+  int32 contentType = 4; // 消息类型
   int32 fromUserType = 5; // 消息发送者的userType
   int64 msgId = 6; // 消息ID
   int64 timestamp = 7; // 服务端收到消息的时间戳

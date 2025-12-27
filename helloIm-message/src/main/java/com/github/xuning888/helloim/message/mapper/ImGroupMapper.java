@@ -10,7 +10,7 @@ public interface ImGroupMapper {
 
     int insertSelective(ImGroup record);
 
-    ImGroup selectByPrimaryKey(Long groupId);
+    ImGroup selectByGroupId(Long groupId);
 
     int updateByPrimaryKeySelective(ImGroup record);
 

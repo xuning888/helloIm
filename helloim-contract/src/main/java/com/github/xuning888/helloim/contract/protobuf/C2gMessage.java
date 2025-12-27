@@ -74,10 +74,10 @@ public final class C2gMessage {
      * 消息类型
      * </pre>
      *
-     * <code>int32 msgContent = 4;</code>
-     * @return The msgContent.
+     * <code>int32 contentType = 4;</code>
+     * @return The contentType.
      */
-    int getMsgContent();
+    int getContentType();
 
     /**
      * <pre>
@@ -239,19 +239,19 @@ public final class C2gMessage {
       }
     }
 
-    public static final int MSGCONTENT_FIELD_NUMBER = 4;
-    private int msgContent_ = 0;
+    public static final int CONTENTTYPE_FIELD_NUMBER = 4;
+    private int contentType_ = 0;
     /**
      * <pre>
      * 消息类型
      * </pre>
      *
-     * <code>int32 msgContent = 4;</code>
-     * @return The msgContent.
+     * <code>int32 contentType = 4;</code>
+     * @return The contentType.
      */
     @java.lang.Override
-    public int getMsgContent() {
-      return msgContent_;
+    public int getContentType() {
+      return contentType_;
     }
 
     public static final int FROMUSERTYPE_FIELD_NUMBER = 5;
@@ -292,8 +292,8 @@ public final class C2gMessage {
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(content_)) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 3, content_);
       }
-      if (msgContent_ != 0) {
-        output.writeInt32(4, msgContent_);
+      if (contentType_ != 0) {
+        output.writeInt32(4, contentType_);
       }
       if (fromUserType_ != 0) {
         output.writeInt32(5, fromUserType_);
@@ -317,9 +317,9 @@ public final class C2gMessage {
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(content_)) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, content_);
       }
-      if (msgContent_ != 0) {
+      if (contentType_ != 0) {
         size += com.google.protobuf.CodedOutputStream
-          .computeInt32Size(4, msgContent_);
+          .computeInt32Size(4, contentType_);
       }
       if (fromUserType_ != 0) {
         size += com.google.protobuf.CodedOutputStream
@@ -346,8 +346,8 @@ public final class C2gMessage {
           != other.getGroupId()) return false;
       if (!getContent()
           .equals(other.getContent())) return false;
-      if (getMsgContent()
-          != other.getMsgContent()) return false;
+      if (getContentType()
+          != other.getContentType()) return false;
       if (getFromUserType()
           != other.getFromUserType()) return false;
       if (!getUnknownFields().equals(other.getUnknownFields())) return false;
@@ -368,8 +368,8 @@ public final class C2gMessage {
           getGroupId());
       hash = (37 * hash) + CONTENT_FIELD_NUMBER;
       hash = (53 * hash) + getContent().hashCode();
-      hash = (37 * hash) + MSGCONTENT_FIELD_NUMBER;
-      hash = (53 * hash) + getMsgContent();
+      hash = (37 * hash) + CONTENTTYPE_FIELD_NUMBER;
+      hash = (53 * hash) + getContentType();
       hash = (37 * hash) + FROMUSERTYPE_FIELD_NUMBER;
       hash = (53 * hash) + getFromUserType();
       hash = (29 * hash) + getUnknownFields().hashCode();
@@ -510,7 +510,7 @@ public final class C2gMessage {
         from_ = "";
         groupId_ = 0L;
         content_ = "";
-        msgContent_ = 0;
+        contentType_ = 0;
         fromUserType_ = 0;
         return this;
       }
@@ -555,7 +555,7 @@ public final class C2gMessage {
           result.content_ = content_;
         }
         if (((from_bitField0_ & 0x00000008) != 0)) {
-          result.msgContent_ = msgContent_;
+          result.contentType_ = contentType_;
         }
         if (((from_bitField0_ & 0x00000010) != 0)) {
           result.fromUserType_ = fromUserType_;
@@ -619,8 +619,8 @@ public final class C2gMessage {
           bitField0_ |= 0x00000004;
           onChanged();
         }
-        if (other.getMsgContent() != 0) {
-          setMsgContent(other.getMsgContent());
+        if (other.getContentType() != 0) {
+          setContentType(other.getContentType());
         }
         if (other.getFromUserType() != 0) {
           setFromUserType(other.getFromUserType());
@@ -667,7 +667,7 @@ public final class C2gMessage {
                 break;
               } // case 26
               case 32: {
-                msgContent_ = input.readInt32();
+                contentType_ = input.readInt32();
                 bitField0_ |= 0x00000008;
                 break;
               } // case 32
@@ -921,31 +921,31 @@ public final class C2gMessage {
         return this;
       }
 
-      private int msgContent_ ;
+      private int contentType_ ;
       /**
        * <pre>
        * 消息类型
        * </pre>
        *
-       * <code>int32 msgContent = 4;</code>
-       * @return The msgContent.
+       * <code>int32 contentType = 4;</code>
+       * @return The contentType.
        */
       @java.lang.Override
-      public int getMsgContent() {
-        return msgContent_;
+      public int getContentType() {
+        return contentType_;
       }
       /**
        * <pre>
        * 消息类型
        * </pre>
        *
-       * <code>int32 msgContent = 4;</code>
-       * @param value The msgContent to set.
+       * <code>int32 contentType = 4;</code>
+       * @param value The contentType to set.
        * @return This builder for chaining.
        */
-      public Builder setMsgContent(int value) {
+      public Builder setContentType(int value) {
 
-        msgContent_ = value;
+        contentType_ = value;
         bitField0_ |= 0x00000008;
         onChanged();
         return this;
@@ -955,12 +955,12 @@ public final class C2gMessage {
        * 消息类型
        * </pre>
        *
-       * <code>int32 msgContent = 4;</code>
+       * <code>int32 contentType = 4;</code>
        * @return This builder for chaining.
        */
-      public Builder clearMsgContent() {
+      public Builder clearContentType() {
         bitField0_ = (bitField0_ & ~0x00000008);
-        msgContent_ = 0;
+        contentType_ = 0;
         onChanged();
         return this;
       }
@@ -1822,10 +1822,10 @@ public final class C2gMessage {
      * 消息类型
      * </pre>
      *
-     * <code>int32 msgContent = 4;</code>
-     * @return The msgContent.
+     * <code>int32 contentType = 4;</code>
+     * @return The contentType.
      */
-    int getMsgContent();
+    int getContentType();
 
     /**
      * <pre>
@@ -2017,19 +2017,19 @@ public final class C2gMessage {
       }
     }
 
-    public static final int MSGCONTENT_FIELD_NUMBER = 4;
-    private int msgContent_ = 0;
+    public static final int CONTENTTYPE_FIELD_NUMBER = 4;
+    private int contentType_ = 0;
     /**
      * <pre>
      * 消息类型
      * </pre>
      *
-     * <code>int32 msgContent = 4;</code>
-     * @return The msgContent.
+     * <code>int32 contentType = 4;</code>
+     * @return The contentType.
      */
     @java.lang.Override
-    public int getMsgContent() {
-      return msgContent_;
+    public int getContentType() {
+      return contentType_;
     }
 
     public static final int FROMUSERTYPE_FIELD_NUMBER = 5;
@@ -2115,8 +2115,8 @@ public final class C2gMessage {
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(content_)) {
         com.google.protobuf.GeneratedMessageV3.writeString(output, 3, content_);
       }
-      if (msgContent_ != 0) {
-        output.writeInt32(4, msgContent_);
+      if (contentType_ != 0) {
+        output.writeInt32(4, contentType_);
       }
       if (fromUserType_ != 0) {
         output.writeInt32(5, fromUserType_);
@@ -2149,9 +2149,9 @@ public final class C2gMessage {
       if (!com.google.protobuf.GeneratedMessageV3.isStringEmpty(content_)) {
         size += com.google.protobuf.GeneratedMessageV3.computeStringSize(3, content_);
       }
-      if (msgContent_ != 0) {
+      if (contentType_ != 0) {
         size += com.google.protobuf.CodedOutputStream
-          .computeInt32Size(4, msgContent_);
+          .computeInt32Size(4, contentType_);
       }
       if (fromUserType_ != 0) {
         size += com.google.protobuf.CodedOutputStream
@@ -2190,8 +2190,8 @@ public final class C2gMessage {
           != other.getGroupId()) return false;
       if (!getContent()
           .equals(other.getContent())) return false;
-      if (getMsgContent()
-          != other.getMsgContent()) return false;
+      if (getContentType()
+          != other.getContentType()) return false;
       if (getFromUserType()
           != other.getFromUserType()) return false;
       if (getMsgId()
@@ -2218,8 +2218,8 @@ public final class C2gMessage {
           getGroupId());
       hash = (37 * hash) + CONTENT_FIELD_NUMBER;
       hash = (53 * hash) + getContent().hashCode();
-      hash = (37 * hash) + MSGCONTENT_FIELD_NUMBER;
-      hash = (53 * hash) + getMsgContent();
+      hash = (37 * hash) + CONTENTTYPE_FIELD_NUMBER;
+      hash = (53 * hash) + getContentType();
       hash = (37 * hash) + FROMUSERTYPE_FIELD_NUMBER;
       hash = (53 * hash) + getFromUserType();
       hash = (37 * hash) + MSGID_FIELD_NUMBER;
@@ -2369,7 +2369,7 @@ public final class C2gMessage {
         from_ = "";
         groupId_ = 0L;
         content_ = "";
-        msgContent_ = 0;
+        contentType_ = 0;
         fromUserType_ = 0;
         msgId_ = 0L;
         timestamp_ = 0L;
@@ -2417,7 +2417,7 @@ public final class C2gMessage {
           result.content_ = content_;
         }
         if (((from_bitField0_ & 0x00000008) != 0)) {
-          result.msgContent_ = msgContent_;
+          result.contentType_ = contentType_;
         }
         if (((from_bitField0_ & 0x00000010) != 0)) {
           result.fromUserType_ = fromUserType_;
@@ -2490,8 +2490,8 @@ public final class C2gMessage {
           bitField0_ |= 0x00000004;
           onChanged();
         }
-        if (other.getMsgContent() != 0) {
-          setMsgContent(other.getMsgContent());
+        if (other.getContentType() != 0) {
+          setContentType(other.getContentType());
         }
         if (other.getFromUserType() != 0) {
           setFromUserType(other.getFromUserType());
@@ -2547,7 +2547,7 @@ public final class C2gMessage {
                 break;
               } // case 26
               case 32: {
-                msgContent_ = input.readInt32();
+                contentType_ = input.readInt32();
                 bitField0_ |= 0x00000008;
                 break;
               } // case 32
@@ -2816,31 +2816,31 @@ public final class C2gMessage {
         return this;
       }
 
-      private int msgContent_ ;
+      private int contentType_ ;
       /**
        * <pre>
        * 消息类型
        * </pre>
        *
-       * <code>int32 msgContent = 4;</code>
-       * @return The msgContent.
+       * <code>int32 contentType = 4;</code>
+       * @return The contentType.
        */
       @java.lang.Override
-      public int getMsgContent() {
-        return msgContent_;
+      public int getContentType() {
+        return contentType_;
       }
       /**
        * <pre>
        * 消息类型
        * </pre>
        *
-       * <code>int32 msgContent = 4;</code>
-       * @param value The msgContent to set.
+       * <code>int32 contentType = 4;</code>
+       * @param value The contentType to set.
        * @return This builder for chaining.
        */
-      public Builder setMsgContent(int value) {
+      public Builder setContentType(int value) {
 
-        msgContent_ = value;
+        contentType_ = value;
         bitField0_ |= 0x00000008;
         onChanged();
         return this;
@@ -2850,12 +2850,12 @@ public final class C2gMessage {
        * 消息类型
        * </pre>
        *
-       * <code>int32 msgContent = 4;</code>
+       * <code>int32 contentType = 4;</code>
        * @return This builder for chaining.
        */
-      public Builder clearMsgContent() {
+      public Builder clearContentType() {
         bitField0_ = (bitField0_ & ~0x00000008);
-        msgContent_ = 0;
+        contentType_ = 0;
         onChanged();
         return this;
       }
@@ -3633,20 +3633,20 @@ public final class C2gMessage {
       descriptor;
   static {
     java.lang.String[] descriptorData = {
-      "\n\tc2g.proto\022\020helloim.protocol\"j\n\016C2GSend" +
+      "\n\tc2g.proto\022\020helloim.protocol\"k\n\016C2GSend" +
       "Request\022\014\n\004from\030\001 \001(\t\022\017\n\007groupId\030\002 \001(\003\022\017" +
-      "\n\007content\030\003 \001(\t\022\022\n\nmsgContent\030\004 \001(\005\022\024\n\014f" +
-      "romUserType\030\005 \001(\005\"F\n\017C2GSendResponse\022\r\n\005" +
-      "msgId\030\001 \001(\003\022\021\n\ttimestamp\030\002 \001(\003\022\021\n\tserver" +
-      "Seq\030\003 \001(\003\"\237\001\n\016C2GPushRequest\022\014\n\004from\030\001 \001" +
-      "(\t\022\017\n\007groupId\030\002 \001(\003\022\017\n\007content\030\003 \001(\t\022\022\n\n" +
-      "msgContent\030\004 \001(\005\022\024\n\014fromUserType\030\005 \001(\005\022\r" +
-      "\n\005msgId\030\006 \001(\003\022\021\n\ttimestamp\030\007 \001(\003\022\021\n\tserv" +
-      "erSeq\030\010 \001(\003\" \n\017C2GPushResponse\022\r\n\005msgId\030" +
-      "\001 \001(\003B}\n.com.github.xuning888.helloim.co" +
-      "ntract.protobufB\nC2gMessageZ?github.com/" +
-      "xuning888/helloIMClient/internal/proto;h" +
-      "elloim_protob\006proto3"
+      "\n\007content\030\003 \001(\t\022\023\n\013contentType\030\004 \001(\005\022\024\n\014" +
+      "fromUserType\030\005 \001(\005\"F\n\017C2GSendResponse\022\r\n" +
+      "\005msgId\030\001 \001(\003\022\021\n\ttimestamp\030\002 \001(\003\022\021\n\tserve" +
+      "rSeq\030\003 \001(\003\"\240\001\n\016C2GPushRequest\022\014\n\004from\030\001 " +
+      "\001(\t\022\017\n\007groupId\030\002 \001(\003\022\017\n\007content\030\003 \001(\t\022\023\n" +
+      "\013contentType\030\004 \001(\005\022\024\n\014fromUserType\030\005 \001(\005" +
+      "\022\r\n\005msgId\030\006 \001(\003\022\021\n\ttimestamp\030\007 \001(\003\022\021\n\tse" +
+      "rverSeq\030\010 \001(\003\" \n\017C2GPushResponse\022\r\n\005msgI" +
+      "d\030\001 \001(\003B}\n.com.github.xuning888.helloim." +
+      "contract.protobufB\nC2gMessageZ?github.co" +
+      "m/xuning888/helloIMClient/internal/proto" +
+      ";helloim_protob\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -3657,7 +3657,7 @@ public final class C2gMessage {
     internal_static_helloim_protocol_C2GSendRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_helloim_protocol_C2GSendRequest_descriptor,
-        new java.lang.String[] { "From", "GroupId", "Content", "MsgContent", "FromUserType", });
+        new java.lang.String[] { "From", "GroupId", "Content", "ContentType", "FromUserType", });
     internal_static_helloim_protocol_C2GSendResponse_descriptor =
       getDescriptor().getMessageTypes().get(1);
     internal_static_helloim_protocol_C2GSendResponse_fieldAccessorTable = new
@@ -3669,7 +3669,7 @@ public final class C2gMessage {
     internal_static_helloim_protocol_C2GPushRequest_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_helloim_protocol_C2GPushRequest_descriptor,
-        new java.lang.String[] { "From", "GroupId", "Content", "MsgContent", "FromUserType", "MsgId", "Timestamp", "ServerSeq", });
+        new java.lang.String[] { "From", "GroupId", "Content", "ContentType", "FromUserType", "MsgId", "Timestamp", "ServerSeq", });
     internal_static_helloim_protocol_C2GPushResponse_descriptor =
       getDescriptor().getMessageTypes().get(3);
     internal_static_helloim_protocol_C2GPushResponse_fieldAccessorTable = new

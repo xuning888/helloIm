@@ -69,7 +69,8 @@ public class UpMessageServiceImpl implements UpMsgService {
         logger.info("sendMessage user: {}, cmdId: {}, frameSize: {}, traceId: {}", gateUser, cmdId,
                 frame.getHeader().getBodyLength(), traceId);
         if (
-                cmdId == MsgCmd.CmdId.CMD_ID_C2CSEND_VALUE // 单聊上行
+                cmdId == MsgCmd.CmdId.CMD_ID_C2CSEND_VALUE || // 单聊上行
+                cmdId == MsgCmd.CmdId.CMD_ID_C2GSEND_VALUE    // 群聊上行
         ) {
             MsgContext msgContext = new MsgContext();
             msgContext.setTraceId(traceId); // 设置traceId

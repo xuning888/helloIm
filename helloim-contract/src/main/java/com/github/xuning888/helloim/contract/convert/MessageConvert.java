@@ -7,6 +7,7 @@ import com.github.xuning888.helloim.contract.entity.ImMessage;
 import com.github.xuning888.helloim.contract.entity.ImMessageGroup;
 import com.github.xuning888.helloim.contract.frame.Frame;
 import com.github.xuning888.helloim.contract.protobuf.C2cMessage;
+import com.github.xuning888.helloim.contract.protobuf.C2gMessage;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.CollectionUtils;
 
@@ -150,5 +151,12 @@ public class MessageConvert {
             messageDtos.add(chatMessageDto);
         }
         return messageDtos;
+    }
+
+    public static ChatMessageDto buildC2GChatMessage(MsgContext msgContext, C2gMessage.C2GSendRequest c2gSendRequest){
+        ChatMessageDto chatMessageDto = new ChatMessageDto();
+
+
+        return chatMessageDto;
     }
 }

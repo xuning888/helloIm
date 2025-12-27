@@ -13,10 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -66,7 +63,7 @@ public class SessionServiceImpl implements SessionService {
         RpcServiceContext serviceContext = RpcContext.getServiceContext();
         String caller = serviceContext.getRemoteApplicationName();
         List<ImSession> sessions = new ArrayList<>();
-        List<String> keys = new ArrayList<>();
+        List<String> keys = new ArrayList<>(users.size());
         for (GateUser user : users) {
             String key = sessionKey(user, gateType);
             keys.add(key);
@@ -81,6 +78,20 @@ public class SessionServiceImpl implements SessionService {
             sessions.add((ImSession) value);
         }
         return sessions;
+    }
+
+    @Override
+    public Map<GateUser, ImSession> batchGetSessionMap(List<GateUser> users, GateType gateType, String traceId) {
+        List<ImSession> imSessions = batchGetSession(users, gateType, traceId);
+        if (CollectionUtils.isEmpty(imSessions)) {
+            return Collections.emptyMap();
+        }
+        Map<GateUser, ImSession> userImSessionMap = new HashMap<>();
+        for (ImSession imSession : imSessions) {
+            GateUser gateUser = imSession.getGateUser();
+            userImSessionMap.put(gateUser, imSession);
+        }
+        return userImSessionMap;
     }
 
     @Override

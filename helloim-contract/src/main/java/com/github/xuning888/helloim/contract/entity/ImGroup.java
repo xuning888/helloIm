@@ -30,6 +30,8 @@ public class ImGroup implements Serializable {
 
     private String extra;
 
+    private Integer delStatus;
+
     private Date createdAt;
 
     private Date updatedAt;
@@ -152,5 +154,13 @@ public class ImGroup implements Serializable {
 
     public void setUpdatedAt(Date updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public Integer getDelStatus() {
+        return delStatus;
+    }
+
+    public void setDelStatus(Integer delStatus) {
+        this.delStatus = delStatus;
     }
 }

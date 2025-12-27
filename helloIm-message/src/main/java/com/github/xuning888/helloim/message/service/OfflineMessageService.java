@@ -1,14 +1,12 @@
 package com.github.xuning888.helloim.message.service;
 
 import com.github.xuning888.helloim.contract.api.request.PullOfflineMsgRequest;
-import com.github.xuning888.helloim.contract.api.service.MsgStoreService;
 import com.github.xuning888.helloim.contract.contant.ChatType;
 import com.github.xuning888.helloim.contract.dto.ChatMessageDto;
 import com.github.xuning888.helloim.contract.util.RedisKeyUtils;
-import org.apache.dubbo.config.annotation.DubboReference;
+import com.github.xuning888.helloim.message.rpc.MsgStoreSvcClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.Cursor;
 import org.springframework.data.redis.core.KeyScanOptions;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -16,6 +14,7 @@ import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import javax.annotation.Resource;
 import java.util.*;
 
 /**
@@ -28,10 +27,10 @@ public class OfflineMessageService {
     private static final Logger logger = LoggerFactory.getLogger(OfflineMessageService.class);
 
     private final long offlineMessageCount = 100;
-    @Autowired
+    @Resource
     private RedisTemplate<String, Object> redisTemplate;
-    @DubboReference
-    private MsgStoreService msgStoreService;
+    @Resource
+    private MsgStoreSvcClient msgStoreSvcClient;
 
     // 存储离线消息
     public void saveOfflineMessage(ChatMessageDto chatMessageDto, String traceId) {
@@ -132,7 +131,7 @@ public class OfflineMessageService {
 
         if (CollectionUtils.isEmpty(messages)) {
             // 离线消息缓存中没有查询到任何消息, 正常情况下是不会有的
-            List<ChatMessageDto> recentMessages = msgStoreService.getRecentMessages(String.valueOf(fromUserId),
+            List<ChatMessageDto> recentMessages = msgStoreSvcClient.getRecentMessages(String.valueOf(fromUserId),
                     String.valueOf(chatId), chatType, size, traceId);
             for (ChatMessageDto recentMessage : recentMessages) {
                 saveOfflineMessage(recentMessage, traceId);
@@ -258,7 +257,7 @@ public class OfflineMessageService {
         if (CollectionUtils.isEmpty(missingServerSeqs)) {
             return messages;
         }
-        List<ChatMessageDto> messageDtos = msgStoreService.selectMessageByServerSeqs(String.valueOf(userId), String.valueOf(chatId), chatType, missingServerSeqs, traceId);
+        List<ChatMessageDto> messageDtos = msgStoreSvcClient.selectMessageByServerSeqs(String.valueOf(userId), String.valueOf(chatId), chatType, missingServerSeqs, traceId);
         if (CollectionUtils.isEmpty(messageDtos)) {
             return messages;
         }

@@ -25,7 +25,7 @@ public class ImGroupUser implements Serializable {
 
     private Integer muteStatus;
 
-    private Byte delStatus;
+    private Integer delStatus;
 
     private Date createdAt;
 
@@ -111,11 +111,11 @@ public class ImGroupUser implements Serializable {
         this.muteStatus = muteStatus;
     }
 
-    public Byte getDelStatus() {
+    public Integer getDelStatus() {
         return delStatus;
     }
 
-    public void setDelStatus(Byte delStatus) {
+    public void setDelStatus(Integer delStatus) {
         this.delStatus = delStatus;
     }
 

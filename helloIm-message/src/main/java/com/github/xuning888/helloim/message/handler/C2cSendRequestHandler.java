@@ -9,7 +9,7 @@ import com.github.xuning888.helloim.contract.kafka.MsgKafkaProducer;
 import com.github.xuning888.helloim.contract.kafka.Topics;
 import com.github.xuning888.helloim.contract.protobuf.C2cMessage;
 import com.github.xuning888.helloim.contract.protobuf.MsgCmd;
-import com.github.xuning888.helloim.message.rpc.DubboAdapter;
+import com.github.xuning888.helloim.message.rpc.MsgStoreSvcClient;
 import com.github.xuning888.helloim.message.service.OfflineMessageService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,7 +27,7 @@ public class C2cSendRequestHandler implements MsgHandler {
     private static final Logger logger = LoggerFactory.getLogger(C2cSendRequestHandler.class);
 
     @Resource
-    private DubboAdapter dubboAdapter;
+    private MsgStoreSvcClient msgStoreSvcClient;
 
     @Resource
     private OfflineMessageService offlineMessageService;
@@ -46,7 +46,7 @@ public class C2cSendRequestHandler implements MsgHandler {
             c2cSendRequest = C2cMessage.C2cSendRequest.parseFrom(frame.getBody());
         } catch (Exception ex) {
             logger.error("handleMessage parse c2cSendRequest failed, from: {}, to: {}, traceId: {}",
-                    msgContext.getMsgFrom(), msgContext.getMsgTo(), traceId);
+                    msgContext.getMsgFrom(), msgContext.getMsgTo(), traceId, ex);
             return;
         }
 
@@ -58,7 +58,7 @@ public class C2cSendRequestHandler implements MsgHandler {
 
         ChatMessageDto chatMessageDto = MessageConvert.buildC2CChatMessage(msgContext, c2cSendRequest);
         // 消息持久化
-        if (!saveMessage(chatMessageDto, traceId)) {
+        if (!msgStoreSvcClient.saveMessage(chatMessageDto, traceId)) {
             logger.error("c2cSendMessage saveMessage error: traceId: {}", traceId);
             return;
         }
@@ -67,14 +67,9 @@ public class C2cSendRequestHandler implements MsgHandler {
         // 构造下行消息, 发送消息
         Frame c2cPushRequestFrame = buildC2cPushRequestFrame(msgContext, c2cSendRequest);
         msgContext.setFrame(c2cPushRequestFrame);
-        MsgKafkaProducer.getInstance().send(Topics.C2C.C2C_PUSH_RES, msgKey(msgContext), msgContext);
+        MsgKafkaProducer.getInstance().send(Topics.C2C.C2C_PUSH_REQ, msgKey(msgContext), msgContext);
     }
 
-
-    private boolean saveMessage(ChatMessageDto chatMessageDto, String traceId) {
-        int raw = this.dubboAdapter.msgStoreService().saveMessage(chatMessageDto, traceId);
-        return raw > 0;
-    }
 
     private String msgKey(MsgContext msgContext) {
         return msgContext.getMsgFrom() + "_" + msgContext.getMsgTo() + "_" + msgContext.getServerSeq();

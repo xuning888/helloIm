@@ -15,6 +15,8 @@ import java.util.Map;
  */
 public class MsgContext implements Serializable {
 
+    public static String GROUP_MEMBER_KEY = "members";
+
     /**
      * 消息发送方,
      */
@@ -75,6 +77,12 @@ public class MsgContext implements Serializable {
     @Tag(value = 12)
     private String sessionId;
 
+    /**
+     * 群聊ID
+     */
+    @Tag(value = 13)
+    private long groupId;
+
     public String getMsgFrom() {
         return msgFrom;
     }
@@ -131,12 +139,12 @@ public class MsgContext implements Serializable {
         this.traceId = traceId;
     }
 
-    public Map<String, Object> getContextMap() {
-        return contextMap;
-    }
-
-    public Object getFromContext(String key) {
-        return this.contextMap.get(key);
+    public <T> T getFromContext(String key) {
+        Object value = this.contextMap.get(key);
+        if (value == null) {
+            return null;
+        }
+        return (T) value;
     }
 
     public void putContext(String key, Object object) {
@@ -181,5 +189,13 @@ public class MsgContext implements Serializable {
             return 0;
         }
         return header.getSeq();
+    }
+
+    public long getGroupId() {
+        return groupId;
+    }
+
+    public void setGroupId(long groupId) {
+        this.groupId = groupId;
     }
 }

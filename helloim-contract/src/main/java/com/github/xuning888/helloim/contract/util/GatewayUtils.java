@@ -8,6 +8,8 @@ import com.github.xuning888.helloim.contract.frame.Header;
 import com.github.xuning888.helloim.contract.meta.Endpoint;
 import com.github.xuning888.helloim.contract.meta.GateUser;
 import com.github.xuning888.helloim.contract.protobuf.MsgCmd;
+import org.apache.dubbo.rpc.cluster.specifyaddress.Address;
+import org.apache.dubbo.rpc.cluster.specifyaddress.UserSpecifiedAddressUtil;
 import org.apache.dubbo.rpc.model.ApplicationModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,39 +52,38 @@ public class GatewayUtils {
             return;
         }
         GateUser gateUser = new GateUser(uidInt64, msgContext.getFromUserType(), msgContext.getSessionId());
-        pushMessage(responseFrame, gateUser, endpoint, traceId);
+        pushMessage(responseFrame, Collections.singletonList(gateUser), endpoint, traceId);
     }
 
-    public static void pushMessage(Frame frame, GateUser gateUser, Endpoint endpoint, String traceId) {
+    public static void pushMessage(Frame frame, List<GateUser> users, Endpoint endpoint, String traceId) {
         String appName = ApplicationModel.getApplicationConfig().getName();
         DownMsgService downMsgService = DubboUtils.downMsgService(appName, endpoint, traceId);
         if (downMsgService == null) {
             logger.error("pushMessage error, downMsgService is null, traceId: {}", traceId);
             return;
         }
-        DownMessageReq downMessageReq = new DownMessageReq(frame, Collections.singletonList(gateUser), traceId);
-        downMsgService.pushMessage(downMessageReq);
+        try {
+            UserSpecifiedAddressUtil.setAddress(new Address(endpoint.getHost(), endpoint.getPort(), true));
+            DownMessageReq downMessageReq = new DownMessageReq(frame, users, traceId);
+            downMsgService.pushMessage(downMessageReq);
+        } finally {
+            UserSpecifiedAddressUtil.setAddress(null);
+        }
     }
 
-    public static void pushMessageNeedAck(Frame frame, GateUser gateUser, Endpoint endpoint, String traceId) {
+    public static void pushMessageNeedAck(Frame frame, List<GateUser> users, Endpoint endpoint, String traceId) {
         String appName = ApplicationModel.getApplicationConfig().getName();
         DownMsgService downMsgService = DubboUtils.downMsgService(appName, endpoint, traceId);
         if (downMsgService == null) {
             logger.error("pushMessageNeedAck error, downMsgService is null, traceId: {}", traceId);
             return;
         }
-        DownMessageReq downMessageReq = new DownMessageReq(frame, true, Collections.singletonList(gateUser), traceId);
-        downMsgService.pushMessage(downMessageReq);
-    }
-
-    public static void batchPushMessage(Frame frame, List<GateUser> users, Endpoint endpoint, String traceId){
-        String appName = ApplicationModel.getApplicationConfig().getName();
-        DownMsgService downMsgService = DubboUtils.downMsgService(appName, endpoint, traceId);
-        if (downMsgService == null) {
-            logger.error("batchPushMessage error, downMsgService is null, traceId: {}", traceId);
-            return;
+        try {
+            UserSpecifiedAddressUtil.setAddress(new Address(endpoint.getHost(), endpoint.getPort(), true));
+            DownMessageReq downMessageReq = new DownMessageReq(frame, true, users, traceId);
+            downMsgService.pushMessage(downMessageReq);
+        } finally {
+            UserSpecifiedAddressUtil.setAddress(null);
         }
-        DownMessageReq downMessageReq = new DownMessageReq(frame, users, traceId);
-        downMsgService.pushMessage(downMessageReq);
     }
 }
