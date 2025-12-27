@@ -13,6 +13,7 @@ import com.github.xuning888.helloim.delivery.rpc.SessionSvcClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
 import java.util.*;
@@ -39,12 +40,16 @@ public class C2gPushRequestHandler implements MsgDeliverHandler {
         String traceId = msgContext.getTraceId();
         Frame frame = msgContext.getFrame();
         List<GateUser> groupUsers = msgContext.getFromContext(MsgContext.GROUP_MEMBER_KEY);
+        if (CollectionUtils.isEmpty(groupUsers)) {
+            logger.error("c2gPushRequestHandler groupUsers is empty, traceId: {}", traceId);
+            return;
+        }
         Map<GateUser, ImSession> sessionTcp = getSessionTcp(groupUsers, traceId);
         // 找出在线用户和离线用户
         Map<Endpoint, Set<GateUser>> onlineTcpUsers = new HashMap<>();
         Set<GateUser> offlineUsers = new HashSet<>();
         findOnlineUsers(groupUsers, sessionTcp, onlineTcpUsers, offlineUsers);
-        logger.info("onlineUser: {}, offlineUser: {}, traceId: {}", onlineTcpUsers, offlineUsers, traceId);
+        logger.info("c2gPushRequestHandler onlineUser: {}, offlineUser: {}, traceId: {}", onlineTcpUsers, offlineUsers, traceId);
         // 在线用户通过长连接网关推送消息
         for (Map.Entry<Endpoint, Set<GateUser>> entry : onlineTcpUsers.entrySet()) {
             Endpoint endpoint = entry.getKey();
