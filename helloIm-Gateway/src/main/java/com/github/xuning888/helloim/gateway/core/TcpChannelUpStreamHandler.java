@@ -68,10 +68,6 @@ public class TcpChannelUpStreamHandler extends ImChannelUpStreamHandler {
         Header header = frame.getHeader();
         logger.debug("received message, conn: {}, cmdId:{}, seq:{}, traceId: {}",
                 conn.getId(), header.getCmdId(), header.getSeq(), traceId);
-        // 尝试ACK消息
-        if (conn.ack(frame)) {
-            return;
-        }
         // 创建上行事件
         UpCmdEvent upCmdEvent = new UpCmdEvent(frame, conn, traceId);
         // 投递上行事件

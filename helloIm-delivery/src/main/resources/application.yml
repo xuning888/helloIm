@@ -37,3 +37,12 @@ im:
       group-id: helloim-delivery
       enable-autocommit: false
       auto-offset-reset: latest
+
+management:
+  endpoints:
+    web:
+      base-path: /
+      exposure:
+        include: health,info,prometheus
+      path-mapping:
+        prometheus: metrics

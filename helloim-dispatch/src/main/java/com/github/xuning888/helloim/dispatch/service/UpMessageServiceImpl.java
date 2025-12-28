@@ -73,6 +73,7 @@ public class UpMessageServiceImpl implements UpMsgService {
                 cmdId == MsgCmd.CmdId.CMD_ID_C2GSEND_VALUE    // 群聊上行
         ) {
             MsgContext msgContext = new MsgContext();
+            msgContext.setTimestamp(System.currentTimeMillis()); // 接收到消息的时间
             msgContext.setTraceId(traceId); // 设置traceId
             msgContext.setMsgFrom(String.valueOf(gateUser.getUid())); // 消息发送者
             msgContext.setFromUserType(gateUser.getUserType()); // 消息发送者到用户类型

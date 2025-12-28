@@ -66,7 +66,7 @@ public class MsgContext implements Serializable {
     private final Map<String, Object> contextMap = new HashMap<>();
 
     @Tag(value =  9)
-    private final long timestamp = System.currentTimeMillis();
+    private long timestamp;
 
     @Tag(value = 10)
     private Integer fromUserType;
@@ -153,6 +153,10 @@ public class MsgContext implements Serializable {
 
     public long getTimestamp() {
         return timestamp;
+    }
+
+    public void setTimestamp(long timestamp) {
+        this.timestamp = timestamp;
     }
 
     public Integer getFromUserType() {

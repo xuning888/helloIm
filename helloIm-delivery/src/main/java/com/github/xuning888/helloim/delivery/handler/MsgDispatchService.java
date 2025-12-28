@@ -3,6 +3,7 @@ package com.github.xuning888.helloim.delivery.handler;
 import com.github.xuning888.helloim.contract.dto.MsgContext;
 import com.github.xuning888.helloim.contract.frame.Frame;
 import com.github.xuning888.helloim.contract.util.ProtoStuffUtils;
+import com.github.xuning888.helloim.delivery.metrics.MetricRegistryService;
 import com.github.xuning888.helloim.delivery.util.ThreadPoolUtils;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.slf4j.Logger;
@@ -22,9 +23,11 @@ public class MsgDispatchService {
 
     private static final Logger logger = LoggerFactory.getLogger(MsgDispatchService.class);
 
+    private final MetricRegistryService metricRegistryService;
+
     private final Map<Integer, MsgDeliverHandler> handlerMap = new HashMap<>();
 
-    public MsgDispatchService(List<MsgDeliverHandler> handlers) {
+    public MsgDispatchService(List<MsgDeliverHandler> handlers, MetricRegistryService metricRegistryService) {
         for (MsgDeliverHandler handler : handlers) {
             int cmdId = handler.getCmdId();
             MsgDeliverHandler msgDeliverHandler = handlerMap.get(cmdId);
@@ -34,6 +37,7 @@ public class MsgDispatchService {
             }
             handlerMap.put(cmdId, handler);
         }
+        this.metricRegistryService = metricRegistryService;
     }
 
     public void dispatch(ConsumerRecord<String, byte[]> record, String traceId) {
@@ -48,6 +52,8 @@ public class MsgDispatchService {
             return;
         }
         msgDeliverHandler.handle(msgContext, kTraceId);
+        // 记录消息延时
+        metricRegistryService.recordLatency(msgContext);
     }
 
 

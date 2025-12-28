@@ -7,6 +7,7 @@ import com.github.xuning888.helloim.gateway.core.ImChannelUpStreamHandler;
 import com.github.xuning888.helloim.gateway.core.TcpChannelUpStreamHandler;
 import com.github.xuning888.helloim.gateway.core.cmd.handler.*;
 import com.github.xuning888.helloim.gateway.core.handler.impl.HeadMsgHandler;
+import com.github.xuning888.helloim.gateway.core.handler.impl.PrometheusHandler;
 import com.github.xuning888.helloim.gateway.core.handler.impl.TailMsgHandler;
 import com.github.xuning888.helloim.gateway.core.pipeline.DefaultMsgPipeline;
 import com.github.xuning888.helloim.gateway.core.pipeline.MsgPipeline;
@@ -14,6 +15,7 @@ import com.github.xuning888.helloim.gateway.core.processor.MessageProcessor;
 import com.github.xuning888.helloim.gateway.core.processor.Processor;
 import com.github.xuning888.helloim.gateway.core.session.DefaultSessionManager;
 import com.github.xuning888.helloim.gateway.core.session.SessionManager;
+import io.micrometer.prometheus.PrometheusMeterRegistry;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -62,9 +64,10 @@ public class GateConfiguration {
     }
 
     @Bean
-    public MsgPipeline msgPipeline(HandlerProxy handlerProxy) {
+    public MsgPipeline msgPipeline(HandlerProxy handlerProxy, PrometheusMeterRegistry registry) {
         DefaultMsgPipeline defaultMsgPipeline = new DefaultMsgPipeline();
         defaultMsgPipeline.addLast("head", new HeadMsgHandler());
+        defaultMsgPipeline.addLast("metrics", new PrometheusHandler(registry));
         defaultMsgPipeline.addLast("tail", new TailMsgHandler(handlerProxy));
         return defaultMsgPipeline;
     }

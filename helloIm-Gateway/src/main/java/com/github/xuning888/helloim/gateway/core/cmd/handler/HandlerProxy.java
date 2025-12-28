@@ -39,6 +39,10 @@ public class HandlerProxy implements CmdHandler {
         try {
             if (cmdEvent instanceof UpCmdEvent) {
                 Frame frame = cmdEvent.getFrame();
+                // 尝试ACK
+                if (cmdEvent.getConn().ack(frame)) {
+                    return;
+                }
                 Header header = frame.getHeader();
                 int cmdId = header.getCmdId();
                 CmdHandler cmdHandler = handlerMap.get(cmdId);
