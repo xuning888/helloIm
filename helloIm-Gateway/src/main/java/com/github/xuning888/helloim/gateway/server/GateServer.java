@@ -36,6 +36,13 @@ public class GateServer {
         try {
             bootstrap.setFactory(new NioServerSocketChannelFactory(Executors.newCachedThreadPool(), Executors.newCachedThreadPool()));
             bootstrap.setPipelineFactory(imChannelPipeFactory);
+            // socket配置
+            // 1. 禁用Nagle算法,确保数据包及时发送
+            // 2. 接收缓冲区 SO_RCVBUF, 设置64KB
+            // 3. 发送缓冲区 SO_SNDBUF, 设置64KB
+            // socket = 3KB + 128KB = 131KB
+            // 按照现在的配置方式, 单机10w个socket占用的内存 = 131 * 100000 / 1024 / 1024 = 12.5G 且这只是内核所需的内存, JVM的还没算。
+            // TODO 目前限制的最大的帧=8192byte = 8KB, 这里根据需要根据实际的压测再调整
             bootstrap.setOption("child.tcpNoDelay", true);
             bootstrap.setOption("child.receiveBufferSize", 65536);
             bootstrap.setOption("child.sendBufferSize", 65536);
