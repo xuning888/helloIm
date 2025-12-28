@@ -112,15 +112,15 @@ public class ChatComponent {
         if (CollectionUtils.isEmpty(imChatDtos)) {
             return Collections.emptyList();
         }
+        // 获取还存活的会话
+        imChatDtos = getAliveChats(imChatDtos);
         // 会话最后一条消息
         Map<String, ChatMessageDto> lastMessagesMap = this.chatMessageComponent.multiLastMessages(userId, imChatDtos, traceId);
         // 根据会话的最后一条消息补偿会话信息
         updateImChatDto(userId, imChatDtos, lastMessagesMap, traceId);
-        // 获取还存活的会话
-        List<ImChatDto> aliveChats = getAliveChats(imChatDtos);
         // 会话排序
-        sortChats(aliveChats);
-        return aliveChats;
+        sortChats(imChatDtos);
+        return imChatDtos;
     }
 
     public List<ImChatDto> getAllChatFromRedis(String userId, String traceId) {

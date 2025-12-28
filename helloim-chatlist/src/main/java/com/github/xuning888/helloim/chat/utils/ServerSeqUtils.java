@@ -13,7 +13,7 @@ import java.util.concurrent.TimeUnit;
 public class ServerSeqUtils {
 
     private static final String SERVER_SEQ_SCRIPT =
-            "if redis.call('exists', KEYS[1]) == 1 then\n" +
+                    "if redis.call('exists', KEYS[1]) == 1 then\n" +
                     "    local value = redis.call('get', KEYS[1])\n" +
                     "    if tonumber(ARGV[1]) > tonumber(value) then\n" +
                     "        redis.call('set', KEYS[1], ARGV[1])\n" +
@@ -30,13 +30,18 @@ public class ServerSeqUtils {
 
     private static final int serverSeqTTL = (int) TimeUnit.DAYS.convert(7, TimeUnit.SECONDS);
 
+    private static DefaultRedisScript<Long> serverSeqScript;
+
+    static {
+        serverSeqScript = new DefaultRedisScript<>();
+        serverSeqScript.setScriptText(SERVER_SEQ_SCRIPT);
+        serverSeqScript.setResultType(Long.class);
+    }
+
 
     public static Long setServerSeq(RedisTemplate redisTemplate, String key, Long serverSeq) {
-        DefaultRedisScript<Long> script = new DefaultRedisScript<>();
-        script.setScriptText(SERVER_SEQ_SCRIPT);
-        script.setResultType(Long.class);
         int random = (int) (Math.random() * 3600);
         int ttl = serverSeqTTL + random;
-        return (Long) redisTemplate.execute(script, Collections.singletonList(key), serverSeq, ttl);
+        return (Long) redisTemplate.execute(serverSeqScript, Collections.singletonList(key), serverSeq, ttl);
     }
 }

@@ -63,8 +63,7 @@ public class C2gPushRequestHandler implements MsgDeliverHandler {
         for (GateUser user : users) {
             ImSession imSession = sessionMap.get(user);
             if (imSession != null) {
-                Endpoint endpoint = imSession.getEndpoint();
-                onlineUsers.getOrDefault(endpoint, new HashSet<>()).add(user);
+                onlineUsers.computeIfAbsent(imSession.getEndpoint(), k -> new HashSet<>()).add(user);
             } else {
                 offlineUsers.add(user);
             }

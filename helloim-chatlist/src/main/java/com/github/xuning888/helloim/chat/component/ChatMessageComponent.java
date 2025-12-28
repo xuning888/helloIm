@@ -1,5 +1,6 @@
 package com.github.xuning888.helloim.chat.component;
 
+import com.github.xuning888.helloim.chat.utils.LastMessageUtils;
 import com.github.xuning888.helloim.contract.api.service.MsgStoreService;
 import com.github.xuning888.helloim.contract.contant.ChatType;
 import com.github.xuning888.helloim.contract.dto.ChatMessageDto;
@@ -98,11 +99,7 @@ public class ChatMessageComponent {
     }
 
     private void updateC2cLastMessage(String userId, String toUserId, ChatMessageDto chatMessageDto, String traceId) {
-        String key = RedisKeyUtils.c2cLastMessageKey(userId, toUserId);
-        Long msgId = chatMessageDto.getMsgId();
-        Long serverSeq = chatMessageDto.getServerSeq();
-        logger.info("updateC2cLastMessage key: {}, msgId: {}, serverSeq: {}, traceId: {}", key, msgId, serverSeq, traceId);
-        this.redisTemplate.opsForValue().set(key, chatMessageDto);
+        LastMessageUtils.updateC2CLastMessage(redisTemplate, userId, toUserId, chatMessageDto, traceId);
     }
 
     private void updateC2gLastMessage(ChatMessageDto chatMessageDto, String traceId) {
