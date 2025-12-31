@@ -97,6 +97,7 @@ public class C2gSendRequestHandler implements MsgHandler {
         ChatMessageDto chatMessageDto = MessageConvert.buildC2GChatMessage(msgContext, c2gSendRequest);
         if (!msgStoreSvcClient.saveMessage(chatMessageDto, traceId)) {
             logger.error("handleMessage, saveMessage error from: {}, groupId: {}, msgId: {}, traceId: {}", msgFrom, groupId, msgContext, traceId);
+            return;
         }
         // 保存离线消息
         offlineMessageService.saveOfflineMessage(chatMessageDto, traceId);
