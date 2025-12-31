@@ -6,6 +6,7 @@ import com.github.xuning888.helloim.contract.dto.MsgContext;
 import com.github.xuning888.helloim.contract.entity.ImMessage;
 import com.github.xuning888.helloim.contract.entity.ImMessageGroup;
 import com.github.xuning888.helloim.contract.frame.Frame;
+import com.github.xuning888.helloim.contract.frame.Header;
 import com.github.xuning888.helloim.contract.protobuf.C2cMessage;
 import com.github.xuning888.helloim.contract.protobuf.C2gMessage;
 import org.apache.commons.lang3.StringUtils;
@@ -155,8 +156,28 @@ public class MessageConvert {
 
     public static ChatMessageDto buildC2GChatMessage(MsgContext msgContext, C2gMessage.C2GSendRequest c2gSendRequest){
         ChatMessageDto chatMessageDto = new ChatMessageDto();
-
-
+        chatMessageDto.setChatType(ChatType.C2G.getType()); // 群聊
+        chatMessageDto.setChatId(msgContext.getGroupId()); // 群聊的话groupId就是chatId
+        chatMessageDto.setChatIdStr(String.valueOf(msgContext.getGroupId()));
+        chatMessageDto.setMsgId(msgContext.getMsgId()); // 消息ID
+        chatMessageDto.setMsgIdStr(String.valueOf(msgContext.getMsgId()));
+        chatMessageDto.setMsgFrom(Long.valueOf(msgContext.getMsgFrom()));
+        chatMessageDto.setMsgFromStr(msgContext.getMsgFrom());
+        chatMessageDto.setFromUserType(msgContext.getFromUserType());
+        chatMessageDto.setMsgTo(msgContext.getGroupId());
+        chatMessageDto.setMsgToStr(String.valueOf(msgContext.getGroupId()));
+        chatMessageDto.setToUserType(0); // 群聊不关注这个字段
+        chatMessageDto.setGroupId(msgContext.getGroupId());
+        chatMessageDto.setGroupIdStr(String.valueOf(msgContext.getGroupId()));
+        chatMessageDto.setMsgSeq(msgContext.getMsgSeq());
+        chatMessageDto.setMsgContent(c2gSendRequest.getContent());
+        chatMessageDto.setContentType(c2gSendRequest.getContentType());
+        Frame frame = msgContext.getFrame();
+        Header header = frame.getHeader();
+        chatMessageDto.setCmdId(header.getCmdId());
+        chatMessageDto.setSendTime(msgContext.getTimestamp());
+        chatMessageDto.setReceiptStatus(0);
+        chatMessageDto.setServerSeq(msgContext.getServerSeq());
         return chatMessageDto;
     }
 }
