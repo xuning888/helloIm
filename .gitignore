@@ -51,3 +51,4 @@ docker/zookeeper/
 docker/kafka/
 docker/redis/
 docker/mysql/
+docker/nginx/logs
