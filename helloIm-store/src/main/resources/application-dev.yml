@@ -7,28 +7,28 @@ im:
       datasource0:
         name: datasource0
         driver-class-name: com.mysql.cj.jdbc.Driver
-        username: root
-        password: root
-        url: jdbc:mysql://127.0.0.1:3306/helloim0?useSSL=false&useUnicode=true&characterEncoding=utf-8&allowMultiQueries=true&autoReconnect=true
+        username: ${DB1_USERNAME:root}
+        password: ${DB1_PASSWORD:root}
+        url: ${DB1_URL:jdbc:mysql://127.0.0.1:3306/helloim0?useSSL=false&useUnicode=true&characterEncoding=utf-8&allowMultiQueries=true&autoReconnect=true}
         type: com.zaxxer.hikari.HikariDataSource
       datasource1:
         name: datasource1
         driver-class-name: com.mysql.cj.jdbc.Driver
-        username: root
-        password: root
-        url: jdbc:mysql://127.0.0.1:3306/helloim1?useSSL=false&useUnicode=true&characterEncoding=utf-8&allowMultiQueries=true&autoReconnect=true
+        username: ${DB2_USERNAME:root}
+        password: ${DB2_PASSWORD:root}
+        url: ${DB2_URL:jdbc:mysql://127.0.0.1:3306/helloim1?useSSL=false&useUnicode=true&characterEncoding=utf-8&allowMultiQueries=true&autoReconnect=true}
         type: com.zaxxer.hikari.HikariDataSource
       datasource2:
         name: datasource2
         driver-class-name: com.mysql.cj.jdbc.Driver
-        username: root
-        password: root
-        url: jdbc:mysql://127.0.0.1:3306/helloim2?useSSL=false&useUnicode=true&characterEncoding=utf-8&allowMultiQueries=true&autoReconnect=true
+        username: ${DB3_USERNAME:root}
+        password: ${DB3_PASSWORD:root}
+        url: ${DB3_URL:jdbc:mysql://127.0.0.1:3306/helloim2?useSSL=false&useUnicode=true&characterEncoding=utf-8&allowMultiQueries=true&autoReconnect=true}
         type: com.zaxxer.hikari.HikariDataSource
       datasource3:
         name: datasource3
         driver-class-name: com.mysql.cj.jdbc.Driver
-        username: root
-        password: root
-        url: jdbc:mysql://127.0.0.1:3306/helloim3?useSSL=false&useUnicode=true&characterEncoding=utf-8&allowMultiQueries=true&autoReconnect=true
+        username: ${DB4_USERNAME:root}
+        password: ${DB4_PASSWORD:root}
+        url: ${DB4_URL:jdbc:mysql://127.0.0.1:3306/helloim3?useSSL=false&useUnicode=true&characterEncoding=utf-8&allowMultiQueries=true&autoReconnect=true}
         type: com.zaxxer.hikari.HikariDataSource

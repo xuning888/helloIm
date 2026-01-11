@@ -6,8 +6,6 @@ spring:
     active: dev
   application:
     name: helloim-store
-  redis:
-    host: ${REDIS_ADDR:127.0.0.1}
 dubbo:
   application:
     name: helloim-store
