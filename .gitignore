@@ -45,6 +45,7 @@ deploy-dev/kafka/
 deploy-dev/redis/
 deploy-dev/mysql/
 *.rdb
+deploy-dev/nginx/logs
 
 docker/zookeeper/
 docker/kafka/

@@ -66,3 +66,21 @@ services:
       - ./mysql/data:/var/lib/mysql
       - ./mysql/logs:/var/log/mysql
       - ./mysql/init:/docker-entrypoint-initdb.d
+  nginx:
+    image: nginx:latest
+    container_name: nginx
+    hostname: nginx
+    ports:
+      - "80:80"
+      - "443:443"
+      - "9299:9299"
+    networks:
+      - im-net
+    volumes:
+      - ./nginx/conf/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/conf.d:/etc/nginx/conf.d:ro
+      - ./nginx/html:/usr/share/nginx/html:ro
+      - ./nginx/logs:/var/log/nginx
+    restart: unless-stopped
+    environment:
+      - TZ=Asia/Shanghai

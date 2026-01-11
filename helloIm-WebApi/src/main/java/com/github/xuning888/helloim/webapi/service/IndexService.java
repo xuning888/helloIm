@@ -14,7 +14,7 @@ public class IndexService {
 
     public List<String> getIpList() {
         List<String> list = new ArrayList<>();
-        list.add("127.0.0.1:9300");
+        list.add("127.0.0.1:9299");
         return list;
     }
 }
