@@ -1,0 +1,226 @@
+version: '3.8'
+networks:
+  im-net:
+    name: im-net
+services:
+  redis:
+    image: redis:7.0
+    container_name: redis-server
+    hostname: redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./redis/conf/redis.conf:/usr/local/etc/redis/redis.conf
+      - ./redis/data:/data
+      - ./redis/log:/var/log/redis
+    command: redis-server /usr/local/etc/redis/redis.conf
+    networks:
+      - im-net
+  zookeeper:
+    image: zookeeper:3.8.1
+    container_name: zookeeper
+    hostname: zookeeper
+    networks:
+      - im-net
+    ports:
+      - "2181:2181"
+    environment:
+      ZOO_MY_ID: 1
+      ZOO_SERVERS: server.1=zookeeper1:2888:3888;2181
+    volumes:
+      - ./zookeeper/data:/data
+      - ./zookeeper/datalog:/datalog
+  kafka:
+    image: bitnami/kafka:2.8.0
+    container_name: kafka
+    hostname: kafka
+    ports:
+      - "9092:9092"
+    networks:
+      - im-net
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://host.docker.internal:9092 # docker-desktop需要配置hosts文件, linux写服务器地址
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      ALLOW_PLAINTEXT_LISTENER: yes
+      KAFKA_LOG_DIRS: /tmp/kafka/logs
+    volumes:
+      - ./kafka/logs:/tmp/kafka/logs
+    depends_on:
+      - zookeeper
+  mysql:
+    image:  mysql:8.0
+    container_name: mysql
+    hostname: mysql
+    ports:
+      - "3306:3306"
+    networks:
+      - im-net
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_CHARACTER_SET_SERVER: utf8mb4
+      MYSQL_COLLATION_SERVER: utf8mb4_unicode_ci
+    volumes:
+      - ./mysql/data:/var/lib/mysql
+      - ./mysql/logs:/var/log/mysql
+      - ./mysql/init:/docker-entrypoint-initdb.d
+  helloim-webApi:
+    image: helloim-webapi:0.1
+    container_name: helloimWebApi
+    hostname: helloimWebApi
+    ports:
+      - "8087:8087"
+      - "28807:28807"
+    networks:
+      - im-net
+    environment:
+      ZK_ADDRESS: zookeeper://zookeeper:2181
+    depends_on:
+      - zookeeper
+  helloim-user:
+    image: helloim-user:0.1
+    container_name: helloimUser
+    hostname: helloimUser
+    ports:
+      - "8088:8088"
+      - "28808:28808"
+    networks:
+      - im-net
+    depends_on:
+      - zookeeper
+    environment:
+      ZK_ADDRESS: zookeeper://zookeeper:2181
+      DB_URL: jdbc:mysql://mysql:3306/helloim0?useSSL=false&useUnicode=true&characterEncoding=utf-8&allowMultiQueries=true&autoReconnect=true
+      DB_USERNAME: root
+      DB_PASSWORD: root
+      REDIS_ADDR: redis
+  helloim-store:
+    image: helloim-store:0.1
+    container_name: helloimStore
+    hostname: helloimStore
+    ports:
+      - "8086:8086"
+      - "28806:28806"
+    networks:
+      - im-net
+    depends_on:
+      - zookeeper
+      - mysql
+    environment:
+      ZK_ADDRESS: zookeeper://zookeeper:2181
+      DB1_URL: jdbc:mysql://mysql:3306/helloim0?useSSL=false&useUnicode=true&characterEncoding=utf-8&allowMultiQueries=true&autoReconnect=true
+      DB1_USERNAME: root
+      DB1_PASSWORD: root
+      DB2_URL: jdbc:mysql://mysql:3306/helloim1?useSSL=false&useUnicode=true&characterEncoding=utf-8&allowMultiQueries=true&autoReconnect=true
+      DB2_USERNAME: root
+      DB2_PASSWORD: root
+      DB3_URL: jdbc:mysql://mysql:3306/helloim2?useSSL=false&useUnicode=true&characterEncoding=utf-8&allowMultiQueries=true&autoReconnect=true
+      DB3_USERNAME: root
+      DB3_PASSWORD: root
+      DB4_URL: jdbc:mysql://mysql:3306/helloim3?useSSL=false&useUnicode=true&characterEncoding=utf-8&allowMultiQueries=true&autoReconnect=true
+      DB4_USERNAME: root
+      DB4_PASSWORD: root
+  helloim-session:
+    image: helloim-session:0.1
+    container_name: helloimSession
+    hostname: helloimSession
+    ports:
+      - "8083:8083"
+      - "28804:28804"
+    networks:
+      - im-net
+    depends_on:
+      - zookeeper
+      - redis
+    environment:
+      ZK_ADDRESS: zookeeper://zookeeper:2181
+      REDIS_ADDR: redis
+  helloim-message:
+    image: helloim-message:0.1
+    container_name: helloimMessage
+    hostname: helloimMessage
+    ports:
+      - "8084:8084"
+      - "28805:28805"
+    networks:
+      - im-net
+    depends_on:
+      - zookeeper
+      - mysql
+      - redis
+    environment:
+      ZK_ADDRESS: zookeeper://zookeeper:2181
+      DB_URL: jdbc:mysql://mysql:3306/helloim0?useSSL=false&useUnicode=true&characterEncoding=utf-8&allowMultiQueries=true&autoReconnect=true
+      DB_USERNAME: root
+      DB_PASSWORD: root
+      REDIS_ADDR: redis
+      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+  helloim-gateway-tcp:
+    image: helloim-gateway:0.1
+    container_name: helloimGatewayTcp
+    hostname: helloimGatewayTcp
+    ports:
+      - "8081:8081"
+      - "28802:28802"
+      - "9300:9300"
+    networks:
+      - im-net
+    depends_on:
+      - zookeeper
+    environment:
+      ZK_ADDRESS: zookeeper://zookeeper:2181
+      PROTOCOL: tcp
+      GATE_PORT: 9300
+  helloim-dispatch:
+    image: helloim-dispatch:0.1
+    container_name: helloimDispatch
+    hostname: helloimDispatch
+    ports:
+      - "8080:8080"
+      - "28801:28801"
+    networks:
+      - im-net
+    depends_on:
+      - zookeeper
+      - redis
+      - kafka
+    environment:
+      ZK_ADDRESS: zookeeper://zookeeper:2181
+      REDIS_ADDR: redis
+      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+  helloim-delivery:
+    image: helloim-delivery:0.1
+    container_name: helloimDelivery
+    hostname: helloimDelivery
+    ports:
+      - "8085:8085"
+      - "28809:28809"
+    networks:
+      - im-net
+    depends_on:
+      - zookeeper
+      - redis
+      - kafka
+    environment:
+      ZK_ADDRESS: zookeeper://zookeeper:2181
+      REDIS_ADDR: redis
+      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+  helloim-chatlist:
+    image: helloim-chatlist:0.1
+    container_name: helloimChatlist
+    hostname: helloimChatlist
+    ports:
+      - "8082:8082"
+      - "28803:28803"
+    networks:
+      - im-net
+    depends_on:
+      - zookeeper
+      - redis
+      - kafka
+    environment:
+      ZK_ADDRESS: zookeeper://zookeeper:2181
+      REDIS_ADDR: redis
+      KAFKA_BOOTSTRAP_SERVERS: kafka:9092
