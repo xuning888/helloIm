@@ -16,7 +16,14 @@ import org.slf4j.LoggerFactory;
  * @author xuning
  * @date 2025/8/3 13:50
  */
-@DubboService
+@DubboService(
+        parameters = {
+                "proxyMode", "${im.gate.proxy-mode}",
+                "protocol", "${im.gate.protocol}",
+                "proxyAddr", "${im.gate.proxy-addr}",
+                "webhookAddr", "${im.gate.webhook-addr}"
+        }
+)
 public class DownMsgServiceImpl implements DownMsgService {
 
     private static final Logger logger = LoggerFactory.getLogger(DownMsgServiceImpl.class);

@@ -10,3 +10,6 @@ im:
     core-size: 200
     max-pool-size: 200
     queue-size: 20000
+    proxy-mode: "NAT"
+    proxy-addr: ${PROXY_ADDR:${local.ip}}
+    webhook-addr: ${"WEBHOOK-ADDR":${local.ip}}

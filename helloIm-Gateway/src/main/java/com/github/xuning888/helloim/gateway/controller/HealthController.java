@@ -21,6 +21,11 @@ public class HealthController {
         this.sessionManager = sessionManager;
     }
 
+    @GetMapping("/check")
+    public RestResult<Object> healthCheck() {
+        return RestResultUtils.success();
+    }
+
     @GetMapping("/connCont")
     public RestResult<Object> connCont() {
         int cnt = sessionManager.count();
