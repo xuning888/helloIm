@@ -1,6 +1,7 @@
 package com.github.xuning888.helloim.contract.api.service;
 
 import com.github.xuning888.helloim.contract.api.request.DownMessageReq;
+import com.github.xuning888.helloim.contract.api.response.DownMessageResp;
 
 /**
  * @author xuning
@@ -8,5 +9,5 @@ import com.github.xuning888.helloim.contract.api.request.DownMessageReq;
  */
 public interface DownMsgService {
 
-    void pushMessage(DownMessageReq req);
+    DownMessageResp pushMessage(DownMessageReq req);
 }

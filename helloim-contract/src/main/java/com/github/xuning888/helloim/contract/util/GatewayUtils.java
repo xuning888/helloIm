@@ -1,6 +1,7 @@
 package com.github.xuning888.helloim.contract.util;
 
 import com.github.xuning888.helloim.contract.api.request.DownMessageReq;
+import com.github.xuning888.helloim.contract.api.response.DownMessageResp;
 import com.github.xuning888.helloim.contract.api.service.DownMsgService;
 import com.github.xuning888.helloim.contract.dto.MsgContext;
 import com.github.xuning888.helloim.contract.frame.Frame;
@@ -55,33 +56,33 @@ public class GatewayUtils {
         pushMessage(responseFrame, Collections.singletonList(gateUser), endpoint, traceId);
     }
 
-    public static void pushMessage(Frame frame, List<GateUser> users, Endpoint endpoint, String traceId) {
+    public static DownMessageResp pushMessage(Frame frame, List<GateUser> users, Endpoint endpoint, String traceId) {
         String appName = ApplicationModel.getApplicationConfig().getName();
         DownMsgService downMsgService = DubboUtils.downMsgService(appName, endpoint, traceId);
         if (downMsgService == null) {
             logger.error("pushMessage error, downMsgService is null, traceId: {}", traceId);
-            return;
+            return null;
         }
         try {
             UserSpecifiedAddressUtil.setAddress(new Address(endpoint.getHost(), endpoint.getPort(), true));
             DownMessageReq downMessageReq = new DownMessageReq(frame, users, traceId);
-            downMsgService.pushMessage(downMessageReq);
+            return downMsgService.pushMessage(downMessageReq);
         } finally {
             UserSpecifiedAddressUtil.setAddress(null);
         }
     }
 
-    public static void pushMessageNeedAck(Frame frame, List<GateUser> users, Endpoint endpoint, String traceId) {
+    public static DownMessageResp pushMessageNeedAck(Frame frame, List<GateUser> users, Endpoint endpoint, String traceId) {
         String appName = ApplicationModel.getApplicationConfig().getName();
         DownMsgService downMsgService = DubboUtils.downMsgService(appName, endpoint, traceId);
         if (downMsgService == null) {
             logger.error("pushMessageNeedAck error, downMsgService is null, traceId: {}", traceId);
-            return;
+            return null;
         }
         try {
             UserSpecifiedAddressUtil.setAddress(new Address(endpoint.getHost(), endpoint.getPort(), true));
             DownMessageReq downMessageReq = new DownMessageReq(frame, true, users, traceId);
-            downMsgService.pushMessage(downMessageReq);
+            return downMsgService.pushMessage(downMessageReq);
         } finally {
             UserSpecifiedAddressUtil.setAddress(null);
         }
