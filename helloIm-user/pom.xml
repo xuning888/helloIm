@@ -16,6 +16,13 @@
     </properties>
 
     <dependencies>
+
+        <dependency>
+            <groupId>com.github.xuning888.helloim</groupId>
+            <artifactId>helloim-api</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+
         <!--contract-->
           <dependency>
               <groupId>com.github.xuning888.helloim</groupId>

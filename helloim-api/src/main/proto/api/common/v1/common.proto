@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+option java_package = "com.github.xuning888.helloim.api.protobuf.common.v1";
+option java_multiple_files = true;
+option java_outer_classname = "CommonProto";
+
+import "google/protobuf/timestamp.proto";
+
+message ImUser {
+  int64 userId = 1;
+  int32 userType = 2;
+  string userName = 3;
+  string icon = 4;
+  string mobile = 5;
+  string deviceId = 6;
+  string extra = 7;
+  int32 userStatus = 8;
+  google.protobuf.Timestamp createdAt = 9;
+  google.protobuf.Timestamp updatedAt = 10;
+}

@@ -1,21 +1,21 @@
 package com.github.xuning888.helloim.user.mapper;
 
-import com.github.xuning888.helloim.contract.entity.ImUser;
+import com.github.xuning888.helloim.contract.entity.ImUserDo;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
 
 @Mapper
 public interface ImUserMapper {
-    int insert(ImUser record);
+    int insert(ImUserDo record);
 
-    int insertSelective(ImUser record);
+    int insertSelective(ImUserDo record);
 
-    ImUser selectByPrimaryKey(Long userId);
+    ImUserDo selectByPrimaryKey(Long userId);
 
-    int updateByPrimaryKeySelective(ImUser record);
+    int updateByPrimaryKeySelective(ImUserDo record);
 
-    int updateByPrimaryKey(ImUser record);
+    int updateByPrimaryKey(ImUserDo record);
 
-    List<ImUser> selectAllUser();
+    List<ImUserDo> selectAllUser();
 }

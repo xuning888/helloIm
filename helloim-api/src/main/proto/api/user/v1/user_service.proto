@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+option java_package = "com.github.xuning888.helloim.api.protobuf.user.v1";
+option java_multiple_files = true;
+option java_outer_classname = "UserServiceProto";
+
+import "api/common/v1/common.proto";
+
+message GetAllUserRequest {
+  string traceId = 1;
+}
+
+message GetAllUserResponse {
+  repeated ImUser users = 1;
+}
+
+service UserService {
+  rpc GetAllUser(GetAllUserRequest) returns (GetAllUserResponse);
+}

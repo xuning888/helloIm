@@ -3,7 +3,7 @@ package com.github.xuning888.helloim.contract.entity;
 import java.io.Serializable;
 import java.util.Date;
 
-public class ImUser implements Serializable {
+public class ImUserDo implements Serializable {
     private Long userId;
 
     private Integer userType;

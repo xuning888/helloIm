@@ -19,6 +19,7 @@
         <module>helloIm-user</module>
         <module>helloIm-session</module>
         <module>helloIm-store</module>
+        <module>helloim-api</module>
     </modules>
 
     <properties>
