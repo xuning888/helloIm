@@ -2,7 +2,7 @@ package com.github.xuning888.helloim.message.handler;
 
 
 import com.github.xuning888.helloim.contract.convert.MessageConvert;
-import com.github.xuning888.helloim.contract.dto.ChatMessageDto;
+import com.github.xuning888.helloim.api.dto.ChatMessageDto;
 import com.github.xuning888.helloim.contract.dto.MsgContext;
 import com.github.xuning888.helloim.contract.entity.ImGroup;
 import com.github.xuning888.helloim.contract.entity.ImGroupUser;

@@ -1,7 +1,7 @@
 package com.github.xuning888.helloim.chat.utils;
 
 
-import com.github.xuning888.helloim.contract.dto.ChatMessageDto;
+import com.github.xuning888.helloim.api.dto.ChatMessageDto;
 import com.github.xuning888.helloim.contract.util.RedisKeyUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

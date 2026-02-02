@@ -88,4 +88,15 @@ public class Frame implements Serializable {
         int cmdId = header.getCmdId();
         return String.format("%d_%d", seq, cmdId);
     }
+
+    /**
+     * 返回序列化后的大小
+     */
+    public int getSerializedSize() {
+        int headerLength = (int) header.getHeaderLength();
+        if (this.body == null) {
+            return headerLength;
+        }
+        return headerLength + body.length;
+    }
 }

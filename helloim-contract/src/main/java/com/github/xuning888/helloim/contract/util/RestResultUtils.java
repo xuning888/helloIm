@@ -1,7 +1,7 @@
 package com.github.xuning888.helloim.contract.util;
 
 import com.github.xuning888.helloim.contract.contant.RestResultStatus;
-import com.github.xuning888.helloim.contract.dto.RestResult;
+import com.github.xuning888.helloim.api.dto.RestResult;
 
 /**
  * @author xuning

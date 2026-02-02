@@ -1,7 +1,7 @@
 package com.github.xuning888.helloim.webapi.exception;
 
 
-import com.github.xuning888.helloim.contract.dto.RestResult;
+import com.github.xuning888.helloim.api.dto.RestResult;
 import com.github.xuning888.helloim.contract.exception.ImException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

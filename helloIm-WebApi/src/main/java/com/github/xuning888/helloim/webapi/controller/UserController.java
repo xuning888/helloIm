@@ -4,7 +4,7 @@ import com.github.xuning888.helloim.api.convert.ImUserConvert;
 import com.github.xuning888.helloim.api.dto.ImUserDto;
 import com.github.xuning888.helloim.api.protobuf.common.v1.ImUser;
 import com.github.xuning888.helloim.api.protobuf.user.v1.GetAllUserRequest;
-import com.github.xuning888.helloim.contract.dto.RestResult;
+import com.github.xuning888.helloim.api.dto.RestResult;
 import com.github.xuning888.helloim.contract.util.RestResultUtils;
 import com.github.xuning888.helloim.webapi.rpc.UserServiceRpc;
 import org.springframework.web.bind.annotation.GetMapping;

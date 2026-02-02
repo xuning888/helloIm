@@ -1,7 +1,7 @@
 package com.github.xuning888.helloim.contract.api.service;
 
 import com.github.xuning888.helloim.contract.api.request.PullOfflineMsgRequest;
-import com.github.xuning888.helloim.contract.dto.ChatMessageDto;
+import com.github.xuning888.helloim.api.dto.ChatMessageDto;
 
 import java.util.List;
 

@@ -1,4 +1,4 @@
-package com.github.xuning888.helloim.contract.dto;
+package com.github.xuning888.helloim.api.dto;
 
 import java.io.Serializable;
 

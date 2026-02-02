@@ -1,6 +1,6 @@
 package com.github.xuning888.helloim.webapi.controller;
 
-import com.github.xuning888.helloim.contract.dto.RestResult;
+import com.github.xuning888.helloim.api.dto.RestResult;
 import com.github.xuning888.helloim.contract.util.RestResultUtils;
 import com.github.xuning888.helloim.webapi.service.IndexService;
 import org.slf4j.Logger;

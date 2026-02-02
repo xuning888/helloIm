@@ -2,7 +2,7 @@ package com.github.xuning888.helloim.message.service;
 
 import com.github.xuning888.helloim.contract.api.request.PullOfflineMsgRequest;
 import com.github.xuning888.helloim.contract.contant.ChatType;
-import com.github.xuning888.helloim.contract.dto.ChatMessageDto;
+import com.github.xuning888.helloim.api.dto.ChatMessageDto;
 import com.github.xuning888.helloim.contract.util.RedisKeyUtils;
 import com.github.xuning888.helloim.message.rpc.MsgStoreSvcClient;
 import org.slf4j.Logger;

@@ -3,7 +3,7 @@ package com.github.xuning888.helloim.store.service.impl;
 import com.github.xuning888.helloim.contract.api.service.MsgStoreService;
 import com.github.xuning888.helloim.contract.contant.ChatType;
 import com.github.xuning888.helloim.contract.convert.MessageConvert;
-import com.github.xuning888.helloim.contract.dto.ChatMessageDto;
+import com.github.xuning888.helloim.api.dto.ChatMessageDto;
 import com.github.xuning888.helloim.contract.entity.ImMessage;
 import com.github.xuning888.helloim.contract.entity.ImMessageGroup;
 import com.github.xuning888.helloim.store.service.ImMessageGroupService;

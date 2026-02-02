@@ -1,6 +1,6 @@
 package com.github.xuning888.helloim.contract.convert;
 
-import com.github.xuning888.helloim.contract.dto.ImChatDto;
+import com.github.xuning888.helloim.api.dto.ImChatDto;
 import com.github.xuning888.helloim.contract.entity.ImChat;
 
 import java.util.Date;

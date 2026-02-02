@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+option java_package = "com.github.xuning888.helloim.api.protobuf.common.v1";
+option java_multiple_files = true;
+option java_outer_classname = "FrameProto";
+
+
+message FramePb {
+  HeaderPb header = 1;
+  bytes body = 2;
+}
+
+message HeaderPb {
+  int32 HeaderLength = 1; // 实际存储int8
+  int32 req = 2; // 实际存储int8
+  int32 seq = 3; // 实际存储int32
+  int32 cmdId = 4; // 实际存储int32
+  int32 bodyLength = 5; // 实际存储int32
+}

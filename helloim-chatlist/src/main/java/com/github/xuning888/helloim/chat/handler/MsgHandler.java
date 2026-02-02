@@ -4,7 +4,7 @@ import com.github.xuning888.helloim.chat.component.ChatMessageComponent;
 import com.github.xuning888.helloim.contract.api.service.ChatService;
 import com.github.xuning888.helloim.contract.contant.ChatType;
 import com.github.xuning888.helloim.contract.convert.MessageConvert;
-import com.github.xuning888.helloim.contract.dto.ChatMessageDto;
+import com.github.xuning888.helloim.api.dto.ChatMessageDto;
 import com.github.xuning888.helloim.contract.dto.MsgContext;
 import com.github.xuning888.helloim.contract.frame.Frame;
 import com.github.xuning888.helloim.contract.protobuf.C2cMessage;

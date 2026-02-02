@@ -1,8 +1,8 @@
 package com.github.xuning888.helloim.contract.api.service;
 
 import com.github.xuning888.helloim.contract.contant.ChatType;
-import com.github.xuning888.helloim.contract.dto.ChatMessageDto;
-import com.github.xuning888.helloim.contract.dto.ImChatDto;
+import com.github.xuning888.helloim.api.dto.ChatMessageDto;
+import com.github.xuning888.helloim.api.dto.ImChatDto;
 
 import java.util.List;
 

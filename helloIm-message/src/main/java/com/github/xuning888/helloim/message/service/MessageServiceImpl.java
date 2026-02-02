@@ -2,7 +2,7 @@ package com.github.xuning888.helloim.message.service;
 
 import com.github.xuning888.helloim.contract.api.request.PullOfflineMsgRequest;
 import com.github.xuning888.helloim.contract.api.service.MessageService;
-import com.github.xuning888.helloim.contract.dto.ChatMessageDto;
+import com.github.xuning888.helloim.api.dto.ChatMessageDto;
 import org.apache.dubbo.config.annotation.DubboService;
 import org.apache.dubbo.config.annotation.Method;
 import org.apache.zookeeper.common.StringUtils;

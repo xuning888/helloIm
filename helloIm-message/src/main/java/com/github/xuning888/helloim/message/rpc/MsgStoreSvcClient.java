@@ -2,7 +2,7 @@ package com.github.xuning888.helloim.message.rpc;
 
 
 import com.github.xuning888.helloim.contract.api.service.MsgStoreService;
-import com.github.xuning888.helloim.contract.dto.ChatMessageDto;
+import com.github.xuning888.helloim.api.dto.ChatMessageDto;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.apache.dubbo.config.annotation.Method;
 import org.slf4j.Logger;

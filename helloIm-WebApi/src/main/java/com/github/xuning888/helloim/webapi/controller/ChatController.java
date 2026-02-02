@@ -1,9 +1,9 @@
 package com.github.xuning888.helloim.webapi.controller;
 
 import com.github.xuning888.helloim.contract.api.service.ChatService;
-import com.github.xuning888.helloim.contract.dto.ChatMessageDto;
-import com.github.xuning888.helloim.contract.dto.ImChatDto;
-import com.github.xuning888.helloim.contract.dto.RestResult;
+import com.github.xuning888.helloim.api.dto.ChatMessageDto;
+import com.github.xuning888.helloim.api.dto.ImChatDto;
+import com.github.xuning888.helloim.api.dto.RestResult;
 import com.github.xuning888.helloim.contract.util.RestResultUtils;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.slf4j.Logger;

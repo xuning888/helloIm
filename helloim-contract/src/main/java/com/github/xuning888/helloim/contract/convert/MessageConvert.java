@@ -1,7 +1,7 @@
 package com.github.xuning888.helloim.contract.convert;
 
 import com.github.xuning888.helloim.contract.contant.ChatType;
-import com.github.xuning888.helloim.contract.dto.ChatMessageDto;
+import com.github.xuning888.helloim.api.dto.ChatMessageDto;
 import com.github.xuning888.helloim.contract.dto.MsgContext;
 import com.github.xuning888.helloim.contract.entity.ImMessage;
 import com.github.xuning888.helloim.contract.entity.ImMessageGroup;
