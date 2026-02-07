@@ -5,4 +5,46 @@ option java_multiple_files = true;
 option java_outer_classname = "ChatServiceProto";
 
 import "api/common/v1/message.proto";
+import "api/common/v1/chat.proto";
+import "api/store/v1/msg_store_service.proto";
+import "api/store/v1/chat_store_service.proto";
 
+message ServerSeqRequest {
+  string from = 1;
+  string to = 2;
+  int32 chatType = 3;
+  string traceId = 4;
+}
+
+message ServerSeqResponse {
+  int64 serverSeq = 1;
+}
+
+message CreateOrActivateChatRequest {
+  int64 userId = 1;
+  int64 chatId = 2;
+  int32 chatType = 3;
+  string traceId = 4;
+}
+
+message CreateOrActivateChatResponse {
+  ImChat imChat = 1;
+}
+
+message GetChatRequest {
+  int64 userId = 1;
+  int64 chatId = 2;
+  string traceId = 3;
+}
+
+message GetChatResponse {
+  ImChat imChat = 1;
+}
+
+service ChatService {
+  rpc serverSeq(ServerSeqRequest) returns (ServerSeqResponse);
+  rpc createOrActivateChat(CreateOrActivateChatRequest) returns (CreateOrActivateChatResponse);
+  rpc getAllChat(GetAllChatRequest) returns (GetAllChatResponse);
+  rpc lastMessage(LastMessageRequest) returns (LastMessageResponse);
+  rpc getChat(GetChatRequest) returns (GetChatResponse);
+}

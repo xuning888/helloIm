@@ -1,0 +1,46 @@
+syntax = "proto3";
+
+option java_package = "com.github.xuning888.helloim.api.protobuf.store.v1";
+option java_multiple_files = true;
+option java_outer_classname = "ChatStoreServiceProto";
+
+import "api/common/v1/message.proto";
+import "api/common/v1/chat.proto";
+
+
+message CreateOrUpdateChatRequest {
+  ImChat imChat = 1;
+  string traceId = 2;
+}
+
+message CreateOrUpdateChatResponse {
+  string userId = 1;
+  string traceId = 2;
+}
+
+message GetAllChatRequest {
+  string userId = 1;
+  string traceId = 2;
+}
+
+message GetAllChatResponse {
+  repeated ImChat chats = 1;
+}
+
+message BatchCreateOrUpdateRequest {
+  repeated ImChat chats = 1;
+  string traceId = 2;
+}
+
+message BatchCreateOrUpdateResponse {
+  int32 result = 1;
+}
+
+service ChatStoreService {
+
+  rpc createOrUpdate(CreateOrUpdateChatRequest) returns (CreateOrUpdateChatResponse);
+
+  rpc getAllChat(GetAllChatRequest) returns (GetAllChatResponse);
+
+  rpc batchCreateOrUpdate(BatchCreateOrUpdateRequest) returns (BatchCreateOrUpdateResponse);
+}

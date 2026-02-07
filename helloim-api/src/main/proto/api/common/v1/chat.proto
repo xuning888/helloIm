@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+option java_package = "com.github.xuning888.helloim.api.protobuf.common.v1";
+option java_multiple_files = true;
+option java_outer_classname = "ImChatProto";
+
+message ImChat {
+  int64 userId = 1;
+  int64 chatId = 2;
+  int32 chatType = 3;
+  bool chatTop = 4;
+  bool chatMute = 5;
+  bool chatDel = 6;
+  int64 updateTimestamp = 7;
+  int64 delTimestamp = 8;
+  int64 lastReadMsgId = 9;
+  int32 subStatus = 10;
+  int64 joinGroupTimestamp = 11;
+}
