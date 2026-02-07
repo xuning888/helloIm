@@ -24,11 +24,11 @@ public class MessageConfiguration {
     }
 
     @Bean
-    public RedisTemplate redisTemplate(RedisConnectionFactory redisConnectionFactory) {
-        RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
+    public RedisTemplate<String, String> redisTemplate(RedisConnectionFactory redisConnectionFactory) {
+        RedisTemplate<String, String> redisTemplate = new RedisTemplate<>();
         redisTemplate.setConnectionFactory(redisConnectionFactory);
         RedisSerializer keySerializer = new StringRedisSerializer();
-        RedisSerializer valueSerializer = new GenericJackson2JsonRedisSerializer();
+        RedisSerializer valueSerializer = new StringRedisSerializer();
         redisTemplate.setKeySerializer(keySerializer);
         redisTemplate.setValueSerializer(valueSerializer);
         redisTemplate.setHashKeySerializer(keySerializer);

@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+option java_package = "com.github.xuning888.helloim.api.protobuf.common.v1";
+option java_multiple_files = true;
+option java_outer_classname = "ChatMessageProto";
+
+message ChatMessage {
+  int32 chatType = 1;
+  int64 chatId = 2;
+  string chatIdStr = 3;
+  int64 msgId = 4;
+  string msgIdStr = 5;
+  int64 msgFrom = 6;
+  string msgFromStr = 7;
+  int32 fromUserType = 8;
+  int64 msgTo = 9;
+  string msgToStr = 10;
+  int32 toUserType = 11;
+  int64 groupId = 12;
+  string groupIdStr = 13;
+  int32 msgSeq = 14;
+  string msgContent = 15;
+  int32 contentType = 16;
+  int32 cmdId = 17;
+  int64 sendTime = 18;
+  int32 receiptStatus = 19;
+  int64 serverSeq = 20;
+}

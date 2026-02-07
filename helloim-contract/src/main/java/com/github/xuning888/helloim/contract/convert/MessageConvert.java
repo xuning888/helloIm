@@ -1,7 +1,7 @@
 package com.github.xuning888.helloim.contract.convert;
 
+import com.github.xuning888.helloim.api.protobuf.common.v1.ChatMessage;
 import com.github.xuning888.helloim.contract.contant.ChatType;
-import com.github.xuning888.helloim.api.dto.ChatMessageDto;
 import com.github.xuning888.helloim.contract.dto.MsgContext;
 import com.github.xuning888.helloim.contract.entity.ImMessage;
 import com.github.xuning888.helloim.contract.entity.ImMessageGroup;
@@ -23,161 +23,160 @@ import java.util.List;
  */
 public class MessageConvert {
 
-
-    public static ChatMessageDto buildC2CChatMessage(MsgContext msgContext, C2cMessage.C2cSendRequest c2cSendRequest) {
-        ChatMessageDto chatMessageDto = new ChatMessageDto();
-        chatMessageDto.setChatType(ChatType.C2C.getType());
-        chatMessageDto.setChatId(Long.parseLong(c2cSendRequest.getTo()));
-        chatMessageDto.setChatIdStr(c2cSendRequest.getTo());
-        chatMessageDto.setMsgId(msgContext.getMsgId());
-        chatMessageDto.setMsgIdStr(msgContext.getMsgId().toString());
-        chatMessageDto.setMsgFrom(Long.parseLong(c2cSendRequest.getFrom()));
-        chatMessageDto.setFromUserType(msgContext.getFromUserType());
-        chatMessageDto.setMsgFromStr(c2cSendRequest.getFrom());
-        chatMessageDto.setMsgTo(Long.parseLong(c2cSendRequest.getTo()));
-        chatMessageDto.setMsgToStr(c2cSendRequest.getTo());
-        chatMessageDto.setToUserType(msgContext.getToUserType());
-        chatMessageDto.setGroupId(null);
-        chatMessageDto.setGroupIdStr(StringUtils.EMPTY);
+    public static ChatMessage buildC2CChatMessage(MsgContext msgContext, C2cMessage.C2cSendRequest c2cSendRequest) {
+        ChatMessage.Builder builder = ChatMessage.newBuilder();
+        builder.setChatType(ChatType.C2C.getType());
+        builder.setChatId(Long.parseLong(c2cSendRequest.getTo()));
+        builder.setChatIdStr(c2cSendRequest.getTo());
+        builder.setMsgId(msgContext.getMsgId());
+        builder.setMsgIdStr(msgContext.getMsgId().toString());
+        builder.setMsgFrom(Long.parseLong(c2cSendRequest.getFrom()));
+        builder.setFromUserType(msgContext.getFromUserType());
+        builder.setMsgFromStr(c2cSendRequest.getFrom());
+        builder.setMsgTo(Long.parseLong(c2cSendRequest.getTo()));
+        builder.setMsgToStr(c2cSendRequest.getTo());
+        builder.setToUserType(msgContext.getToUserType());
+        builder.setGroupId(0L);
+        builder.setGroupIdStr(StringUtils.EMPTY);
         Frame frame = msgContext.getFrame();
-        chatMessageDto.setMsgSeq(frame.getHeader().getSeq());
-        chatMessageDto.setMsgContent(c2cSendRequest.getContent());
-        chatMessageDto.setCmdId(frame.getHeader().getCmdId());
-        chatMessageDto.setSendTime(msgContext.getTimestamp()); // 时间不准确
-        chatMessageDto.setReceiptStatus(0);
-        chatMessageDto.setServerSeq(msgContext.getServerSeq());
-        return chatMessageDto;
+        builder.setMsgSeq(frame.getHeader().getSeq());
+        builder.setMsgContent(c2cSendRequest.getContent());
+        builder.setCmdId(frame.getHeader().getCmdId());
+        builder.setSendTime(msgContext.getTimestamp()); // 时间不准确
+        builder.setReceiptStatus(0);
+        builder.setServerSeq(msgContext.getServerSeq());
+        return builder.build();
     }
 
-    public static ImMessage convertImMessage(ChatMessageDto chatMessageDto) {
+    public static ImMessage convertImMessage(ChatMessage chatMessage) {
         ImMessage imMessage = new ImMessage();
-        imMessage.setMsgId(chatMessageDto.getMsgId());
-        imMessage.setMsgFrom(chatMessageDto.getMsgFrom());
-        imMessage.setFromUserType(chatMessageDto.getFromUserType());
-        imMessage.setMsgTo(chatMessageDto.getMsgTo());
-        imMessage.setToUserType(chatMessageDto.getToUserType());
-        imMessage.setMsgSeq(chatMessageDto.getMsgSeq());
-        imMessage.setMsgContent(chatMessageDto.getMsgContent());
-        imMessage.setContentType(chatMessageDto.getContentType());
-        imMessage.setCmdId(chatMessageDto.getCmdId());
-        imMessage.setSendTime(new Date(chatMessageDto.getSendTime()));
-        imMessage.setServerSeq(chatMessageDto.getServerSeq());
-        imMessage.setReceiptStatus(chatMessageDto.getReceiptStatus());
+        imMessage.setMsgId(chatMessage.getMsgId());
+        imMessage.setMsgFrom(chatMessage.getMsgFrom());
+        imMessage.setFromUserType(chatMessage.getFromUserType());
+        imMessage.setMsgTo(chatMessage.getMsgTo());
+        imMessage.setToUserType(chatMessage.getToUserType());
+        imMessage.setMsgSeq(chatMessage.getMsgSeq());
+        imMessage.setMsgContent(chatMessage.getMsgContent());
+        imMessage.setContentType(chatMessage.getContentType());
+        imMessage.setCmdId(chatMessage.getCmdId());
+        imMessage.setSendTime(new Date(chatMessage.getSendTime()));
+        imMessage.setServerSeq(chatMessage.getServerSeq());
+        imMessage.setReceiptStatus(chatMessage.getReceiptStatus());
         return imMessage;
     }
 
-    public static ImMessageGroup convertImMessageGroup(ChatMessageDto chatMessageDto) {
+    public static ImMessageGroup convertImMessageGroup(ChatMessage chatMessage) {
         ImMessageGroup imMessageGroup = new ImMessageGroup();
-        imMessageGroup.setMsgId(chatMessageDto.getMsgId());
-        imMessageGroup.setMsgFrom(chatMessageDto.getMsgFrom());
-        imMessageGroup.setFromUserType(chatMessageDto.getFromUserType());
-        imMessageGroup.setGroupId(chatMessageDto.getGroupId());
-        imMessageGroup.setMsgSeq(chatMessageDto.getMsgSeq());
-        imMessageGroup.setMsgContent(chatMessageDto.getMsgContent());
-        imMessageGroup.setCmdId(chatMessageDto.getCmdId());
-        imMessageGroup.setSendTime(new Date(chatMessageDto.getSendTime()));
-        imMessageGroup.setServerSeq(chatMessageDto.getServerSeq());
+        imMessageGroup.setMsgId(chatMessage.getMsgId());
+        imMessageGroup.setMsgFrom(chatMessage.getMsgFrom());
+        imMessageGroup.setFromUserType(chatMessage.getFromUserType());
+        imMessageGroup.setGroupId(chatMessage.getGroupId());
+        imMessageGroup.setMsgSeq(chatMessage.getMsgSeq());
+        imMessageGroup.setMsgContent(chatMessage.getMsgContent());
+        imMessageGroup.setCmdId(chatMessage.getCmdId());
+        imMessageGroup.setSendTime(new Date(chatMessage.getSendTime()));
+        imMessageGroup.setServerSeq(chatMessage.getServerSeq());
         return imMessageGroup;
     }
 
-    public static ChatMessageDto convert2ChatMessage(ImMessage imMessage) {
-        ChatMessageDto chatMessageDto = new ChatMessageDto();
-        chatMessageDto.setChatType(ChatType.C2C.getType());
-        chatMessageDto.setChatId(imMessage.getMsgTo());
-        chatMessageDto.setChatIdStr(imMessage.getMsgTo().toString());
-        chatMessageDto.setMsgId(imMessage.getMsgId());
-        chatMessageDto.setMsgIdStr(imMessage.getMsgId().toString());
-        chatMessageDto.setMsgFrom(imMessage.getMsgFrom());
-        chatMessageDto.setMsgFromStr(imMessage.getMsgFrom().toString());
-        chatMessageDto.setFromUserType(imMessage.getFromUserType());
-        chatMessageDto.setMsgTo(imMessage.getMsgTo());
-        chatMessageDto.setMsgToStr(imMessage.getMsgTo().toString());
-        chatMessageDto.setToUserType(imMessage.getToUserType());
-        chatMessageDto.setGroupId(0L);
-        chatMessageDto.setGroupIdStr(StringUtils.EMPTY);
-        chatMessageDto.setMsgSeq(imMessage.getMsgSeq());
-        chatMessageDto.setMsgContent(imMessage.getMsgContent());
-        chatMessageDto.setContentType(imMessage.getContentType());
-        chatMessageDto.setCmdId(imMessage.getCmdId());
-        chatMessageDto.setSendTime(imMessage.getSendTime().getTime());
-        chatMessageDto.setReceiptStatus(imMessage.getReceiptStatus());
-        chatMessageDto.setServerSeq(imMessage.getServerSeq());
-        return chatMessageDto;
+    public static ChatMessage convert2ChatMessage(ImMessage imMessage) {
+        ChatMessage.Builder builder = ChatMessage.newBuilder();
+        builder.setChatType(ChatType.C2C.getType());
+        builder.setChatId(imMessage.getMsgTo());
+        builder.setChatIdStr(imMessage.getMsgTo().toString());
+        builder.setMsgId(imMessage.getMsgId());
+        builder.setMsgIdStr(imMessage.getMsgId().toString());
+        builder.setMsgFrom(imMessage.getMsgFrom());
+        builder.setMsgFromStr(imMessage.getMsgFrom().toString());
+        builder.setFromUserType(imMessage.getFromUserType());
+        builder.setMsgTo(imMessage.getMsgTo());
+        builder.setMsgToStr(imMessage.getMsgTo().toString());
+        builder.setToUserType(imMessage.getToUserType());
+        builder.setGroupId(0L);
+        builder.setGroupIdStr(StringUtils.EMPTY);
+        builder.setMsgSeq(imMessage.getMsgSeq());
+        builder.setMsgContent(imMessage.getMsgContent());
+        builder.setContentType(imMessage.getContentType());
+        builder.setCmdId(imMessage.getCmdId());
+        builder.setSendTime(imMessage.getSendTime().getTime());
+        builder.setReceiptStatus(imMessage.getReceiptStatus());
+        builder.setServerSeq(imMessage.getServerSeq());
+        return builder.build();
     }
 
-    public static ChatMessageDto convert2ChatMessage(ImMessageGroup imMessageGroup) {
-        ChatMessageDto chatMessageDto = new ChatMessageDto();
-        chatMessageDto.setChatType(ChatType.C2G.getType());
-        chatMessageDto.setChatId(imMessageGroup.getGroupId());
-        chatMessageDto.setChatIdStr(imMessageGroup.getGroupId().toString());
-        chatMessageDto.setMsgId(imMessageGroup.getMsgId());
-        chatMessageDto.setMsgIdStr(imMessageGroup.getMsgId().toString());
-        chatMessageDto.setMsgFrom(imMessageGroup.getMsgFrom());
-        chatMessageDto.setMsgFromStr(imMessageGroup.getMsgFrom().toString());
-        chatMessageDto.setFromUserType(imMessageGroup.getFromUserType());
-        chatMessageDto.setMsgTo(imMessageGroup.getGroupId());
-        chatMessageDto.setMsgToStr(imMessageGroup.getGroupId().toString());
-        chatMessageDto.setToUserType(0);
-        chatMessageDto.setGroupId(imMessageGroup.getGroupId());
-        chatMessageDto.setGroupIdStr(imMessageGroup.getGroupId().toString());
-        chatMessageDto.setMsgSeq(imMessageGroup.getMsgSeq());
-        chatMessageDto.setMsgContent(imMessageGroup.getMsgContent());
-        chatMessageDto.setContentType(imMessageGroup.getContentType());
-        chatMessageDto.setCmdId(imMessageGroup.getCmdId());
-        chatMessageDto.setSendTime(imMessageGroup.getSendTime().getTime());
-        chatMessageDto.setReceiptStatus(0); // 群聊不关注
-        chatMessageDto.setServerSeq(imMessageGroup.getServerSeq());
-        return chatMessageDto;
+    public static ChatMessage convert2ChatMessage(ImMessageGroup imMessageGroup) {
+        ChatMessage.Builder builder = ChatMessage.newBuilder();
+        builder.setChatType(ChatType.C2G.getType());
+        builder.setChatId(imMessageGroup.getGroupId());
+        builder.setChatIdStr(imMessageGroup.getGroupId().toString());
+        builder.setMsgId(imMessageGroup.getMsgId());
+        builder.setMsgIdStr(imMessageGroup.getMsgId().toString());
+        builder.setMsgFrom(imMessageGroup.getMsgFrom());
+        builder.setMsgFromStr(imMessageGroup.getMsgFrom().toString());
+        builder.setFromUserType(imMessageGroup.getFromUserType());
+        builder.setMsgTo(imMessageGroup.getGroupId());
+        builder.setMsgToStr(imMessageGroup.getGroupId().toString());
+        builder.setToUserType(0);
+        builder.setGroupId(imMessageGroup.getGroupId());
+        builder.setGroupIdStr(imMessageGroup.getGroupId().toString());
+        builder.setMsgSeq(imMessageGroup.getMsgSeq());
+        builder.setMsgContent(imMessageGroup.getMsgContent());
+        builder.setContentType(imMessageGroup.getContentType());
+        builder.setCmdId(imMessageGroup.getCmdId());
+        builder.setSendTime(imMessageGroup.getSendTime().getTime());
+        builder.setReceiptStatus(0); // 群聊不关注
+        builder.setServerSeq(imMessageGroup.getServerSeq());
+        return builder.build();
     }
 
-    public static List<ChatMessageDto> convert2ChatMessages(List<ImMessageGroup> imMessageGroups) {
+    public static List<ChatMessage> convert2ChatMessages(List<ImMessageGroup> imMessageGroups) {
         if (CollectionUtils.isEmpty(imMessageGroups)) {
             return Collections.emptyList();
         }
-        List<ChatMessageDto> messageDtos = new ArrayList<>(imMessageGroups.size());
+        List<ChatMessage> chatMessages = new ArrayList<>(imMessageGroups.size());
         for (ImMessageGroup imMessageGroup : imMessageGroups) {
-            ChatMessageDto chatMessageDto = convert2ChatMessage(imMessageGroup);
-            messageDtos.add(chatMessageDto);
+            ChatMessage chatMessage = convert2ChatMessage(imMessageGroup);
+            chatMessages.add(chatMessage);
         }
-        return messageDtos;
+        return chatMessages;
     }
 
-    public static List<ChatMessageDto> convertImMessages2ChatMessages(List<ImMessage> imMessages) {
+    public static List<ChatMessage> convertImMessages2ChatMessages(List<ImMessage> imMessages) {
         if (CollectionUtils.isEmpty(imMessages)) {
             return Collections.emptyList();
         }
-        List<ChatMessageDto> messageDtos = new ArrayList<>(imMessages.size());
+        List<ChatMessage> chatMessages = new ArrayList<>(imMessages.size());
         for (ImMessage imMessage : imMessages) {
-            ChatMessageDto chatMessageDto = convert2ChatMessage(imMessage);
-            messageDtos.add(chatMessageDto);
+            ChatMessage chatMessage = convert2ChatMessage(imMessage);
+            chatMessages.add(chatMessage);
         }
-        return messageDtos;
+        return chatMessages;
     }
 
-    public static ChatMessageDto buildC2GChatMessage(MsgContext msgContext, C2gMessage.C2GSendRequest c2gSendRequest){
-        ChatMessageDto chatMessageDto = new ChatMessageDto();
-        chatMessageDto.setChatType(ChatType.C2G.getType()); // 群聊
-        chatMessageDto.setChatId(msgContext.getGroupId()); // 群聊的话groupId就是chatId
-        chatMessageDto.setChatIdStr(String.valueOf(msgContext.getGroupId()));
-        chatMessageDto.setMsgId(msgContext.getMsgId()); // 消息ID
-        chatMessageDto.setMsgIdStr(String.valueOf(msgContext.getMsgId()));
-        chatMessageDto.setMsgFrom(Long.valueOf(msgContext.getMsgFrom()));
-        chatMessageDto.setMsgFromStr(msgContext.getMsgFrom());
-        chatMessageDto.setFromUserType(msgContext.getFromUserType());
-        chatMessageDto.setMsgTo(msgContext.getGroupId());
-        chatMessageDto.setMsgToStr(String.valueOf(msgContext.getGroupId()));
-        chatMessageDto.setToUserType(0); // 群聊不关注这个字段
-        chatMessageDto.setGroupId(msgContext.getGroupId());
-        chatMessageDto.setGroupIdStr(String.valueOf(msgContext.getGroupId()));
-        chatMessageDto.setMsgSeq(msgContext.getMsgSeq());
-        chatMessageDto.setMsgContent(c2gSendRequest.getContent());
-        chatMessageDto.setContentType(c2gSendRequest.getContentType());
+    public static ChatMessage buildC2GChatMessage(MsgContext msgContext, C2gMessage.C2GSendRequest c2gSendRequest){
+        ChatMessage.Builder builder = ChatMessage.newBuilder();
+        builder.setChatType(ChatType.C2G.getType()); // 群聊
+        builder.setChatId(msgContext.getGroupId()); // 群聊的话groupId就是chatId
+        builder.setChatIdStr(String.valueOf(msgContext.getGroupId()));
+        builder.setMsgId(msgContext.getMsgId()); // 消息ID
+        builder.setMsgIdStr(String.valueOf(msgContext.getMsgId()));
+        builder.setMsgFrom(Long.parseLong(msgContext.getMsgFrom()));
+        builder.setMsgFromStr(msgContext.getMsgFrom());
+        builder.setFromUserType(msgContext.getFromUserType());
+        builder.setMsgTo(msgContext.getGroupId());
+        builder.setMsgToStr(String.valueOf(msgContext.getGroupId()));
+        builder.setToUserType(0); // 群聊不关注这个字段
+        builder.setGroupId(msgContext.getGroupId());
+        builder.setGroupIdStr(String.valueOf(msgContext.getGroupId()));
+        builder.setMsgSeq(msgContext.getMsgSeq());
+        builder.setMsgContent(c2gSendRequest.getContent());
+        builder.setContentType(c2gSendRequest.getContentType());
         Frame frame = msgContext.getFrame();
         Header header = frame.getHeader();
-        chatMessageDto.setCmdId(header.getCmdId());
-        chatMessageDto.setSendTime(msgContext.getTimestamp());
-        chatMessageDto.setReceiptStatus(0);
-        chatMessageDto.setServerSeq(msgContext.getServerSeq());
-        return chatMessageDto;
+        builder.setCmdId(header.getCmdId());
+        builder.setSendTime(msgContext.getTimestamp());
+        builder.setReceiptStatus(0);
+        builder.setServerSeq(msgContext.getServerSeq());
+        return builder.build();
     }
 }

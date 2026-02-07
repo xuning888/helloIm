@@ -1,10 +1,11 @@
 package com.github.xuning888.helloim.message.service;
 
-import com.github.xuning888.helloim.contract.api.request.PullOfflineMsgRequest;
+import com.github.xuning888.helloim.api.protobuf.common.v1.ChatMessage;
+import com.github.xuning888.helloim.api.protobuf.message.v1.PullOfflineMsgRequest;
+import com.github.xuning888.helloim.api.utils.ProtobufUtils;
 import com.github.xuning888.helloim.contract.contant.ChatType;
-import com.github.xuning888.helloim.api.dto.ChatMessageDto;
 import com.github.xuning888.helloim.contract.util.RedisKeyUtils;
-import com.github.xuning888.helloim.message.rpc.MsgStoreSvcClient;
+import com.github.xuning888.helloim.message.rpc.MsgStoreRpc;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.redis.core.Cursor;
@@ -28,40 +29,41 @@ public class OfflineMessageService {
 
     private final long offlineMessageCount = 100;
     @Resource
-    private RedisTemplate<String, Object> redisTemplate;
+    private RedisTemplate<String, String> redisTemplate;
     @Resource
-    private MsgStoreSvcClient msgStoreSvcClient;
+    private MsgStoreRpc msgStoreRpc;
 
     // 存储离线消息
-    public void saveOfflineMessage(ChatMessageDto chatMessageDto, String traceId) {
-        if (chatMessageDto == null) {
+    public void saveOfflineMessage(ChatMessage chatMessage, String traceId) {
+        if (chatMessage == null) {
             logger.error("saveOfflineMessage chatMessage is null traceId: {}", traceId);
             return;
         }
-        Long fromUserId = chatMessageDto.getMsgFrom();
-        Long toUserId = chatMessageDto.getMsgTo();
-        Long groupId = chatMessageDto.getGroupId();
-        Integer chatType = chatMessageDto.getChatType();
-        Long msgId = chatMessageDto.getMsgId();
-        Long serverSeq = chatMessageDto.getServerSeq();
+        Long fromUserId = chatMessage.getMsgFrom();
+        Long toUserId = chatMessage.getMsgTo();
+        Long groupId = chatMessage.getGroupId();
+        int chatType = chatMessage.getChatType();
+        long msgId = chatMessage.getMsgId();
+        long serverSeq = chatMessage.getServerSeq();
         String offlineMsgKey = RedisKeyUtils.offlineMsgKey(fromUserId, toUserId, groupId, chatType);
         logger.info("saveOfflineMessage, msgId: {}, serverSeq: {}, offlineMsgKey: {}", msgId, serverSeq, offlineMsgKey);
-        redisTemplate.opsForZSet().add(offlineMsgKey, chatMessageDto, serverSeq);
+        String json = ProtobufUtils.toJson(chatMessage);
+        redisTemplate.opsForZSet().add(offlineMsgKey, json, serverSeq);
         // 记录下key, 半夜清理
         addActivateChatOfflineKey(offlineMsgKey);
     }
 
     // 拉取离线消息
-    public List<ChatMessageDto> pullOfflineMessage(PullOfflineMsgRequest request, String traceId) {
+    public List<ChatMessage> pullOfflineMessage(PullOfflineMsgRequest request, String traceId) {
         logger.info("pullOfflineMessage, request: {}, traceId: {}", request, traceId);
         validPullOfflineMsgRequest(request, traceId, false);
         Long chatId = request.getChatId();
         Long fromUserId = request.getFromUserId();
-        Long minServerSeq = request.getMinServerSeq();
+        long minServerSeq = request.getMinServerSeq();
         if (minServerSeq <= 0) {
             minServerSeq = 1L;
         }
-        Long maxServerSeq = request.getMaxServerSeq();
+        long maxServerSeq = request.getMaxServerSeq();
         Integer chatType = request.getChatType();
         String msgKey;
         if (ChatType.C2C.match(chatType)) {
@@ -73,17 +75,15 @@ public class OfflineMessageService {
             return new ArrayList<>();
         }
         // 按 score 范围获取消息，带 score 信息
-        Set<ZSetOperations.TypedTuple<Object>> set =
+        Set<ZSetOperations.TypedTuple<String>> set =
                 redisTemplate.opsForZSet().rangeByScoreWithScores(msgKey, minServerSeq, maxServerSeq);
 
         // 转换为 List<ChatMessage>
-        List<ChatMessageDto> messages = new ArrayList<>();
+        List<ChatMessage> messages = new ArrayList<>();
         if (set != null && !set.isEmpty()) {
-            for (ZSetOperations.TypedTuple<Object> tuple : set) {
-                ChatMessageDto message = (ChatMessageDto) tuple.getValue();
+            for (ZSetOperations.TypedTuple<String> tuple : set) {
+                ChatMessage message = ProtobufUtils.fromJson(tuple.getValue(), ChatMessage.newBuilder());
                 if (message != null) {
-                    // 可以在这里设置 serverSeq，确保数据完整性
-                    message.setServerSeq(tuple.getScore().longValue());
                     messages.add(message);
                 }
             }
@@ -93,7 +93,7 @@ public class OfflineMessageService {
     }
 
     // 拉取离线消息, 获取最近的消息
-    public List<ChatMessageDto> getLatestOfflineMessages(PullOfflineMsgRequest request, String traceId) {
+    public List<ChatMessage> getLatestOfflineMessages(PullOfflineMsgRequest request, String traceId) {
         logger.info("getLatestOfflineMessages, request: {}, traceId: {}", request, traceId);
         validPullOfflineMsgRequest(request, traceId, true);
         Long chatId = request.getChatId();
@@ -113,15 +113,15 @@ public class OfflineMessageService {
             return new ArrayList<>();
         }
         // 获取最新的消息
-        Set<ZSetOperations.TypedTuple<Object>> set =
+        Set<ZSetOperations.TypedTuple<String>> set =
                 redisTemplate.opsForZSet().reverseRangeWithScores(msgKey, 0, size - 1);
 
-        List<ChatMessageDto> messages = new ArrayList<>();
+        List<ChatMessage> messages = new ArrayList<>();
         if (set != null && !set.isEmpty()) {
-            for (ZSetOperations.TypedTuple<Object> tuple : set) {
-                ChatMessageDto message = (ChatMessageDto) tuple.getValue();
+            for (ZSetOperations.TypedTuple<String> tuple : set) {
+                String value = tuple.getValue();
+                ChatMessage message = ProtobufUtils.fromJson(value, ChatMessage.newBuilder());
                 if (message != null) {
-                    message.setServerSeq(tuple.getScore().longValue());
                     messages.add(message);
                 }
             }
@@ -131,15 +131,15 @@ public class OfflineMessageService {
 
         if (CollectionUtils.isEmpty(messages)) {
             // 离线消息缓存中没有查询到任何消息, 正常情况下是不会有的
-            List<ChatMessageDto> recentMessages = msgStoreSvcClient.getRecentMessages(String.valueOf(fromUserId),
+            List<ChatMessage> recentMessages = msgStoreRpc.getRecentMessages(String.valueOf(fromUserId),
                     String.valueOf(chatId), chatType, size, traceId);
-            for (ChatMessageDto recentMessage : recentMessages) {
+            for (ChatMessage recentMessage : recentMessages) {
                 saveOfflineMessage(recentMessage, traceId);
             }
             return recentMessages;
         }
         // 检查中间是否存在缺失
-        ChatMessageDto firstMsg = messages.get(0), lastMsg = messages.get(messages.size() - 1);
+        ChatMessage firstMsg = messages.get(0), lastMsg = messages.get(messages.size() - 1);
         return checkMissingMessage(messages, firstMsg.getServerSeq(), lastMsg.getServerSeq(),
                 String.valueOf(fromUserId), String.valueOf(chatId), chatType, traceId);
     }
@@ -186,11 +186,11 @@ public class OfflineMessageService {
     }
 
     private void scanOfflineMessageKey(String activateChatKey) {
-        Cursor<Object> scan = redisTemplate.opsForSet().scan(activateChatKey, KeyScanOptions.NONE);
+        Cursor<String> scan = redisTemplate.opsForSet().scan(activateChatKey, KeyScanOptions.NONE);
         List<String> clearKey = new ArrayList<>();
         try {
             while (scan.hasNext()) {
-                String offlineMsgKey = (String) scan.next();
+                String offlineMsgKey = scan.next();
                 try {
                     if (doCleanOfflineMessageKey(offlineMsgKey)) {
                         clearKey.add(offlineMsgKey);
@@ -212,32 +212,21 @@ public class OfflineMessageService {
             logger.error("validPullOfflineMsgRequest request is null, traceId: {}", traceId);
             throw new IllegalArgumentException("request is null");
         }
-        if (Objects.isNull(request.getChatId())) {
-            logger.error("validPullOfflineMsgRequest chatId is null, traceId: {}", traceId);
-            throw new IllegalArgumentException("chatId is null");
-        }
-        if (Objects.isNull(request.getFromUserId())) {
-            logger.error("validPullOfflineMsgRequest fromUserId is null, traceId: {}", traceId);
-            throw new IllegalArgumentException("fromUserId is null");
-        }
-        if (Objects.isNull(request.getChatType())) {
-            logger.error("validPullOfflineMsgRequest chatType is null, traceId: {}", traceId);
-            throw new IllegalArgumentException("chatType is null");
-        }
         if (last) {
-            if (Objects.isNull(request.getSize())) {
-                logger.warn("validPullOfflineMsgRequest size is null, traceId: {}", traceId);
-                request.setSize(PullOfflineMsgRequest.DEFAULT_SIZE);
+            int size = request.getSize();
+            if (size < 0) {
+                logger.warn("validPullOfflineMsgRequest size is invalid, traceId: {}", traceId);
+                throw new IllegalArgumentException("size is invalid");
             }
         } else {
-            Long minServerSeq = request.getMinServerSeq();
-            Long maxServerSeq = request.getMaxServerSeq();
-            if (Objects.isNull(minServerSeq) || minServerSeq < 0) {
+            long minServerSeq = request.getMinServerSeq();
+            long maxServerSeq = request.getMaxServerSeq();
+            if (minServerSeq < 0) {
                 logger.error("validPullOfflineMsgRequest minServerSeq is invalid, minSvrSeq: {}, traceId: {}",
                         minServerSeq, traceId);
                 throw new IllegalArgumentException("minServerSeq is invalid");
             }
-            if (Objects.isNull(maxServerSeq) || maxServerSeq < 0) {
+            if (maxServerSeq < 0) {
                 logger.error("validPullOfflineMsgRequest maxServerSeq is invalid, maxSvrSeq: {}, traceId: {}",
                         maxServerSeq, traceId);
                 throw new IllegalArgumentException("maxServerSeq is invalid");
@@ -251,29 +240,29 @@ public class OfflineMessageService {
     }
 
 
-    private List<ChatMessageDto> checkMissingMessage(List<ChatMessageDto> messages,
+    private List<ChatMessage> checkMissingMessage(List<ChatMessage> messages,
                                                      Long minServerSeq, Long maxServerSeq, String userId, String chatId, Integer chatType, String traceId) {
         Set<Long> missingServerSeqs = getMissingServerSeqs(messages, minServerSeq, maxServerSeq);
         if (CollectionUtils.isEmpty(missingServerSeqs)) {
             return messages;
         }
-        List<ChatMessageDto> messageDtos = msgStoreSvcClient.selectMessageByServerSeqs(String.valueOf(userId), String.valueOf(chatId), chatType, missingServerSeqs, traceId);
+        List<ChatMessage> messageDtos = msgStoreRpc.selectMessageByServerSeqs(String.valueOf(userId), String.valueOf(chatId), chatType, missingServerSeqs, traceId);
         if (CollectionUtils.isEmpty(messageDtos)) {
             return messages;
         }
-        for (ChatMessageDto messageDto : messageDtos) {
+        for (ChatMessage messageDto : messageDtos) {
             saveOfflineMessage(messageDto, traceId); // 维护到离线消息缓存
             messages.add(messageDto);
         }
-        messages.sort(Comparator.comparing(ChatMessageDto::getServerSeq));
+        messages.sort(Comparator.comparing(ChatMessage::getServerSeq));
         return messages;
     }
 
-    private Set<Long> getMissingServerSeqs(List<ChatMessageDto> messages, Long minServerSeq, Long maxServerSeq) {
+    private Set<Long> getMissingServerSeqs(List<ChatMessage> messages, Long minServerSeq, Long maxServerSeq) {
         Set<Long> missingServerSeqs = new HashSet<>();
         for (int i = 1; i < messages.size(); i++) {
-            ChatMessageDto prevMsg = messages.get(i - 1);
-            ChatMessageDto curMsg = messages.get(i);
+            ChatMessage prevMsg = messages.get(i - 1);
+            ChatMessage curMsg = messages.get(i);
             // 检查相邻消息的serverSeq是否连续
             long diff = curMsg.getServerSeq() - prevMsg.getServerSeq();
             if (diff > 1) {
@@ -289,13 +278,13 @@ public class OfflineMessageService {
             }
         } else {
             // 检查首尾
-            ChatMessageDto firstMsg = messages.get(0);
+            ChatMessage firstMsg = messages.get(0);
             if (firstMsg.getServerSeq() > minServerSeq) {
                 for (long seq = minServerSeq; seq < firstMsg.getServerSeq(); seq++) {
                     missingServerSeqs.add(seq);
                 }
             }
-            ChatMessageDto lastMsg = messages.get(messages.size() - 1);
+            ChatMessage lastMsg = messages.get(messages.size() - 1);
             if (lastMsg.getServerSeq() < maxServerSeq) {
                 for (long seq = lastMsg.getServerSeq() + 1; seq <= maxServerSeq; seq++) {
                     missingServerSeqs.add(seq);

@@ -1,0 +1,40 @@
+syntax = "proto3";
+
+option java_package = "com.github.xuning888.helloim.api.protobuf.message.v1";
+option java_multiple_files = true;
+option java_outer_classname = "MessageServiceProto";
+
+import "api/common/v1/message.proto";
+
+message PullOfflineMsgRequest {
+  int64 fromUserId = 1;
+  int64 chatId = 2;
+  int32 chatType = 3;
+  int64 minServerSeq = 4;
+  int64 maxServerSeq = 5;
+  int32 size = 6;
+  string traceId = 7;
+}
+
+message OfflineMessageResponse {
+  repeated ChatMessage offlineMessages = 1;
+}
+
+message CleanOfflineMsgRequest {
+  string offlineMsgKey = 1;
+  string traceId = 2;
+}
+
+message CleanOfflineMsgResponse {
+  string traceId = 1;
+}
+
+service MessageService {
+
+  rpc PullOfflineMsg(PullOfflineMsgRequest) returns (OfflineMessageResponse);
+
+  rpc GetLatestOfflineMessages(PullOfflineMsgRequest) returns (OfflineMessageResponse);
+
+  rpc CleanOfflineMessage(CleanOfflineMsgRequest) returns (CleanOfflineMsgResponse);
+}
+

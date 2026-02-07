@@ -1,5 +1,6 @@
 package com.github.xuning888.helloim.chat.component;
 
+import com.github.xuning888.helloim.api.protobuf.common.v1.ChatMessage;
 import com.github.xuning888.helloim.chat.utils.ThreadPoolUtils;
 import com.github.xuning888.helloim.contract.api.service.ChatStoreService;
 import com.github.xuning888.helloim.contract.api.service.UserGroupService;
@@ -66,7 +67,7 @@ public class ChatComponent {
             }
             imChatDto.setUpdateTimestamp(updateTimestamp);
         }
-        ChatMessageDto lastMessage = chatMessageComponent.getLastMessage(userId.toString(), chatId.toString(), chatType, traceId);
+        ChatMessage lastMessage = chatMessageComponent.getLastMessage(userId.toString(), chatId.toString(), chatType, traceId);
         if (lastMessage != null) {
             updateChatDto(imChatDto, lastMessage);
         }
@@ -86,7 +87,7 @@ public class ChatComponent {
             return null;
         }
         ImChatDto imchatDto = (ImChatDto) value;
-        ChatMessageDto lastMessage = this.chatMessageComponent.getLastMessage(userId, chatId, imchatDto.getChatType(), traceId);
+        ChatMessage lastMessage = this.chatMessageComponent.getLastMessage(userId, chatId, imchatDto.getChatType(), traceId);
         if (lastMessage != null) {
             if (updateChatDto(imchatDto, lastMessage)) {
                 batchUpdateChat(Collections.singleton(imchatDto), traceId);
@@ -115,7 +116,7 @@ public class ChatComponent {
         // 获取还存活的会话
         imChatDtos = getAliveChats(imChatDtos);
         // 会话最后一条消息
-        Map<String, ChatMessageDto> lastMessagesMap = this.chatMessageComponent.multiLastMessages(userId, imChatDtos, traceId);
+        Map<String, ChatMessage> lastMessagesMap = this.chatMessageComponent.multiLastMessages(userId, imChatDtos, traceId);
         // 根据会话的最后一条消息补偿会话信息
         updateImChatDto(userId, imChatDtos, lastMessagesMap, traceId);
         // 会话排序
@@ -156,7 +157,7 @@ public class ChatComponent {
     }
 
 
-    private void updateImChatDto(String userId, List<ImChatDto> imChatDtos, Map<String, ChatMessageDto> lastMessagesMap, String traceId) {
+    private void updateImChatDto(String userId, List<ImChatDto> imChatDtos, Map<String, ChatMessage> lastMessagesMap, String traceId) {
         if (CollectionUtils.isEmpty(imChatDtos) || MapUtils.isEmpty(lastMessagesMap)) {
             return;
         }
@@ -165,7 +166,7 @@ public class ChatComponent {
             Long chatId = imChatDto.getChatId();
             Integer chatType = imChatDto.getChatType();
             String key = chatMessageComponent.lastMessageKey(userId, String.valueOf(chatId), chatType);
-            ChatMessageDto lastMessage = lastMessagesMap.get(key);
+            ChatMessage lastMessage = lastMessagesMap.get(key);
             if (lastMessage == null) {
                 continue;
             }
@@ -224,7 +225,7 @@ public class ChatComponent {
     /**
      * 更新会话的最后一条消息, 更新会话版本
      */
-    private boolean updateChatDto(ImChatDto imChatDto, ChatMessageDto lastMessage) {
+    private boolean updateChatDto(ImChatDto imChatDto, ChatMessage lastMessage) {
         boolean updated = false;
         if (imChatDto == null || lastMessage == null) {
             return updated;

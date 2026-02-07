@@ -1,7 +1,7 @@
 package com.github.xuning888.helloim.message.handler;
 
+import com.github.xuning888.helloim.api.protobuf.common.v1.ChatMessage;
 import com.github.xuning888.helloim.contract.convert.MessageConvert;
-import com.github.xuning888.helloim.api.dto.ChatMessageDto;
 import com.github.xuning888.helloim.contract.dto.MsgContext;
 import com.github.xuning888.helloim.contract.frame.Frame;
 import com.github.xuning888.helloim.contract.frame.Header;
@@ -9,7 +9,7 @@ import com.github.xuning888.helloim.contract.kafka.MsgKafkaProducer;
 import com.github.xuning888.helloim.contract.kafka.Topics;
 import com.github.xuning888.helloim.contract.protobuf.C2cMessage;
 import com.github.xuning888.helloim.contract.protobuf.MsgCmd;
-import com.github.xuning888.helloim.message.rpc.MsgStoreSvcClient;
+import com.github.xuning888.helloim.message.rpc.MsgStoreRpc;
 import com.github.xuning888.helloim.message.service.OfflineMessageService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,8 +27,7 @@ public class C2cSendRequestHandler implements MsgHandler {
     private static final Logger logger = LoggerFactory.getLogger(C2cSendRequestHandler.class);
 
     @Resource
-    private MsgStoreSvcClient msgStoreSvcClient;
-
+    private MsgStoreRpc msgStoreRpc;
     @Resource
     private OfflineMessageService offlineMessageService;
 
@@ -56,9 +55,9 @@ public class C2cSendRequestHandler implements MsgHandler {
         }
         logger.info("handleMessage serverSeq: {} traceId: {}", msgContext.getServerSeq(), traceId);
 
-        ChatMessageDto chatMessageDto = MessageConvert.buildC2CChatMessage(msgContext, c2cSendRequest);
+        ChatMessage chatMessageDto = MessageConvert.buildC2CChatMessage(msgContext, c2cSendRequest);
         // 消息持久化
-        if (!msgStoreSvcClient.saveMessage(chatMessageDto, traceId)) {
+        if (!msgStoreRpc.saveMessage(chatMessageDto, traceId)) {
             logger.error("c2cSendMessage saveMessage error: traceId: {}", traceId);
             return;
         }

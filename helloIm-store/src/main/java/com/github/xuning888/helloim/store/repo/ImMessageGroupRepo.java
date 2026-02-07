@@ -1,4 +1,4 @@
-package com.github.xuning888.helloim.store.service;
+package com.github.xuning888.helloim.store.repo;
 
 import com.github.xuning888.helloim.contract.entity.ImMessageGroup;
 
@@ -9,7 +9,7 @@ import java.util.Set;
  * @author xuning
  * @date 2025/9/21 16:01
  */
-public interface ImMessageGroupService {
+public interface ImMessageGroupRepo {
 
     int saveMessage(ImMessageGroup imMessageGroup, String traceId);
 

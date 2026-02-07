@@ -19,7 +19,7 @@ import javax.annotation.Resource;
 @Component
 public class KafkaRunner implements CommandLineRunner {
 
-    @Autowired
+    @Resource
     private ChatService chatService;
 
     @Resource

@@ -1,7 +1,8 @@
 package com.github.xuning888.helloim.chat.utils;
 
 
-import com.github.xuning888.helloim.api.dto.ChatMessageDto;
+import com.github.xuning888.helloim.api.protobuf.common.v1.ChatMessage;
+import com.github.xuning888.helloim.api.utils.ProtobufUtils;
 import com.github.xuning888.helloim.contract.util.RedisKeyUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,14 +43,15 @@ public class LastMessageUtils {
         updateC2cLastMsgScript.setResultType(Long.class);
     }
 
-    public static boolean updateC2CLastMessage(RedisTemplate<String, Object> redisTemplate,
-                                               String userId, String toUserId, ChatMessageDto chatMessageDto,
+    public static boolean updateC2CLastMessage(RedisTemplate<String, String> redisTemplate,
+                                               String userId, String toUserId, ChatMessage chatMessage,
                                                String traceId) {
         String key = RedisKeyUtils.c2cLastMessageKey(userId, toUserId);
-        Long serverSeq = chatMessageDto.getServerSeq();
-        Long msgId = chatMessageDto.getMsgId();
+        Long serverSeq = chatMessage.getServerSeq();
+        Long msgId = chatMessage.getMsgId();
         logger.info("updateC2cLastMessage key: {}, msgId: {}, serverSeq: {}, traceId: {}", key, msgId, serverSeq, traceId);
-        Long res = redisTemplate.execute(updateC2cLastMsgScript, Collections.singletonList(key), chatMessageDto, serverSeq);
+        String json = ProtobufUtils.toJson(chatMessage);
+        Long res = redisTemplate.execute(updateC2cLastMsgScript, Collections.singletonList(key), json, serverSeq);
         boolean updated = res > 0;
         if (!updated) {
             logger.info("updateC2cLastMessage, 最后一条消息更新失败, traceId: {}", traceId);

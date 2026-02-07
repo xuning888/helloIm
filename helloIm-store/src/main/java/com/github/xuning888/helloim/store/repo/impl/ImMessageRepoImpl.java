@@ -1,9 +1,9 @@
-package com.github.xuning888.helloim.store.service.impl;
+package com.github.xuning888.helloim.store.repo.impl;
 
 import com.github.xuning888.helloim.contract.entity.ImMessage;
 import com.github.xuning888.helloim.store.config.ShardingContextHolder;
 import com.github.xuning888.helloim.store.mapper.ImMessageMapper;
-import com.github.xuning888.helloim.store.service.ImMessageService;
+import com.github.xuning888.helloim.store.repo.ImMessageRepo;
 import com.github.xuning888.helloim.store.utils.ShardingUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -15,8 +15,8 @@ import java.util.*;
  * @author xuning
  * @date 2025/9/21 16:15
  */
-@Service("imMessageServiceImpl")
-public class ImMessageServiceImpl implements ImMessageService {
+@Service("ImMessageRepoImpl")
+public class ImMessageRepoImpl implements ImMessageRepo {
 
     @Resource
     private ImMessageMapper imMessageMapper;

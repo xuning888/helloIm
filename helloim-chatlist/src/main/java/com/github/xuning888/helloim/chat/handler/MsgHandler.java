@@ -1,5 +1,6 @@
 package com.github.xuning888.helloim.chat.handler;
 
+import com.github.xuning888.helloim.api.protobuf.common.v1.ChatMessage;
 import com.github.xuning888.helloim.chat.component.ChatMessageComponent;
 import com.github.xuning888.helloim.contract.api.service.ChatService;
 import com.github.xuning888.helloim.contract.contant.ChatType;
@@ -79,7 +80,7 @@ public class MsgHandler implements Runnable {
                     msgContext.getMsgFrom(), msgContext.getMsgTo(), traceId);
             return;
         }
-        ChatMessageDto chatMessage = MessageConvert.buildC2CChatMessage(msgContext, c2cSendRequest);
+        ChatMessage chatMessage = MessageConvert.buildC2CChatMessage(msgContext, c2cSendRequest);
         // 更新会话的最后一条消息
         chatMessageComponent.updateLastChatMessage(msgFrom.toString(), msgTo.toString(), chatMessage, traceId);
         // 单聊会话写扩散

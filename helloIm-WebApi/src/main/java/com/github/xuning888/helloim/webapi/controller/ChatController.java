@@ -51,6 +51,7 @@ public class ChatController {
                                           @RequestParam("chatId") String chatId,
                                           @RequestParam("chatType") Integer chatType) {
         String traceId = UUID.randomUUID().toString();
+        // TODO
         ChatMessageDto chatMessageDto = chatService.lastMessage(userId, chatId, chatType, traceId);
         return RestResultUtils.success(chatMessageDto);
     }

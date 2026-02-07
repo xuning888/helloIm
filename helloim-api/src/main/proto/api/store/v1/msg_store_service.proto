@@ -1,0 +1,77 @@
+syntax = "proto3";
+
+option java_package = "com.github.xuning888.helloim.api.protobuf.store.v1";
+option java_multiple_files = true;
+option java_outer_classname = "MsgStoreServiceProto";
+
+import "api/common/v1/message.proto";
+
+message SaveMessageRequest {
+  ChatMessage chatMessage = 1;
+  string traceId = 2;
+}
+
+message SaveMessageResponse {
+  int32 result = 1;
+}
+
+message MaxServerSeqRequest {
+  string from = 1;
+  string to = 2;
+  int32 chatType = 3;
+  string traceId = 4;
+}
+
+message MaxServerSeqResponse {
+  int64 maxServerSeq = 1;
+}
+
+message LastMessageRequest {
+  string userId = 1;
+  string chatId = 2;
+  int32 chatType = 3;
+  string traceId = 4;
+}
+
+message LastMessageResponse {
+  ChatMessage lastMessage = 1;
+}
+
+
+message SelectMessageByServerSeqsRequest {
+  string userId = 1;
+  string chatId = 2;
+  int32 chatType = 3;
+  repeated int64 serverSeqs = 4;
+  string traceId = 5;
+}
+
+message SelectMessageByServerSeqsResponse {
+  repeated ChatMessage messages = 1;
+}
+
+message GetRecentMessagesRequest {
+  string userId = 1;
+  string chatId = 2;
+  int32 chatType = 3;
+  int32 limit = 4;
+  string traceId = 5;
+}
+
+message GetRecentMessagesResponse {
+  repeated ChatMessage messages = 1;
+}
+
+service MsgStoreService {
+
+  rpc SaveMessage(SaveMessageRequest) returns (SaveMessageResponse);
+
+  rpc MaxServerSeq(MaxServerSeqRequest) returns (MaxServerSeqResponse);
+
+  rpc LastMessage(LastMessageRequest) returns (LastMessageResponse);
+
+  rpc SelectMessageByServerSeqs(SelectMessageByServerSeqsRequest) returns (SelectMessageByServerSeqsResponse);
+
+  rpc GetRecentMessages(GetRecentMessagesRequest) returns (GetRecentMessagesResponse);
+}
+

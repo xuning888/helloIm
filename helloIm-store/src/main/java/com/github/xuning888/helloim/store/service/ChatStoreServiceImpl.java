@@ -1,4 +1,4 @@
-package com.github.xuning888.helloim.store.service.impl;
+package com.github.xuning888.helloim.store.service;
 
 import com.github.xuning888.helloim.contract.api.service.ChatStoreService;
 import com.github.xuning888.helloim.contract.entity.ImChat;

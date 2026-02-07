@@ -1,8 +1,8 @@
 package com.github.xuning888.helloim.message.handler;
 
 
+import com.github.xuning888.helloim.api.protobuf.common.v1.ChatMessage;
 import com.github.xuning888.helloim.contract.convert.MessageConvert;
-import com.github.xuning888.helloim.api.dto.ChatMessageDto;
 import com.github.xuning888.helloim.contract.dto.MsgContext;
 import com.github.xuning888.helloim.contract.entity.ImGroup;
 import com.github.xuning888.helloim.contract.entity.ImGroupUser;
@@ -13,7 +13,7 @@ import com.github.xuning888.helloim.contract.kafka.Topics;
 import com.github.xuning888.helloim.contract.meta.GateUser;
 import com.github.xuning888.helloim.contract.protobuf.C2gMessage;
 import com.github.xuning888.helloim.contract.protobuf.MsgCmd;
-import com.github.xuning888.helloim.message.rpc.MsgStoreSvcClient;
+import com.github.xuning888.helloim.message.rpc.MsgStoreRpc;
 import com.github.xuning888.helloim.message.service.OfflineMessageService;
 import com.github.xuning888.helloim.message.service.UserGroupCommonService;
 import com.google.common.collect.Lists;
@@ -38,9 +38,8 @@ public class C2gSendRequestHandler implements MsgHandler {
     private static final Logger logger = LoggerFactory.getLogger(C2gSendRequestHandler.class);
 
     private final int segmentSize = 50;
-
     @Resource
-    private MsgStoreSvcClient msgStoreSvcClient;
+    private MsgStoreRpc msgStoreRpc;
     @Resource
     private UserGroupCommonService userGroupCommonService;
     @Resource
@@ -94,13 +93,13 @@ public class C2gSendRequestHandler implements MsgHandler {
             return;
         }
         logger.info("handleMessage, from: {}, groupId: {}, msgId: {}, traceId: {}", msgFrom, groupId, msgId, traceId);
-        ChatMessageDto chatMessageDto = MessageConvert.buildC2GChatMessage(msgContext, c2gSendRequest);
-        if (!msgStoreSvcClient.saveMessage(chatMessageDto, traceId)) {
+        ChatMessage chatMessage = MessageConvert.buildC2GChatMessage(msgContext, c2gSendRequest);
+        if (!msgStoreRpc.saveMessage(chatMessage, traceId)) {
             logger.error("handleMessage, saveMessage error from: {}, groupId: {}, msgId: {}, traceId: {}", msgFrom, groupId, msgContext, traceId);
             return;
         }
         // 保存离线消息
-        offlineMessageService.saveOfflineMessage(chatMessageDto, traceId);
+        offlineMessageService.saveOfflineMessage(chatMessage, traceId);
         // 构造下行消息的frame
         Frame pushRequestFrame = buildC2GPushRequestFrame(msgContext, c2gSendRequest);
         msgContext.setFrame(pushRequestFrame);

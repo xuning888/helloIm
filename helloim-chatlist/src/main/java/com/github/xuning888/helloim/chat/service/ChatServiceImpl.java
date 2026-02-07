@@ -1,11 +1,13 @@
 package com.github.xuning888.helloim.chat.service;
 
+import com.github.xuning888.helloim.api.convert.MessageConvert;
+import com.github.xuning888.helloim.api.protobuf.common.v1.ChatMessage;
 import com.github.xuning888.helloim.chat.component.ChatComponent;
 import com.github.xuning888.helloim.chat.component.ChatMessageComponent;
+import com.github.xuning888.helloim.chat.rpc.MsgStoreRpc;
 import com.github.xuning888.helloim.chat.utils.ServerSeqUtils;
 import com.github.xuning888.helloim.contract.api.service.ChatService;
 import com.github.xuning888.helloim.contract.api.service.ChatStoreService;
-import com.github.xuning888.helloim.contract.api.service.MsgStoreService;
 import com.github.xuning888.helloim.contract.contant.ChatType;
 import com.github.xuning888.helloim.contract.contant.CommonConstant;
 import com.github.xuning888.helloim.contract.convert.ChatConvert;
@@ -38,8 +40,8 @@ public class ChatServiceImpl implements ChatService {
     @DubboReference
     private ChatStoreService chatStoreService;
 
-    @DubboReference
-    private MsgStoreService msgStoreService;
+    @Resource
+    private MsgStoreRpc msgStoreRpc;
 
     @Resource
     private ChatComponent chatComponent;
@@ -101,7 +103,8 @@ public class ChatServiceImpl implements ChatService {
 
     @Override
     public ChatMessageDto lastMessage(String userId, String chatId, Integer chatType, String traceId) {
-        return chatMessageComponent.getLastMessage(userId, chatId, chatType, traceId);
+        ChatMessage lastMessage = chatMessageComponent.getLastMessage(userId, chatId, chatType, traceId);
+        return MessageConvert.pbConvert2Dto(lastMessage);
     }
 
     @Override
@@ -129,7 +132,7 @@ public class ChatServiceImpl implements ChatService {
     private Long serverSeqFromDB(String from, String to, ChatType chatType, String traceId) {
         Long serverSeq = null;
         try {
-            serverSeq = msgStoreService.maxServerSeq(from, to, chatType.getType(), traceId);
+            serverSeq = msgStoreRpc.maxServerSeq(from, to, chatType.getType(), traceId);
         } catch (Exception ex) {
             logger.error("serverSeqFromDB error. traceId: {}", traceId, ex);
             serverSeq = CommonConstant.ERROR_SERVER_SEQ;

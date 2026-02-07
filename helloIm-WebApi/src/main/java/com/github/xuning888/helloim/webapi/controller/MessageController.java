@@ -1,12 +1,13 @@
 package com.github.xuning888.helloim.webapi.controller;
 
-import com.github.xuning888.helloim.contract.api.request.PullOfflineMsgRequest;
-import com.github.xuning888.helloim.contract.api.service.MessageService;
+import com.github.xuning888.helloim.api.convert.MessageConvert;
+import com.github.xuning888.helloim.api.protobuf.common.v1.ChatMessage;
+import com.github.xuning888.helloim.api.protobuf.message.v1.PullOfflineMsgRequest;
 import com.github.xuning888.helloim.contract.contant.RestResultStatus;
 import com.github.xuning888.helloim.api.dto.ChatMessageDto;
 import com.github.xuning888.helloim.api.dto.RestResult;
 import com.github.xuning888.helloim.contract.util.RestResultUtils;
-import org.apache.dubbo.config.annotation.DubboReference;
+import com.github.xuning888.helloim.webapi.rpc.MessageServiceRpc;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.annotation.Resource;
 import java.util.List;
 import java.util.UUID;
 
@@ -27,8 +29,8 @@ public class MessageController {
 
     public static final Logger logger = LoggerFactory.getLogger(MessageController.class);
 
-    @DubboReference
-    private MessageService messageService;
+    @Resource
+    private MessageServiceRpc messageServiceRpc;
 
     @GetMapping("/pullOfflineMsg")
     public RestResult<Object> pullOfflineMsg(@RequestParam("fromUserId") String fromUserId,
@@ -37,16 +39,19 @@ public class MessageController {
                                       @RequestParam("minServerSeq") Long minServerSeq,
                                       @RequestParam("maxServerSeq") Long maxServerSeq) {
         String traceId = UUID.randomUUID().toString();
-        PullOfflineMsgRequest pullOfflineMsgRequest = new PullOfflineMsgRequest();
-        pullOfflineMsgRequest.setFromUserId(Long.valueOf(fromUserId));
-        pullOfflineMsgRequest.setChatId(Long.valueOf(chatId));
-        pullOfflineMsgRequest.setChatType(chatType);
-        pullOfflineMsgRequest.setMinServerSeq(minServerSeq);
-        pullOfflineMsgRequest.setMaxServerSeq(maxServerSeq);
-        logger.info("/message/pullOfflineMsg request: {}, traceId: {}", pullOfflineMsgRequest, traceId);
+        PullOfflineMsgRequest.Builder builder = PullOfflineMsgRequest.newBuilder();
+        builder.setFromUserId(Long.parseLong(fromUserId));
+        builder.setChatId(Long.parseLong(chatId));
+        builder.setChatType(chatType);
+        builder.setMinServerSeq(minServerSeq);
+        builder.setMaxServerSeq(maxServerSeq);
+        builder.setTraceId(traceId);
+        PullOfflineMsgRequest request = builder.build();
+        logger.info("/message/pullOfflineMsg request: {}, traceId: {}", request, traceId);
         try {
-            List<ChatMessageDto> chatMessageDtos = messageService.pullOfflineMsg(pullOfflineMsgRequest, traceId);
-            return RestResultUtils.success(chatMessageDtos);
+            List<ChatMessage> chatMessages = messageServiceRpc.pullOfflineMsg(request);
+            List<ChatMessageDto> messageDtos = MessageConvert.pbConvert2Dto(chatMessages);
+            return RestResultUtils.success(messageDtos);
         } catch (IllegalArgumentException illegalArgumentException) {
             logger.error("pullOfflineMsg illegalArgumentException traceId: {}", traceId, illegalArgumentException);
             return RestResultUtils.withStatus(RestResultStatus.INVALID);
@@ -63,15 +68,18 @@ public class MessageController {
                                                        @RequestParam("chatType") Integer chatType,
                                                        @RequestParam(value = "size", defaultValue = "50", required = false) Integer size) {
         String traceId = UUID.randomUUID().toString();
-        PullOfflineMsgRequest request = new PullOfflineMsgRequest();
-        request.setFromUserId(Long.parseLong(fromUserId));
-        request.setChatId(Long.parseLong(chatId));
-        request.setChatType(chatType);
-        request.setSize(size);
+        PullOfflineMsgRequest.Builder builder = PullOfflineMsgRequest.newBuilder();
+        builder.setFromUserId(Long.parseLong(fromUserId));
+        builder.setChatId(Long.parseLong(chatId));
+        builder.setChatType(chatType);
+        builder.setSize(size);
+        builder.setTraceId(traceId);
+        PullOfflineMsgRequest request = builder.build();
         logger.info("/message/getLatestOfflineMessages request: {}, traceId: {}", request, traceId);
         try {
-            List<ChatMessageDto> messages = messageService.getLatestOfflineMessages(request, UUID.randomUUID().toString());
-            return RestResultUtils.success(messages);
+            List<ChatMessage> messages = messageServiceRpc.getLatestOfflineMessages(request);
+            List<ChatMessageDto> messageDtos = MessageConvert.pbConvert2Dto(messages);
+            return RestResultUtils.success(messageDtos);
         } catch (IllegalArgumentException illegalArgumentException) {
             logger.error("getLatestOfflineMessages illegalArgumentException traceId: {}", traceId, illegalArgumentException);
             return RestResultUtils.withStatus(RestResultStatus.INVALID);
@@ -83,8 +91,9 @@ public class MessageController {
 
     @GetMapping("/cleanOfflineMessage")
     public RestResult<Object> cleanOfflineMessage(@RequestParam(value = "offlineMsgKey", required = false) String offlineMsgKey) {
+        String traceId = UUID.randomUUID().toString();
         try {
-            messageService.cleanOfflineMessage(offlineMsgKey);
+            messageServiceRpc.cleanOfflineMessage(offlineMsgKey, traceId);
             return RestResultUtils.success();
         } catch (Exception ex) {
             logger.error("getLatestOfflineMessages unknown error", ex);

@@ -1,8 +1,7 @@
 package com.github.xuning888.helloim.message.service;
 
-import com.github.xuning888.helloim.contract.api.request.PullOfflineMsgRequest;
-import com.github.xuning888.helloim.contract.api.service.MessageService;
-import com.github.xuning888.helloim.api.dto.ChatMessageDto;
+import com.github.xuning888.helloim.api.protobuf.common.v1.ChatMessage;
+import com.github.xuning888.helloim.api.protobuf.message.v1.*;
 import org.apache.dubbo.config.annotation.DubboService;
 import org.apache.dubbo.config.annotation.Method;
 import org.apache.zookeeper.common.StringUtils;
@@ -11,7 +10,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -23,7 +21,7 @@ import java.util.List;
                 @Method(name = "cleanOfflineMessage", timeout = 10000, retries = 0) // 禁止重试
         }
 )
-public class MessageServiceImpl implements MessageService {
+public class MessageServiceImpl extends DubboMessageServiceTriple.MessageServiceImplBase {
 
     private static final Logger logger = LoggerFactory.getLogger(MessageServiceImpl.class);
 
@@ -31,35 +29,44 @@ public class MessageServiceImpl implements MessageService {
     private OfflineMessageService offlineMessageService;
 
     @Override
-    public List<ChatMessageDto> pullOfflineMsg(PullOfflineMsgRequest request, String traceId) {
+    public OfflineMessageResponse pullOfflineMsg(PullOfflineMsgRequest request) {
+        String traceId = request.getTraceId();
         logger.info("pullOfflineMsg, request: {}, traceId: {}", request, traceId);
-        List<ChatMessageDto> chatMessageDtos = offlineMessageService.pullOfflineMessage(request, traceId);
-        if (CollectionUtils.isEmpty(chatMessageDtos)) {
+        OfflineMessageResponse.Builder responseBuilder = OfflineMessageResponse.newBuilder();
+        List<ChatMessage> chatMessages = offlineMessageService.pullOfflineMessage(request, traceId);
+        if (CollectionUtils.isEmpty(chatMessages)) {
             logger.debug("pullOfflineMsg chatMessages is empty, traceId: {}", traceId);
-            return Collections.emptyList();
+            return responseBuilder.build();
         }
-        logger.info("pullOfflineMsg, chatMessages.size: {}, traceId: {}", chatMessageDtos.size(), traceId);
-        return chatMessageDtos;
+        responseBuilder.addAllOfflineMessages(chatMessages);
+        logger.info("pullOfflineMsg, chatMessages.size: {}, traceId: {}", chatMessages.size(), traceId);
+        return responseBuilder.build();
     }
 
     @Override
-    public List<ChatMessageDto> getLatestOfflineMessages(PullOfflineMsgRequest request, String traceId) {
+    public OfflineMessageResponse getLatestOfflineMessages(PullOfflineMsgRequest request) {
+        String traceId = request.getTraceId();
         logger.info("getLatestOfflineMessages, request: {}, traceId: {}", request, traceId);
-        List<ChatMessageDto> messages = offlineMessageService.getLatestOfflineMessages(request, traceId);
+        OfflineMessageResponse.Builder responseBuilder = OfflineMessageResponse.newBuilder();
+        List<ChatMessage> messages = offlineMessageService.getLatestOfflineMessages(request, traceId);
         if (CollectionUtils.isEmpty(messages)) {
             logger.debug("getLatestOfflineMessages message is empty, traceId: {}", traceId);
-            return Collections.emptyList();
+            return responseBuilder.build();
         }
         logger.info("getLatestOfflineMessages message.size: {}, traceId: {}", messages.size(), traceId);
-        return messages;
+        responseBuilder.addAllOfflineMessages(messages);
+        return responseBuilder.build();
     }
 
+
     @Override
-    public void cleanOfflineMessage(String offlineMessageKey) {
-        if (StringUtils.isEmpty(offlineMessageKey)) {
+    public CleanOfflineMsgResponse cleanOfflineMessage(CleanOfflineMsgRequest request) {
+        String offlineMsgKey = request.getOfflineMsgKey();
+        if (StringUtils.isEmpty(offlineMsgKey)) {
             offlineMessageService.cleanOfflineMessage();
         } else {
-            offlineMessageService.doCleanOfflineMessageKey(offlineMessageKey);
+            offlineMessageService.doCleanOfflineMessageKey(offlineMsgKey);
         }
+        return CleanOfflineMsgResponse.newBuilder().build();
     }
 }
