@@ -1,7 +1,6 @@
 package com.github.xuning888.helloim.api.utils;
 
 
-import com.github.xuning888.helloim.api.protobuf.common.v1.ImUser;
 import com.google.protobuf.Message;
 import com.google.protobuf.util.JsonFormat;
 import com.google.protobuf.util.Timestamps;
@@ -28,7 +27,7 @@ public class ProtobufUtils {
 
     public static String toJson(Message message) {
         try {
-            return JsonFormat.printer().includingDefaultValueFields().print(message);
+            return JsonFormat.printer().includingDefaultValueFields().omittingInsignificantWhitespace().print(message);
         } catch (Exception ex) {
             logger.error("toJson error: {}", ex.getMessage(), ex);
             throw new RuntimeException("toJson error", ex);
