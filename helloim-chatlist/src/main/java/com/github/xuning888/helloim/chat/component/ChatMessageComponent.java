@@ -2,6 +2,7 @@ package com.github.xuning888.helloim.chat.component;
 
 import com.github.xuning888.helloim.api.dto.ImChatDto;
 import com.github.xuning888.helloim.api.protobuf.common.v1.ChatMessage;
+import com.github.xuning888.helloim.api.protobuf.common.v1.ImChat;
 import com.github.xuning888.helloim.api.utils.ProtobufUtils;
 import com.github.xuning888.helloim.chat.rpc.MsgStoreRpc;
 import com.github.xuning888.helloim.chat.utils.LastMessageUtils;
@@ -28,7 +29,7 @@ public class ChatMessageComponent {
     private static final Logger logger = LoggerFactory.getLogger(ChatMessageComponent.class);
 
     @Resource
-    private RedisTemplate<String, String> redisTemplate;
+    private RedisTemplate<String, Object> redisTemplate;
 
     @Resource
     private MsgStoreRpc msgStoreRpc;
@@ -63,14 +64,14 @@ public class ChatMessageComponent {
         return chatMessage;
     }
 
-    public Map<String, ChatMessage> multiLastMessages(String userId, List<ImChatDto> imChatDtoList, String traceId) {
-        if (CollectionUtils.isEmpty(imChatDtoList)) {
+    public Map<String, ChatMessage> multiLastMessages(String userId, List<ImChat> imChatList, String traceId) {
+        if (CollectionUtils.isEmpty(imChatList)) {
             return new HashMap<>();
         }
         Map<String, ChatMessage> messageDtoMap = new HashMap<>();
-        for (ImChatDto imChatDto : imChatDtoList) {
-            Long chatId = imChatDto.getChatId();
-            Integer chatType = imChatDto.getChatType();
+        for (ImChat imChat : imChatList) {
+            Long chatId = imChat.getChatId();
+            Integer chatType = imChat.getChatType();
             ChatMessage lastMessage = getLastMessage(userId, String.valueOf(chatId), chatType, traceId);
             String key = lastMessageKey(userId, String.valueOf(chatId), chatType);
             messageDtoMap.put(key, lastMessage);
@@ -83,7 +84,10 @@ public class ChatMessageComponent {
         String key = null;
         if (ChatType.C2C.match(chatType)) {
             key = RedisKeyUtils.c2cLastMessageKey(userId, chatId);
-            value = this.redisTemplate.opsForValue().get(key);
+            Object obj = this.redisTemplate.opsForValue().get(key);
+            if (obj != null) {
+                value = (String) obj;
+            }
         } else if (ChatType.C2G.match(chatType)) {
             key = RedisKeyUtils.c2gLastMessageKey(Long.parseLong(chatId));
             Object obj = this.redisTemplate.opsForHash().get(key, chatId);

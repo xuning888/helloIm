@@ -1,11 +1,14 @@
 package com.github.xuning888.helloim.webapi.controller;
 
-import com.github.xuning888.helloim.contract.api.service.ChatService;
+import com.github.xuning888.helloim.api.convert.ImChatConvert;
+import com.github.xuning888.helloim.api.convert.MessageConvert;
 import com.github.xuning888.helloim.api.dto.ChatMessageDto;
 import com.github.xuning888.helloim.api.dto.ImChatDto;
 import com.github.xuning888.helloim.api.dto.RestResult;
+import com.github.xuning888.helloim.api.protobuf.common.v1.ChatMessage;
+import com.github.xuning888.helloim.api.protobuf.common.v1.ImChat;
 import com.github.xuning888.helloim.contract.util.RestResultUtils;
-import org.apache.dubbo.config.annotation.DubboReference;
+import com.github.xuning888.helloim.webapi.rpc.ChatServiceRpc;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.annotation.Resource;
 import java.util.List;
 import java.util.UUID;
 
@@ -26,15 +30,16 @@ public class ChatController {
 
     private static final Logger logger = LoggerFactory.getLogger(ChatController.class);
 
-    @DubboReference
-    private ChatService chatService;
+    @Resource
+    private ChatServiceRpc chatServiceRpc;
 
     @GetMapping("/getAllChat")
     public RestResult<Object> getAllChat(@RequestParam("userId") String userId) {
         String traceId = UUID.randomUUID().toString();
         logger.info("/chat/getAllChat, userId: {}, traceId: {}", userId, traceId);
-        List<ImChatDto> aLlChat = this.chatService.getALlChat(Long.parseLong(userId), traceId);
-        return RestResultUtils.success(aLlChat);
+        List<ImChat> aLlChat = this.chatServiceRpc.getALlChat(Long.parseLong(userId), traceId);
+        List<ImChatDto> imChatDtos = ImChatConvert.convert2Dto(aLlChat);
+        return RestResultUtils.success(imChatDtos);
     }
 
     @GetMapping("/getChat")
@@ -42,8 +47,12 @@ public class ChatController {
                                       @RequestParam("chatId") String chatId) {
         String traceId = UUID.randomUUID().toString();
         logger.info("/chat/getChat, userId: {}, chatId: {} traceId: {}", userId, chatId, traceId);
-        ImChatDto imChatDto = this.chatService.getChat(Long.parseLong(userId), Long.parseLong(chatId), traceId);
-        return RestResultUtils.success(imChatDto);
+        ImChat imChat = this.chatServiceRpc.getChat(Long.parseLong(userId), Long.parseLong(chatId), traceId);
+        if (imChat == null) {
+            return RestResultUtils.success();
+        }
+        ImChatDto imChatDo = ImChatConvert.convert2Dto(imChat);
+        return RestResultUtils.success(imChatDo);
     }
 
     @GetMapping("/lastMessage")
@@ -51,8 +60,11 @@ public class ChatController {
                                           @RequestParam("chatId") String chatId,
                                           @RequestParam("chatType") Integer chatType) {
         String traceId = UUID.randomUUID().toString();
-        // TODO
-        ChatMessageDto chatMessageDto = chatService.lastMessage(userId, chatId, chatType, traceId);
+        ChatMessage chatMessage = chatServiceRpc.lastMessage(userId, chatId, chatType, traceId);
+        if (chatMessage == null) {
+            return RestResultUtils.success();
+        }
+        ChatMessageDto chatMessageDto = MessageConvert.pbConvert2Dto(chatMessage);
         return RestResultUtils.success(chatMessageDto);
     }
 }

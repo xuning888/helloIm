@@ -2,8 +2,8 @@ package com.github.xuning888.helloim.chat.consumer;
 
 import com.github.xuning888.helloim.chat.component.ChatMessageComponent;
 import com.github.xuning888.helloim.chat.handler.MsgHandler;
+import com.github.xuning888.helloim.chat.service.ChatServiceImpl;
 import com.github.xuning888.helloim.chat.utils.ThreadPoolUtils;
-import com.github.xuning888.helloim.contract.api.service.ChatService;
 import com.github.xuning888.helloim.contract.kafka.MsgKafkaConsumer;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 
@@ -16,11 +16,11 @@ import java.util.Properties;
  */
 public class MessageConsumer extends MsgKafkaConsumer {
 
-    private final ChatService chatService;
+    private final ChatServiceImpl chatService;
 
     private final ChatMessageComponent chatMessageComponent;
 
-    public MessageConsumer(ChatService chatService, ChatMessageComponent chatMessageComponent,
+    public MessageConsumer(ChatServiceImpl chatService, ChatMessageComponent chatMessageComponent,
                            Properties properties, List<String> topics) {
         super(properties, topics);
         this.chatService = chatService;

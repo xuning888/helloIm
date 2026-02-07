@@ -43,7 +43,7 @@ public class LastMessageUtils {
         updateC2cLastMsgScript.setResultType(Long.class);
     }
 
-    public static boolean updateC2CLastMessage(RedisTemplate<String, String> redisTemplate,
+    public static boolean updateC2CLastMessage(RedisTemplate<String, Object> redisTemplate,
                                                String userId, String toUserId, ChatMessage chatMessage,
                                                String traceId) {
         String key = RedisKeyUtils.c2cLastMessageKey(userId, toUserId);

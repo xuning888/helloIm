@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.github.xuning888.helloim.store.mapper.ImChatMapper">
-  <resultMap id="BaseResultMap" type="com.github.xuning888.helloim.contract.entity.ImChat">
+  <resultMap id="BaseResultMap" type="com.github.xuning888.helloim.contract.entity.ImChatDo">
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="user_id" jdbcType="BIGINT" property="userId" />
     <result column="chat_id" jdbcType="BIGINT" property="chatId" />
@@ -21,7 +21,7 @@
     chat_mute, sub_status, join_group_timestamp,
       created_at, updated_at
   </sql>
-  <insert id="insertSelective" parameterType="com.github.xuning888.helloim.contract.entity.ImChat">
+  <insert id="insertSelective" parameterType="com.github.xuning888.helloim.contract.entity.ImChatDo">
     insert into im_chat
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">
@@ -106,7 +106,7 @@
       </if>
     </trim>
   </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.github.xuning888.helloim.contract.entity.ImChat">
+  <update id="updateByPrimaryKeySelective" parameterType="com.github.xuning888.helloim.contract.entity.ImChatDo">
     update im_chat
     <set>
       <if test="userId != null">

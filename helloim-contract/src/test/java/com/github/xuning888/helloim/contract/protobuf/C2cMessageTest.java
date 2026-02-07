@@ -1,5 +1,6 @@
 package com.github.xuning888.helloim.contract.protobuf;
 
+import com.github.xuning888.helloim.api.utils.ProtobufUtils;
 import com.github.xuning888.helloim.contract.frame.Frame;
 import com.github.xuning888.helloim.contract.frame.Header;
 import com.google.protobuf.InvalidProtocolBufferException;

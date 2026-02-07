@@ -1,7 +1,7 @@
 package com.github.xuning888.helloim.contract.convert;
 
-import com.github.xuning888.helloim.api.dto.ImChatDto;
-import com.github.xuning888.helloim.contract.entity.ImChat;
+import com.github.xuning888.helloim.api.protobuf.common.v1.ImChat;
+import com.github.xuning888.helloim.contract.entity.ImChatDo;
 
 import java.util.Date;
 
@@ -12,73 +12,64 @@ import java.util.Date;
 public class ChatConvert {
 
 
-    public static ImChat convertImChat(ImChatDto imChatDto) {
-        ImChat imChat = new ImChat();
-        imChat.setChatId(imChatDto.getChatId());
-        imChat.setUserId(imChatDto.getUserId());
-        imChat.setChatType(imChatDto.getChatType());
-        if (imChatDto.getChatTop() != null) {
-            imChat.setChatTop(imChatDto.getChatTop() ? 1 : 0);
-        } else {
-            imChat.setChatTop(0);
+    public static ImChatDo convert2Do(ImChat imChat) {
+        ImChatDo imChatDo = new ImChatDo();
+        imChatDo.setChatId(imChat.getChatId());
+        imChatDo.setUserId(imChat.getUserId());
+        imChatDo.setChatType(imChat.getChatType());
+        boolean chatTop = imChat.getChatTop();
+        imChatDo.setChatTop(chatTop ? 1 : 0);
+        boolean chatDel = imChat.getChatDel();
+        imChatDo.setChatDel(chatDel ? 1 : 0);
+        long updateTimestamp = imChat.getUpdateTimestamp();
+        if (updateTimestamp > 0) {
+            imChatDo.setUpdateTimestamp(new Date(updateTimestamp));
         }
-        if (imChatDto.getChatDel() != null) {
-            imChat.setChatDel(imChatDto.getChatDel() ? 1 : 0);
-        } else {
-            imChat.setChatDel(0);
+        long delTimestamp = imChat.getDelTimestamp();
+        if (delTimestamp > 0) {
+            imChatDo.setDelTimestamp(new Date(delTimestamp));
         }
-        Long updateTimestamp = imChatDto.getUpdateTimestamp();
-        if (updateTimestamp != null) {
-            imChat.setUpdateTimestamp(new Date(updateTimestamp));
-        }
-        Long delTimestamp = imChatDto.getDelTimestamp();
-        if (delTimestamp != null) {
-            imChat.setDelTimestamp(new Date(delTimestamp));
-        }
-        imChat.setChatMute(imChat.getChatMute());
-        return imChat;
+        boolean chatMute = imChat.getChatMute();
+        imChatDo.setChatMute(chatMute ? 1 : 0);
+        return imChatDo;
     }
 
-
-    public static ImChatDto convertToimChatDto(ImChat imChat) {
-        if (imChat == null) {
-            return null;
-        }
-        ImChatDto imChatDto = new ImChatDto();
-        imChatDto.setUserId(imChat.getUserId());
-        imChatDto.setChatId(imChat.getChatId());
-        imChatDto.setChatType(imChat.getChatType());
-        Integer chatTop = imChat.getChatTop();
+    public static ImChat convertImChat(ImChatDo imChatDo) {
+        ImChat.Builder builder = ImChat.newBuilder();
+        builder.setUserId(imChatDo.getUserId());
+        builder.setChatId(imChatDo.getChatId());
+        builder.setChatType(imChatDo.getChatType());
+        Integer chatTop = imChatDo.getChatTop();
         if (chatTop == null) {
-            imChatDto.setChatTop(false);
+            builder.setChatTop(false);
         } else {
-            imChatDto.setChatTop(chatTop == 1);
+            builder.setChatTop(chatTop == 1);
         }
-        Integer chatMute = imChat.getChatMute();
+        Integer chatMute = imChatDo.getChatMute();
         if (chatMute == null) {
-            imChatDto.setChatMute(false);
+            builder.setChatMute(false);
         } else {
-            imChatDto.setChatMute(chatMute == 1);
+            builder.setChatMute(chatMute == 1);
         }
-        Integer chatDel = imChat.getChatDel();
+        Integer chatDel = imChatDo.getChatDel();
         if (chatDel == null) {
-            imChatDto.setChatDel(false);
+            builder.setChatDel(false);
         } else {
-            imChatDto.setChatDel(chatDel == 1);
+            builder.setChatDel(chatDel == 1);
         }
-        Date updateTimestamp = imChat.getUpdateTimestamp();
+        Date updateTimestamp = imChatDo.getUpdateTimestamp();
         if (updateTimestamp == null) {
-            imChatDto.setUpdateTimestamp(System.currentTimeMillis());
+            builder.setUpdateTimestamp(System.currentTimeMillis());
         } else {
-            imChatDto.setUpdateTimestamp(updateTimestamp.getTime());
+            builder.setUpdateTimestamp(updateTimestamp.getTime());
         }
-        Date delTimestamp = imChat.getDelTimestamp();
+        Date delTimestamp = imChatDo.getDelTimestamp();
         if (delTimestamp == null) {
-            imChatDto.setDelTimestamp(System.currentTimeMillis());
+            builder.setDelTimestamp(System.currentTimeMillis());
         } else {
-            imChatDto.setDelTimestamp(delTimestamp.getTime());
+            builder.setDelTimestamp(delTimestamp.getTime());
         }
-        imChatDto.setLastReadMsgId(null);
-        return imChatDto;
+        builder.setLastReadMsgId(0L);
+        return builder.build();
     }
 }

@@ -2,7 +2,7 @@ package com.github.xuning888.helloim.chat.runner;
 
 import com.github.xuning888.helloim.chat.component.ChatMessageComponent;
 import com.github.xuning888.helloim.chat.consumer.MessageConsumer;
-import com.github.xuning888.helloim.contract.api.service.ChatService;
+import com.github.xuning888.helloim.chat.service.ChatServiceImpl;
 import com.github.xuning888.helloim.contract.kafka.KafkaProperties;
 import com.github.xuning888.helloim.contract.kafka.Topics;
 import com.google.common.collect.ImmutableList;
@@ -20,7 +20,7 @@ import javax.annotation.Resource;
 public class KafkaRunner implements CommandLineRunner {
 
     @Resource
-    private ChatService chatService;
+    private ChatServiceImpl chatService;
 
     @Resource
     private ChatMessageComponent chatMessageComponent;

@@ -1,6 +1,5 @@
 package com.github.xuning888.helloim.dispatch.sender;
 
-import com.github.xuning888.helloim.contract.api.service.ChatService;
 import com.github.xuning888.helloim.contract.contant.ChatType;
 import com.github.xuning888.helloim.contract.contant.CommonConstant;
 import com.github.xuning888.helloim.contract.dto.MsgContext;
@@ -10,14 +9,15 @@ import com.github.xuning888.helloim.contract.kafka.Topics;
 import com.github.xuning888.helloim.contract.protobuf.C2cMessage;
 import com.github.xuning888.helloim.contract.protobuf.MsgCmd;
 import com.github.xuning888.helloim.contract.util.GatewayUtils;
+import com.github.xuning888.helloim.dispatch.rpc.ChatServiceRpc;
 import com.github.xuning888.helloim.dispatch.util.UpMessageUtils;
-import org.apache.dubbo.config.annotation.DubboReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Resource;
 import java.util.Objects;
 
 /**
@@ -29,8 +29,8 @@ public class C2CSendRequestSender implements MessageSender {
 
     private static final Logger logger = LoggerFactory.getLogger(C2CSendRequestSender.class);
 
-    @DubboReference
-    private ChatService chatService;
+    @Resource
+    private ChatServiceRpc chatServiceRpc;
 
     @Autowired
     private RedisTemplate<String, Object> redisTemplate;
@@ -63,7 +63,7 @@ public class C2CSendRequestSender implements MessageSender {
         // 生成serverSeq
         Long serverSeq = null;
         try {
-            serverSeq = chatService.serverSeq(msgFrom, msgTo, ChatType.C2C, traceId);
+            serverSeq = chatServiceRpc.serverSeq(msgFrom, msgTo, ChatType.C2C, traceId);
             if (Objects.equals(serverSeq, CommonConstant.ERROR_SERVER_SEQ)) {
                 logger.error("c2cSendRequest 获取serverSeq异常, from: {}, to: {}, traceId: {}", msgFrom, msgTo, traceId);
                 UpMessageUtils.deleteDuplicate(redisTemplate, msgContext);

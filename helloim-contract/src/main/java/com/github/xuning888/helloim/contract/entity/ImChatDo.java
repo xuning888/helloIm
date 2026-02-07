@@ -3,7 +3,7 @@ package com.github.xuning888.helloim.contract.entity;
 import java.io.Serializable;
 import java.util.Date;
 
-public class ImChat implements Serializable {
+public class ImChatDo implements Serializable {
     private Long id;
 
     private Long userId;

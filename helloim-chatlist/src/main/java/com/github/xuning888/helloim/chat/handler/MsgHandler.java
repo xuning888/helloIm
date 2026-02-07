@@ -1,11 +1,11 @@
 package com.github.xuning888.helloim.chat.handler;
 
+import com.github.xuning888.helloim.api.protobuf.chat.v1.CreateOrActivateChatRequest;
 import com.github.xuning888.helloim.api.protobuf.common.v1.ChatMessage;
 import com.github.xuning888.helloim.chat.component.ChatMessageComponent;
-import com.github.xuning888.helloim.contract.api.service.ChatService;
+import com.github.xuning888.helloim.chat.service.ChatServiceImpl;
 import com.github.xuning888.helloim.contract.contant.ChatType;
 import com.github.xuning888.helloim.contract.convert.MessageConvert;
-import com.github.xuning888.helloim.api.dto.ChatMessageDto;
 import com.github.xuning888.helloim.contract.dto.MsgContext;
 import com.github.xuning888.helloim.contract.frame.Frame;
 import com.github.xuning888.helloim.contract.protobuf.C2cMessage;
@@ -24,12 +24,12 @@ public class MsgHandler implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(MsgHandler.class);
 
     private final ConsumerRecord<String, byte[]> record;
-    private final ChatService chatService;
+    private final ChatServiceImpl chatService;
     private final ChatMessageComponent chatMessageComponent;
     private final String traceId;
 
     public MsgHandler(ConsumerRecord<String, byte[]> record,
-                      ChatService chatService,
+                      ChatServiceImpl chatService,
                       ChatMessageComponent chatMessageComponent,
                       String traceId) {
         this.record = record;
@@ -90,6 +90,9 @@ public class MsgHandler implements Runnable {
 
     private void updateC2c(Long from, Long to, String traceId) {
         // 创建或激活会话
-        chatService.createOrActivateChat(from, to, ChatType.C2C, traceId);
+        CreateOrActivateChatRequest request = CreateOrActivateChatRequest.newBuilder()
+                .setUserId(from).setChatId(to).setChatType(ChatType.C2C.getType())
+                .setTraceId(traceId).build();
+        chatService.createOrActivateChat(request);
     }
 }

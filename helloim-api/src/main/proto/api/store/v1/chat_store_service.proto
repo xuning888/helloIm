@@ -14,7 +14,7 @@ message CreateOrUpdateChatRequest {
 }
 
 message CreateOrUpdateChatResponse {
-  string userId = 1;
+  int32 result = 1;
   string traceId = 2;
 }
 

@@ -58,8 +58,8 @@ public final class ChatStoreServiceProto {
       "\033api/common/v1/message.proto\032\030api/common" +
       "/v1/chat.proto\"E\n\031CreateOrUpdateChatRequ" +
       "est\022\027\n\006imChat\030\001 \001(\0132\007.ImChat\022\017\n\007traceId\030" +
-      "\002 \001(\t\"=\n\032CreateOrUpdateChatResponse\022\016\n\006u" +
-      "serId\030\001 \001(\t\022\017\n\007traceId\030\002 \001(\t\"4\n\021GetAllCh" +
+      "\002 \001(\t\"=\n\032CreateOrUpdateChatResponse\022\016\n\006r" +
+      "esult\030\001 \001(\005\022\017\n\007traceId\030\002 \001(\t\"4\n\021GetAllCh" +
       "atRequest\022\016\n\006userId\030\001 \001(\t\022\017\n\007traceId\030\002 \001" +
       "(\t\",\n\022GetAllChatResponse\022\026\n\005chats\030\001 \003(\0132" +
       "\007.ImChat\"E\n\032BatchCreateOrUpdateRequest\022\026" +
@@ -92,7 +92,7 @@ public final class ChatStoreServiceProto {
     internal_static_CreateOrUpdateChatResponse_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_CreateOrUpdateChatResponse_descriptor,
-        new java.lang.String[] { "UserId", "TraceId", });
+        new java.lang.String[] { "Result", "TraceId", });
     internal_static_GetAllChatRequest_descriptor =
       getDescriptor().getMessageTypes().get(2);
     internal_static_GetAllChatRequest_fieldAccessorTable = new

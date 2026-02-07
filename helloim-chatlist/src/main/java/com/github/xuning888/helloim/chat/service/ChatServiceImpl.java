@@ -1,22 +1,21 @@
 package com.github.xuning888.helloim.chat.service;
 
-import com.github.xuning888.helloim.api.convert.MessageConvert;
+import com.github.xuning888.helloim.api.protobuf.chat.v1.*;
 import com.github.xuning888.helloim.api.protobuf.common.v1.ChatMessage;
+import com.github.xuning888.helloim.api.protobuf.common.v1.ImChat;
+import com.github.xuning888.helloim.api.protobuf.store.v1.GetAllChatRequest;
+import com.github.xuning888.helloim.api.protobuf.store.v1.GetAllChatResponse;
+import com.github.xuning888.helloim.api.protobuf.store.v1.LastMessageRequest;
+import com.github.xuning888.helloim.api.protobuf.store.v1.LastMessageResponse;
 import com.github.xuning888.helloim.chat.component.ChatComponent;
 import com.github.xuning888.helloim.chat.component.ChatMessageComponent;
+import com.github.xuning888.helloim.chat.rpc.ChatStoreRpc;
 import com.github.xuning888.helloim.chat.rpc.MsgStoreRpc;
 import com.github.xuning888.helloim.chat.utils.ServerSeqUtils;
-import com.github.xuning888.helloim.contract.api.service.ChatService;
-import com.github.xuning888.helloim.contract.api.service.ChatStoreService;
 import com.github.xuning888.helloim.contract.contant.ChatType;
 import com.github.xuning888.helloim.contract.contant.CommonConstant;
-import com.github.xuning888.helloim.contract.convert.ChatConvert;
-import com.github.xuning888.helloim.api.dto.ChatMessageDto;
-import com.github.xuning888.helloim.api.dto.ImChatDto;
-import com.github.xuning888.helloim.contract.entity.ImChat;
 import com.github.xuning888.helloim.contract.util.RedisKeyUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.dubbo.config.annotation.DubboReference;
 import org.apache.dubbo.config.annotation.DubboService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,15 +29,15 @@ import java.util.List;
  * @date 2025/8/2 19:37
  */
 @DubboService
-public class ChatServiceImpl implements ChatService {
+public class ChatServiceImpl extends DubboChatServiceTriple.ChatServiceImplBase {
 
     private static final Logger logger = LoggerFactory.getLogger(ChatServiceImpl.class);
 
     @Resource
-    private RedisTemplate redisTemplate;
+    private RedisTemplate<String, Object> redisTemplate;
 
-    @DubboReference
-    private ChatStoreService chatStoreService;
+    @Resource
+    private ChatStoreRpc chatStoreRpc;
 
     @Resource
     private MsgStoreRpc msgStoreRpc;
@@ -50,11 +49,14 @@ public class ChatServiceImpl implements ChatService {
     private ChatMessageComponent chatMessageComponent;
 
     @Override
-    public Long serverSeq(String from, String to, ChatType chatType, String traceId) {
+    public ServerSeqResponse serverSeq(ServerSeqRequest request) {
+        String from = request.getFrom(), to = request.getTo();
+        ChatType chatType = ChatType.getChatType(request.getChatType());
+        String traceId = request.getTraceId();
         String key = RedisKeyUtils.serverSeqKey(from, to, chatType);
         if (StringUtils.isBlank(key)) {
             logger.error("serverSeq serverSeqKey is null, from: {}, to: {}, chatType: {} traceId: {}", from, to, chatType, traceId);
-            return CommonConstant.ERROR_SERVER_SEQ;
+            return ServerSeqResponse.newBuilder().setServerSeq(CommonConstant.ERROR_SERVER_SEQ).build();
         }
         Long serverSeq = null;
         Object value = this.redisTemplate.opsForValue().get(key);
@@ -63,70 +65,79 @@ public class ChatServiceImpl implements ChatService {
                 serverSeq = serverSeqFromDB(from, to, chatType, traceId);
                 if (serverSeq == null || serverSeq.equals(CommonConstant.ERROR_SERVER_SEQ)) {
                     logger.error("serverSeq DB query failed, traceId: {}", traceId);
-                    return CommonConstant.ERROR_SERVER_SEQ;
+                    return ServerSeqResponse.newBuilder().setServerSeq(CommonConstant.ERROR_SERVER_SEQ).build();
                 }
-                return ServerSeqUtils.setServerSeq(redisTemplate, key, serverSeq);
+                serverSeq = ServerSeqUtils.setServerSeq(redisTemplate, key, serverSeq);
+                return ServerSeqResponse.newBuilder().setServerSeq(serverSeq).build();
             } catch (Exception ex) {
                 logger.error("serverSeq 重建缓存失败, from: {}, to: {}, chatType: {}, traceId: {}", from, to, serverSeq, traceId, ex);
-                return CommonConstant.ERROR_SERVER_SEQ;
+                return ServerSeqResponse.newBuilder().setServerSeq(CommonConstant.ERROR_SERVER_SEQ).build();
             }
         }
         try {
             serverSeq = this.redisTemplate.opsForValue().increment(key);
         } catch (Exception ex) {
             logger.error("serverSeq incr失败, from: {}, to: {}, chatType: {}, traceId: {}", from, to, chatType, traceId, ex);
-            return CommonConstant.ERROR_SERVER_SEQ;
+            return ServerSeqResponse.newBuilder().setServerSeq(CommonConstant.ERROR_SERVER_SEQ).build();
         }
         if (serverSeq == null) {
             logger.error("serverSeq incr失败2, from: {}, to: {}, chatType: {}, traceId: {}", from, to, chatType, traceId);
-            return CommonConstant.ERROR_SERVER_SEQ;
+            return ServerSeqResponse.newBuilder().setServerSeq(CommonConstant.ERROR_SERVER_SEQ).build();
         }
-        return serverSeq;
+        return ServerSeqResponse.newBuilder().setServerSeq(serverSeq).build();
     }
 
     @Override
-    public ImChatDto createOrActivateChat(Long userId, Long chatId, ChatType chatType, String traceId) {
+    public CreateOrActivateChatResponse createOrActivateChat(CreateOrActivateChatRequest request) {
+        long userId = request.getUserId(), chatId = request.getChatId();
+        int chatType = request.getChatType();
+        String traceId = request.getTraceId();
         logger.info("createOrActivateChat userId: {}, chatId: {}, chatType: {}, traceId: {}",
                 userId, chatId, chatType, traceId);
-        // 获取会话缓存
-        ImChatDto imChatDto = chatComponent.getChat(String.valueOf(userId), String.valueOf(chatId), traceId);
-        if (imChatDto != null) {
-            return imChatDto;
+        ImChat imChat = chatComponent.getChat(String.valueOf(userId), String.valueOf(chatId), traceId);
+        if (imChat != null) {
+            return CreateOrActivateChatResponse.newBuilder().setImChat(imChat).build();
         }
-        return createChat(userId, chatId, chatType, traceId);
+        imChat = createChat(userId, chatId, ChatType.getChatType(chatType), traceId);
+        return CreateOrActivateChatResponse.newBuilder().setImChat(imChat).build();
     }
 
     @Override
-    public List<ImChatDto> getALlChat(Long userId, String traceId) {
-        return chatComponent.getAllChat(String.valueOf(userId), traceId);
+    public GetAllChatResponse getAllChat(GetAllChatRequest request) {
+        List<ImChat> allChat = chatComponent.getAllChat(request.getUserId(), request.getTraceId());
+        return GetAllChatResponse.newBuilder().addAllChats(allChat).build();
     }
 
     @Override
-    public ChatMessageDto lastMessage(String userId, String chatId, Integer chatType, String traceId) {
+    public LastMessageResponse lastMessage(LastMessageRequest request) {
+        String userId = request.getUserId(), chatId = request.getChatId(), traceId = request.getTraceId();
+        int chatType = request.getChatType();
         ChatMessage lastMessage = chatMessageComponent.getLastMessage(userId, chatId, chatType, traceId);
-        return MessageConvert.pbConvert2Dto(lastMessage);
+        return LastMessageResponse.newBuilder().setLastMessage(lastMessage).build();
     }
 
     @Override
-    public ImChatDto getChat(Long userId, Long chatId, String traceId) {
-        logger.info("getChat userId: {}, chatId: {}, traceId: {}", userId, chatId, traceId);
-        ImChatDto imChatDto = chatComponent.getChat(String.valueOf(userId), String.valueOf(chatId), traceId);
-        if (imChatDto == null) {
+    public GetChatResponse getChat(GetChatRequest request) {
+        long userId = request.getUserId(), chatId = request.getChatId();
+        String traceId = request.getTraceId();
+        ImChat imChat = chatComponent.getChat(String.valueOf(userId), String.valueOf(chatId), traceId);
+        GetChatResponse.Builder builder = GetChatResponse.newBuilder();
+        if (imChat == null) {
             logger.info("getChat result is null, traceId: {}", traceId);
-            return null;
+        } else {
+            builder.setImChat(imChat);
         }
-        return imChatDto;
+        return builder.build();
     }
 
 
-    private ImChatDto createChat(Long userId, Long chatId, ChatType chatType, String traceId) {
-        ImChatDto imChatDto = chatComponent.createImChatDto(userId, chatId, chatType.getType(), traceId);
+    private ImChat createChat(Long userId, Long chatId, ChatType chatType, String traceId) {
+        ImChat imChat = chatComponent.createImChatDto(userId, chatId, chatType.getType(), traceId);
         // 构建会话缓存
-        chatComponent.putChat(imChatDto, traceId);
+        chatComponent.putChat(imChat, traceId);
         // 会话存入db
-        ImChat imChat = ChatConvert.convertImChat(imChatDto);
-        chatStoreService.createOrUpdate(imChat, traceId);
-        return imChatDto;
+        chatStoreRpc.createOrUpdate(imChat, traceId);
+        return imChat;
     }
 
     private Long serverSeqFromDB(String from, String to, ChatType chatType, String traceId) {

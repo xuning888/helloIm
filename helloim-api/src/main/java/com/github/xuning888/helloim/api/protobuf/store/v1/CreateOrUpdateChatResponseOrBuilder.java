@@ -9,16 +9,10 @@ public interface CreateOrUpdateChatResponseOrBuilder extends
     com.google.protobuf.MessageOrBuilder {
 
   /**
-   * <code>string userId = 1;</code>
-   * @return The userId.
+   * <code>int32 result = 1;</code>
+   * @return The result.
    */
-  java.lang.String getUserId();
-  /**
-   * <code>string userId = 1;</code>
-   * @return The bytes for userId.
-   */
-  com.google.protobuf.ByteString
-      getUserIdBytes();
+  int getResult();
 
   /**
    * <code>string traceId = 2;</code>

@@ -1,7 +1,6 @@
 package com.github.xuning888.helloim.dispatch.sender;
 
 
-import com.github.xuning888.helloim.contract.api.service.ChatService;
 import com.github.xuning888.helloim.contract.contant.ChatType;
 import com.github.xuning888.helloim.contract.contant.CommonConstant;
 import com.github.xuning888.helloim.contract.dto.MsgContext;
@@ -11,8 +10,8 @@ import com.github.xuning888.helloim.contract.kafka.Topics;
 import com.github.xuning888.helloim.contract.protobuf.C2gMessage;
 import com.github.xuning888.helloim.contract.protobuf.MsgCmd;
 import com.github.xuning888.helloim.contract.util.GatewayUtils;
+import com.github.xuning888.helloim.dispatch.rpc.ChatServiceRpc;
 import com.github.xuning888.helloim.dispatch.util.UpMessageUtils;
-import org.apache.dubbo.config.annotation.DubboReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -30,8 +29,8 @@ public class C2GSendRequestSender implements MessageSender {
 
     private static final Logger logger = LoggerFactory.getLogger(C2GSendRequestSender.class);
 
-    @DubboReference
-    private ChatService chatService;
+    @Resource
+    private ChatServiceRpc chatServiceRpc;
     @Resource
     private RedisTemplate<String, Object> redisTemplate;
 
@@ -55,7 +54,7 @@ public class C2GSendRequestSender implements MessageSender {
         msgContext.setGroupId(groupId);
         Long serverSeq = null;
         try {
-            serverSeq = chatService.serverSeq(msgFrom, String.valueOf(groupId), ChatType.C2G, traceId);
+            serverSeq = chatServiceRpc.serverSeq(msgFrom, String.valueOf(groupId), ChatType.C2G, traceId);
             if (Objects.equals(serverSeq, CommonConstant.ERROR_SERVER_SEQ)) {
                 logger.error("c2gSendRequest 获取serverSeq异常, from: {}, groupId: {}, traceId: {}", msgFrom, groupId, traceId);
                 UpMessageUtils.deleteDuplicate(redisTemplate, msgContext);
