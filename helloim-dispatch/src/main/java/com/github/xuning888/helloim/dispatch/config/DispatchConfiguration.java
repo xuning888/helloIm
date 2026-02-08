@@ -1,6 +1,7 @@
 package com.github.xuning888.helloim.dispatch.config;
 
 import com.github.xuning888.helloim.contract.contant.CommonConstant;
+import com.github.xuning888.helloim.contract.gateway.DownMsgSvcProperties;
 import com.github.xuning888.helloim.contract.kafka.KafkaProperties;
 import com.github.xuning888.helloim.contract.util.IdGenerator;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -41,5 +42,11 @@ public class DispatchConfiguration {
         redisTemplate.setHashKeySerializer(keySerializer);
         redisTemplate.setHashValueSerializer(valueSerializer);
         return redisTemplate;
+    }
+
+    @Bean
+    @ConfigurationProperties(prefix = "im.downmsgsvc")
+    public DownMsgSvcProperties downMsgSvcProperties() {
+        return new DownMsgSvcProperties();
     }
 }

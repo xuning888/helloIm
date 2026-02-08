@@ -39,3 +39,6 @@ im:
       batch-size: 1000
       buffer-memory: 3000000
       linger-ms: 10
+  downmsgsvc:
+    keepalive-time-second: 10 # keeplive的间隔时间
+    keepalive-timeout-second: 1 # keeplive的超时时间

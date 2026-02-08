@@ -18,3 +18,33 @@ message ImUser {
   google.protobuf.Timestamp createdAt = 9;
   google.protobuf.Timestamp updatedAt = 10;
 }
+
+enum GateType {
+  TCP = 0;
+}
+
+message GateUser {
+  int64 uid = 1;
+  int32 userType = 2;
+  string sessionId = 3;
+}
+
+message Endpoint {
+  string host = 1;
+  int32 port = 2;
+  GateType gateType = 3;
+}
+
+
+enum GateSessionState {
+  CLOSE = 0;
+  ERROR = 1;
+  TIMEOUT = 2;
+  LOGOUT = 3;
+}
+
+message GateSessionEvent {
+    GateSessionState sessionState = 1;
+    GateUser gateUser = 2;
+    string traceId = 3;
+}

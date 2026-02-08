@@ -1,10 +1,12 @@
 package com.github.xuning888.helloim.gateway.service;
 
-import com.github.xuning888.helloim.contract.api.request.DownMessageReq;
-import com.github.xuning888.helloim.contract.api.response.DownMessageResp;
-import com.github.xuning888.helloim.contract.api.service.DownMsgService;
+import com.github.xuning888.helloim.api.protobuf.common.v1.FramePb;
+import com.github.xuning888.helloim.api.protobuf.common.v1.GateUser;
+import com.github.xuning888.helloim.api.protobuf.gateway.v1.DownMessageRequest;
+import com.github.xuning888.helloim.api.protobuf.gateway.v1.DownMessageResponse;
+import com.github.xuning888.helloim.api.protobuf.gateway.v1.DubboDownMsgServiceTriple;
 import com.github.xuning888.helloim.contract.frame.Frame;
-import com.github.xuning888.helloim.contract.meta.GateUser;
+import com.github.xuning888.helloim.contract.util.FrameUtils;
 import com.github.xuning888.helloim.gateway.core.cmd.DownCmdEvent;
 import com.github.xuning888.helloim.gateway.core.session.Session;
 import com.github.xuning888.helloim.gateway.core.session.SessionManager;
@@ -14,6 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -21,7 +24,7 @@ import java.util.Set;
  * @date 2025/8/3 13:50
  */
 @DubboService
-public class DownMsgServiceImpl implements DownMsgService {
+public class DownMsgServiceImpl extends DubboDownMsgServiceTriple.DownMsgServiceImplBase {
 
     private static final Logger logger = LoggerFactory.getLogger(DownMsgServiceImpl.class);
 
@@ -32,32 +35,35 @@ public class DownMsgServiceImpl implements DownMsgService {
     }
 
     @Override
-    public DownMessageResp pushMessage(DownMessageReq req) {
-        logger.debug("pushMessage req: {}", req);
-        Frame frame = req.getFrame();
-        boolean needAck = req.getNeedAck();
+    public DownMessageResponse pushMessage(DownMessageRequest request) {
+        logger.debug("pushMessage request: {}", request);
+        FramePb framePb = request.getFrame();
+        String traceId = request.getTraceId();
+        boolean needAck = request.getNeedAck();
+        List<GateUser> users = request.getUsersList();
         Set<GateUser> offlineUsers = new HashSet<>();
-        for (GateUser user : req.getUsers()) {
+        for (GateUser user : users) {
             if (user == null) {
-                logger.error("pushMessage user is null, traceId: {}", req.getTraceId());
+                logger.error("pushMessage user is null, traceId: {}", traceId);
                 continue;
             }
             String sessionId = user.getSessionId();
             if (StringUtils.isBlank(sessionId)) {
-                logger.error("pushMessage sessionId is null, user: {}, traceId: {}", user, req.getTraceId());
+                logger.error("pushMessage sessionId is null, user: {}, traceId: {}", user, traceId);
                 offlineUsers.add(user);
                 continue;
             }
-            Session session = sessionManager.getSession(sessionId, req.getTraceId());
+            Session session = sessionManager.getSession(sessionId, traceId);
             if (session == null || !session.isOk()) {
-                logger.warn("pushMessage, session is null or not ok, user: {}, traceId: {}", user, req.getTraceId());
+                logger.warn("pushMessage, session is null or not ok, user: {}, traceId: {}", user, traceId);
                 offlineUsers.add(user);
                 continue;
             }
             // 用户在线，发送消息
-            sendMessage(frame, session, needAck, req.getTraceId());
+            Frame frame = FrameUtils.convertToFrame(framePb);
+            sendMessage(frame, session, needAck, traceId);
         }
-        return new DownMessageResp(offlineUsers, req.getTraceId());
+        return DownMessageResponse.newBuilder().addAllOfflineUsers(offlineUsers).build();
     }
 
     /**

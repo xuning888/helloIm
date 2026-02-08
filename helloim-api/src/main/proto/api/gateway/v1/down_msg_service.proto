@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+option java_package = "com.github.xuning888.helloim.api.protobuf.gateway.v1";
+option java_multiple_files = true;
+option java_outer_classname = "DownMsgServiceProto";
+
+import "api/common/v1/message.proto";
+import "api/common/v1/frame.proto";
+import "api/common/v1/common.proto";
+
+
+message DownMessageRequest {
+  FramePb frame = 1;
+  bool needAck = 2;
+  repeated GateUser users = 3;
+  string traceId = 4;
+}
+
+message DownMessageResponse {
+  repeated GateUser offlineUsers = 1;
+}
+
+service DownMsgService {
+  rpc PushMessage(DownMessageRequest) returns (DownMessageResponse);
+}
