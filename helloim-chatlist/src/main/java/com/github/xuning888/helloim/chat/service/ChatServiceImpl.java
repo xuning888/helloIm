@@ -23,6 +23,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @author xuning
@@ -113,7 +114,11 @@ public class ChatServiceImpl extends DubboChatServiceTriple.ChatServiceImplBase 
         String userId = request.getUserId(), chatId = request.getChatId(), traceId = request.getTraceId();
         int chatType = request.getChatType();
         ChatMessage lastMessage = chatMessageComponent.getLastMessage(userId, chatId, chatType, traceId);
-        return LastMessageResponse.newBuilder().setLastMessage(lastMessage).build();
+        LastMessageResponse.Builder builder = LastMessageResponse.newBuilder();
+        if (Objects.nonNull(lastMessage)) {
+            builder.setLastMessage(lastMessage);
+        }
+        return builder.build();
     }
 
     @Override
