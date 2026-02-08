@@ -1,4 +1,4 @@
-package com.github.xuning888.helloim.contract.meta;
+package com.github.xuning888.helloim.contract.contant;
 
 import org.apache.commons.lang3.StringUtils;
 

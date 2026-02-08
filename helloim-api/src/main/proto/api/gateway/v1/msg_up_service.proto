@@ -1,0 +1,60 @@
+syntax = "proto3";
+
+option java_package = "com.github.xuning888.helloim.api.protobuf.gateway.v1";
+option java_multiple_files = true;
+option java_outer_classname = "UpMsgServiceProto";
+
+import "api/common/v1/message.proto";
+import "api/common/v1/common.proto";
+import "api/common/v1/frame.proto";
+
+
+message AuthRequest {
+  GateUser gateUser = 1;
+  Endpoint endpoint = 2;
+  string sessionId = 3;
+  string traceId = 4;
+}
+
+message AuthResponse {
+  bool success = 1;
+  string errMsg = 2;
+  string traceId = 3;
+  GateUser gateUser = 4;
+}
+
+
+message UpMessageRequest {
+  FramePb frame = 1;
+  Endpoint endpoint = 2;
+  GateUser gateUser = 3;
+  string traceId = 4;
+}
+
+message UpMessageResponse {
+  string traceId = 1;
+}
+
+message LogoutRequest {
+  string traceId = 1;
+  GateUser gateUser = 2;
+  Endpoint endpoint = 3;
+  GateSessionEvent sessionEvent = 4;
+  string sessionId = 5;
+}
+
+message LogoutResponse {
+  bool success = 1;
+  GateUser gateUser = 2;
+  string traceId = 3;
+}
+
+service UpMsgService {
+
+  rpc Auth(AuthRequest) returns (AuthResponse);
+
+  rpc SendMessage(UpMessageRequest) returns (UpMessageResponse);
+
+  rpc Logout(LogoutRequest) returns (LogoutResponse);
+}
+

@@ -1,8 +1,8 @@
 package com.github.xuning888.helloim.contract.dto;
 
+import com.github.xuning888.helloim.api.protobuf.common.v1.Endpoint;
 import com.github.xuning888.helloim.contract.frame.Frame;
 import com.github.xuning888.helloim.contract.frame.Header;
-import com.github.xuning888.helloim.contract.meta.Endpoint;
 import io.protostuff.Tag;
 
 import java.io.Serializable;

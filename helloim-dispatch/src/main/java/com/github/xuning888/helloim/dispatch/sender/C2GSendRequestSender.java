@@ -9,7 +9,7 @@ import com.github.xuning888.helloim.contract.kafka.MsgKafkaProducer;
 import com.github.xuning888.helloim.contract.kafka.Topics;
 import com.github.xuning888.helloim.contract.protobuf.C2gMessage;
 import com.github.xuning888.helloim.contract.protobuf.MsgCmd;
-import com.github.xuning888.helloim.contract.util.GatewayUtils;
+import com.github.xuning888.helloim.contract.util.GatewayGrpcUtils;
 import com.github.xuning888.helloim.dispatch.rpc.ChatServiceRpc;
 import com.github.xuning888.helloim.dispatch.util.UpMessageUtils;
 import org.slf4j.Logger;
@@ -71,7 +71,7 @@ public class C2GSendRequestSender implements MessageSender {
         MsgKafkaProducer.getInstance().send(Topics.C2G.C2G_SEND_REQ, kafkaKey(msgContext), msgContext);
 
         // 回复ACK
-        GatewayUtils.pushResponse(msgContext, msgContext.getEndpoint(), traceId);
+        GatewayGrpcUtils.pushResponse(msgContext, msgContext.getEndpoint(), traceId);
     }
 
     private String kafkaKey(MsgContext msgContext) {

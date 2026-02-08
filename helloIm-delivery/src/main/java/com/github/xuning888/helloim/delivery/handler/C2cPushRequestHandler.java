@@ -1,13 +1,14 @@
 package com.github.xuning888.helloim.delivery.handler;
 
+import com.github.xuning888.helloim.api.protobuf.common.v1.Endpoint;
+import com.github.xuning888.helloim.api.protobuf.common.v1.GateType;
+import com.github.xuning888.helloim.api.protobuf.common.v1.GateUser;
+import com.github.xuning888.helloim.api.protobuf.common.v1.ImSession;
 import com.github.xuning888.helloim.contract.dto.MsgContext;
-import com.github.xuning888.helloim.contract.meta.Endpoint;
-import com.github.xuning888.helloim.contract.meta.GateType;
-import com.github.xuning888.helloim.contract.meta.GateUser;
-import com.github.xuning888.helloim.contract.meta.ImSession;
 import com.github.xuning888.helloim.contract.protobuf.MsgCmd;
-import com.github.xuning888.helloim.contract.util.GatewayUtils;
-import com.github.xuning888.helloim.delivery.rpc.SessionSvcClient;
+import com.github.xuning888.helloim.contract.util.FrameUtils;
+import com.github.xuning888.helloim.contract.util.GatewayGrpcUtils;
+import com.github.xuning888.helloim.delivery.rpc.SessionServiceRpc;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -25,7 +26,7 @@ public class C2cPushRequestHandler implements MsgDeliverHandler {
     private static final Logger logger = LoggerFactory.getLogger(C2cPushRequestHandler.class);
 
     @Resource
-    private SessionSvcClient sessionSvcClient;
+    private SessionServiceRpc sessionSvcClient;
 
     @Override
     public int getCmdId() {
@@ -35,7 +36,8 @@ public class C2cPushRequestHandler implements MsgDeliverHandler {
     @Override
     public void handle(MsgContext msgContext, String kTraceId) {
         String msgTo = msgContext.getMsgTo();
-        GateUser toUser = new GateUser(Long.parseLong(msgTo), msgContext.getToUserType(), null);
+        GateUser toUser = GateUser.newBuilder().setUid(Long.parseLong(msgTo))
+                .setUserType(msgContext.getToUserType()).build();
         ImSession imSession = getSessionTcp(toUser, msgContext.getTraceId());
         if (imSession != null) {
             // 用户在线
@@ -44,7 +46,8 @@ public class C2cPushRequestHandler implements MsgDeliverHandler {
             logger.info("handle message, session: {}, toUser: {}, traceId: {}, kTraceId: {}", imSession, gateUser,
                     msgContext.getTraceId(), kTraceId);
             // 单聊下行消息, 需要客户端给返回ACK
-            GatewayUtils.pushMessageNeedAck(msgContext.getFrame(), Collections.singletonList(gateUser), endpoint, msgContext.getTraceId());
+            GatewayGrpcUtils.pushMessageNeedAck(FrameUtils.convertToPb(msgContext.getFrame()),
+                    Collections.singletonList(gateUser), endpoint, msgContext.getTraceId());
         }
     }
 

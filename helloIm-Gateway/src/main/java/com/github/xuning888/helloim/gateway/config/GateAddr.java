@@ -1,7 +1,7 @@
 package com.github.xuning888.helloim.gateway.config;
 
-import com.github.xuning888.helloim.contract.meta.Endpoint;
-import com.github.xuning888.helloim.contract.meta.GateType;
+import com.github.xuning888.helloim.api.protobuf.common.v1.Endpoint;
+import com.github.xuning888.helloim.contract.contant.GateType;
 import org.apache.dubbo.common.utils.NetUtils;
 
 /**
@@ -32,11 +32,22 @@ public class GateAddr {
             if (endpoint != null) {
                 return endpoint;
             }
-            endpoint = new Endpoint();
-            endpoint.setPort(this.port);
-            endpoint.setHost(this.host);
-            endpoint.setGateType(GateType.parseGateType(protocol));
+            Endpoint.Builder builder = Endpoint.newBuilder();
+            builder.setPort(this.port);
+            builder.setHost(this.host);
+            builder.setGateType(convert2Pb(GateType.parseGateType(protocol)));
+            this.endpoint = builder.build();
         }
         return endpoint;
+    }
+
+    private com.github.xuning888.helloim.api.protobuf.common.v1.GateType convert2Pb(GateType gateType) {
+        if (gateType == null) {
+            throw new NullPointerException("gateType is null");
+        }
+        if (GateType.TCP.equals(gateType)) {
+            return com.github.xuning888.helloim.api.protobuf.common.v1.GateType.TCP;
+        }
+        throw new IllegalArgumentException("unknown gateType: " + gateType);
     }
 }

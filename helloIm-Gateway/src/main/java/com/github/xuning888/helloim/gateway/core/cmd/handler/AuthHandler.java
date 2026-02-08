@@ -1,14 +1,13 @@
 package com.github.xuning888.helloim.gateway.core.cmd.handler;
 
-import com.github.xuning888.helloim.contract.api.request.AuthRequest;
-import com.github.xuning888.helloim.contract.api.request.LogoutRequest;
-import com.github.xuning888.helloim.contract.api.response.AuthResponse;
-import com.github.xuning888.helloim.contract.contant.GateSessionEvent;
+import com.github.xuning888.helloim.api.protobuf.common.v1.GateSessionEvent;
+import com.github.xuning888.helloim.api.protobuf.common.v1.GateUser;
+import com.github.xuning888.helloim.api.protobuf.gateway.v1.AuthRequest;
+import com.github.xuning888.helloim.api.protobuf.gateway.v1.AuthResponse;
+import com.github.xuning888.helloim.api.protobuf.gateway.v1.LogoutRequest;
 import com.github.xuning888.helloim.contract.frame.Frame;
 import com.github.xuning888.helloim.contract.frame.Header;
-import com.github.xuning888.helloim.contract.meta.GateUser;
 import com.github.xuning888.helloim.contract.protobuf.Auth;
-import com.github.xuning888.helloim.gateway.adapter.UpMsgServiceAdapter;
 import com.github.xuning888.helloim.gateway.config.GateAddr;
 import com.github.xuning888.helloim.gateway.core.cmd.CmdEvent;
 import com.github.xuning888.helloim.gateway.core.cmd.CmdHandler;
@@ -18,6 +17,7 @@ import com.github.xuning888.helloim.gateway.core.conn.event.ConnStateEvent;
 import com.github.xuning888.helloim.gateway.core.session.Session;
 import com.github.xuning888.helloim.gateway.core.session.SessionListener;
 import com.github.xuning888.helloim.gateway.core.session.SessionManager;
+import com.github.xuning888.helloim.gateway.rpc.UpMsgServiceRpc;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,13 +29,13 @@ public class AuthHandler implements CmdHandler {
 
     private static final Logger logger = LoggerFactory.getLogger(AuthHandler.class);
 
-    private final UpMsgServiceAdapter upMsgServiceAdapter;
+    private final UpMsgServiceRpc upMsgServiceRpc;
     private final SessionManager sessionManager;
     private final GateAddr gateAddr;
 
-    public AuthHandler(UpMsgServiceAdapter upMsgServiceAdapter,
+    public AuthHandler(UpMsgServiceRpc upMsgServiceRpc,
                        SessionManager sessionManager, GateAddr gateAddr) {
-        this.upMsgServiceAdapter = upMsgServiceAdapter;
+        this.upMsgServiceRpc = upMsgServiceRpc;
         this.sessionManager = sessionManager;
         this.gateAddr = gateAddr;
     }
@@ -70,27 +70,33 @@ public class AuthHandler implements CmdHandler {
             authRequest = Auth.AuthRequest.parseFrom(frame.getBody());
         } catch (Exception ex) {
             logger.error("handleAuth, parse AuthRequest failed, sessionId: {}, traceId: {}", conn.getId(), traceId);
-            return new AuthResponse(false, "parse AuthRequest failed", null, traceId);
+            return AuthResponse.newBuilder().setSuccess(false)
+                    .setErrMsg("parse AuthRequest failed").setTraceId(traceId).build();
         }
         if (authRequest == null) {
             logger.error("handleAuth, authRequest is null, sessionId: {}, traceId: {}", conn.getId(), traceId);
-            return new AuthResponse(false, "parse AuthRequest failed", null, traceId);
+            return AuthResponse.newBuilder().setSuccess(false)
+                    .setErrMsg("parse AuthRequest failed").setTraceId(traceId).build();
         }
-        GateUser gateUser = new GateUser(Long.parseLong(authRequest.getUid()), authRequest.getUserType(), conn.getId());
+        GateUser gateUser = GateUser.newBuilder()
+                .setUid(Long.parseLong(authRequest.getUid()))
+                .setUserType(authRequest.getUserType())
+                .setSessionId(conn.getId()).build();
+
         // 构造authRequest
-        AuthRequest logicAuthRequest = new AuthRequest();
-        logicAuthRequest.setEndpoint(gateAddr.endpoint());
-        logicAuthRequest.setGateUser(gateUser);
-        logicAuthRequest.setSessionId(conn.getId());
-        logicAuthRequest.setTraceId(cmdEvent.getTraceId());
+        AuthRequest.Builder builder = AuthRequest.newBuilder();
+        builder.setEndpoint(gateAddr.endpoint());
+        builder.setGateUser(gateUser);
+        builder.setSessionId(conn.getId());
+        builder.setTraceId(cmdEvent.getTraceId());
         // 发送auth到logic
-        return upMsgServiceAdapter.upMsgService().auth(logicAuthRequest);
+        return upMsgServiceRpc.auth(builder.build());
     }
 
 
     private Frame buildAuthResponse(Frame frame, GateUser gateUser) {
         Auth.AuthResponse.Builder builder = Auth.AuthResponse.newBuilder();
-        builder.setUid(gateUser.getUid().toString());
+        builder.setUid(String.valueOf(gateUser.getUid()));
         builder.setUserType(gateUser.getUserType());
         builder.setSuccess(true);
         Auth.AuthResponse authResponse = builder.build();
@@ -108,13 +114,13 @@ public class AuthHandler implements CmdHandler {
         session.addListener(new SessionListener() {
             @Override
             public void notifyEvent(Session session, GateSessionEvent sessionEvent) {
-                LogoutRequest logoutRequest = new LogoutRequest();
-                logoutRequest.setTraceId(traceId);
-                logoutRequest.setGateUser(session.getUser());
-                logoutRequest.setSessionEvent(sessionEvent);
-                logoutRequest.setSessionId(session.getId());
-                logoutRequest.setEndpoint(gateAddr.endpoint());
-                upMsgServiceAdapter.upMsgService().logout(logoutRequest);
+                LogoutRequest.Builder builder = LogoutRequest.newBuilder();
+                builder.setTraceId(traceId);
+                builder.setGateUser(session.getUser());
+                builder.setSessionEvent(sessionEvent);
+                builder.setSessionId(session.getId());
+                builder.setEndpoint(gateAddr.endpoint());
+                upMsgServiceRpc.logout(builder.build());
             }
         });
         return session;

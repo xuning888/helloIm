@@ -1,6 +1,5 @@
 package com.github.xuning888.helloim.gateway.core.session;
 
-import com.github.xuning888.helloim.contract.meta.GateUser;
 import com.github.xuning888.helloim.gateway.core.conn.event.ConnStateEvent;
 
 /**

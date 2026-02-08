@@ -1,36 +1,31 @@
 package com.github.xuning888.helloim.dispatch.service;
 
-import com.github.xuning888.helloim.contract.api.request.AuthRequest;
-import com.github.xuning888.helloim.contract.api.request.LogoutRequest;
-import com.github.xuning888.helloim.contract.api.request.UpMessageReq;
-import com.github.xuning888.helloim.contract.api.response.AuthResponse;
-import com.github.xuning888.helloim.contract.api.response.LogoutResponse;
-import com.github.xuning888.helloim.contract.api.service.SessionService;
-import com.github.xuning888.helloim.contract.api.service.UpMsgService;
+
+import com.github.xuning888.helloim.api.protobuf.common.v1.Endpoint;
+import com.github.xuning888.helloim.api.protobuf.common.v1.FramePb;
+import com.github.xuning888.helloim.api.protobuf.common.v1.GateUser;
+import com.github.xuning888.helloim.api.protobuf.common.v1.ImSession;
+import com.github.xuning888.helloim.api.protobuf.gateway.v1.*;
 import com.github.xuning888.helloim.contract.dto.MsgContext;
-import com.github.xuning888.helloim.contract.frame.Frame;
-import com.github.xuning888.helloim.contract.meta.Endpoint;
-import com.github.xuning888.helloim.contract.meta.GateUser;
-import com.github.xuning888.helloim.contract.meta.ImSession;
 import com.github.xuning888.helloim.contract.protobuf.MsgCmd;
-import com.github.xuning888.helloim.contract.util.GatewayUtils;
+import com.github.xuning888.helloim.contract.util.FrameUtils;
+import com.github.xuning888.helloim.contract.util.GatewayGrpcUtils;
 import com.github.xuning888.helloim.contract.util.IdGenerator;
+import com.github.xuning888.helloim.dispatch.rpc.SessionServiceRpc;
 import com.github.xuning888.helloim.dispatch.util.UpMessageUtils;
-import org.apache.dubbo.config.annotation.DubboReference;
 import org.apache.dubbo.config.annotation.DubboService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 
 import javax.annotation.Resource;
-import java.util.Objects;
 
 /**
  * @author xuning
- * @date 2025/8/2 19:21
+ * @date 2026/2/8 17:43
  */
 @DubboService
-public class UpMessageServiceImpl implements UpMsgService {
+public class UpMessageServiceImpl extends DubboUpMsgServiceTriple.UpMsgServiceImplBase {
 
     private static final Logger logger = LoggerFactory.getLogger(UpMessageServiceImpl.class);
 
@@ -40,34 +35,33 @@ public class UpMessageServiceImpl implements UpMsgService {
     private IdGenerator idGenerator;
     @Resource
     private RedisTemplate<String, Object> redisTemplate;
-    @DubboReference
-    private SessionService sessionService;
-
+    @Resource
+    private SessionServiceRpc sessionServiceRpc;
 
     @Override
-    public AuthResponse auth(AuthRequest authRequest) {
-        AuthResponse authResponse = new AuthResponse();
-        authResponse.setGateUser(authRequest.getGateUser());
-        authResponse.setSuccess(true);
-        authResponse.setTraceId(authRequest.getTraceId());
+    public AuthResponse auth(AuthRequest request) {
+        AuthResponse.Builder builder = AuthResponse.newBuilder();
+        builder.setGateUser(request.getGateUser());
+        builder.setSuccess(true);
+        builder.setTraceId(request.getTraceId());
         // TODO 校验token
         // 保存session
-        saveSession(authRequest);
-        return authResponse;
+        this.saveSession(request);
+        return builder.build();
     }
 
     @Override
-    public void sendMessage(UpMessageReq req) {
-        // 参数校验
+    public UpMessageResponse sendMessage(UpMessageRequest req) {
         String traceId = req.getTraceId();
-        validParams(req, req.getTraceId());
+        validParams(req);
 
-        Frame frame = req.getFrame();
-        int cmdId = frame.getHeader().getCmdId();
+        FramePb framePb = req.getFrame();
+        int cmdId = framePb.getHeader().getCmdId();
         Endpoint endpoint = req.getEndpoint();
         GateUser gateUser = req.getGateUser();
         logger.info("sendMessage user: {}, cmdId: {}, frameSize: {}, traceId: {}", gateUser, cmdId,
-                frame.getHeader().getBodyLength(), traceId);
+                framePb.getHeader().getBodyLength(), traceId);
+
         if (
                 cmdId == MsgCmd.CmdId.CMD_ID_C2CSEND_VALUE || // 单聊上行
                 cmdId == MsgCmd.CmdId.CMD_ID_C2GSEND_VALUE    // 群聊上行
@@ -79,7 +73,7 @@ public class UpMessageServiceImpl implements UpMsgService {
             msgContext.setFromUserType(gateUser.getUserType()); // 消息发送者到用户类型
             msgContext.setEndpoint(endpoint); // 消息来自哪个网关机
             msgContext.setSessionId(gateUser.getSessionId());
-            msgContext.setFrame(frame); // 数据帧
+            msgContext.setFrame(FrameUtils.convertToFrame(framePb)); // 数据帧
 
             // 分配并设置消息ID
             Long msgId = getMsgId(msgContext);
@@ -88,15 +82,16 @@ public class UpMessageServiceImpl implements UpMsgService {
             // 判断消息是否重复
             if (UpMessageUtils.isDuplicate(redisTemplate, msgContext)) {
                 logger.warn("sendMessage 上行消息重推, from: {}, cmdId: {}, seq: {}, traceId: {}", gateUser, cmdId,
-                        frame.getHeader().getSeq(), traceId);
+                        framePb.getHeader().getSeq(), traceId);
                 // 客户端重推消息，回复ACK
-                GatewayUtils.pushResponse(msgContext, endpoint, traceId);
-                return;
+                GatewayGrpcUtils.pushResponse(msgContext, endpoint, traceId);
+                return UpMessageResponse.newBuilder().setTraceId(traceId).build();
             }
 
             // 分发消息
             dispatchService.dispatch(msgContext, traceId);
         }
+        return UpMessageResponse.newBuilder().setTraceId(traceId).build();
     }
 
     @Override
@@ -107,32 +102,29 @@ public class UpMessageServiceImpl implements UpMsgService {
         return logoutResponse;
     }
 
-
     private Long getMsgId(MsgContext msgContext) {
         Long msgId = idGenerator.nextId();
         return UpMessageUtils.getMsgId(this.redisTemplate, msgContext, msgId);
     }
 
-
-    private void validParams(UpMessageReq upMessageReq, String traceId) {
-        Frame frame = upMessageReq.getFrame();
-        GateUser gateUser = upMessageReq.getGateUser();
-        Endpoint endpoint = upMessageReq.getEndpoint();
-        if (frame == null) {
+    private void validParams(UpMessageRequest upMessageRequest) {
+        String traceId = upMessageRequest.getTraceId();
+        if (!upMessageRequest.hasFrame()) {
             logger.error("validParams frame is null, traceId: {}", traceId);
             throw new IllegalArgumentException("frame is null");
         }
-        if (gateUser == null) {
+        if (!upMessageRequest.hasGateUser()) {
             logger.error("validParams gateUser is null, traceId: {}", traceId);
             throw new IllegalArgumentException("gateUser is null");
         }
-        if (endpoint == null) {
+        if (!upMessageRequest.hasEndpoint()) {
             logger.error("validParams endpoint is null, traceId: {}", traceId);
             throw new IllegalArgumentException("endpoint is null");
         }
-        if (Objects.isNull(gateUser.getUid())) {
-            logger.error("validParams gateUser.uid is null traceId: {}", traceId);
-            throw new IllegalArgumentException("validParams gateUser.uid is null");
+        GateUser gateUser = upMessageRequest.getGateUser();
+        if (gateUser.getUid() <= 0) {
+            logger.error("validParams gateUser.uid is invalid traceId: {}", traceId);
+            throw new IllegalArgumentException("validParams gateUser.uid is invalid");
         }
     }
 
@@ -142,33 +134,33 @@ public class UpMessageServiceImpl implements UpMsgService {
         removeSession(logoutRequest);
 
         // 删除成功
-        LogoutResponse logoutResponse = new LogoutResponse();
-        logoutResponse.setGateUser(logoutRequest.getGateUser());
-        logoutResponse.setSuccess(true);
-        logoutResponse.setTraceId(logoutRequest.getTraceId());
-        return logoutResponse;
+        LogoutResponse.Builder builder = LogoutResponse.newBuilder();
+        builder.setGateUser(logoutRequest.getGateUser());
+        builder.setSuccess(true);
+        builder.setTraceId(logoutRequest.getTraceId());
+        return builder.build();
     }
 
     private void removeSession(LogoutRequest logoutRequest) {
         GateUser gateUser = logoutRequest.getGateUser();
         String traceId = logoutRequest.getTraceId();
         Endpoint endpoint = logoutRequest.getEndpoint();
-        ImSession imSession = new ImSession();
-        imSession.setSessionId(logoutRequest.getSessionId());
-        imSession.setGateUser(gateUser);
-        imSession.setEndpoint(endpoint);
-        this.sessionService.removeSession(imSession, traceId);
+        ImSession.Builder builder = ImSession.newBuilder();
+        builder.setSessionId(logoutRequest.getSessionId());
+        builder.setGateUser(gateUser);
+        builder.setEndpoint(endpoint);
+        this.sessionServiceRpc.removeSession(builder.build(), traceId);
     }
 
     /**
      * 保存session
      */
-    private void saveSession(AuthRequest authRequest) {
-        ImSession imSession = new ImSession();
-        imSession.setEndpoint(authRequest.getEndpoint());
-        imSession.setGateUser(authRequest.getGateUser());
-        imSession.setSessionId(authRequest.getSessionId());
+    private void saveSession(AuthRequest request) {
+        ImSession.Builder builder = ImSession.newBuilder();
+        builder.setEndpoint(request.getEndpoint());
+        builder.setGateUser(request.getGateUser());
+        builder.setSessionId(request.getSessionId());
 
-        sessionService.saveSession(imSession, authRequest.getTraceId());
+        sessionServiceRpc.saveSession(builder.build(), request.getTraceId());
     }
 }

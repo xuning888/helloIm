@@ -40,7 +40,7 @@ public class DownMsgSvcClient {
     /**
      * 发送下行消息, 返回gateway中不在线的用户
      */
-    public List<GateUser> pushMessage(FramePb framePb, List<GateUser> users, String traceId) {
+    public List<GateUser> pushMessage(FramePb framePb, List<GateUser> users, boolean needAck, String traceId) {
         if (framePb == null) {
             throw new IllegalArgumentException("framePb is null, traceId: " + traceId);
         }
@@ -49,7 +49,7 @@ public class DownMsgSvcClient {
         }
         logger.info("pushMessage frameSize: {}, users.size: {}, traceId: {}",
                 framePb.getSerializedSize(), users.size(), traceId);
-        DownMessageRequest request = DownMessageRequest.newBuilder()
+        DownMessageRequest request = DownMessageRequest.newBuilder().setNeedAck(needAck)
                 .setFrame(framePb).addAllUsers(users).setTraceId(traceId).build();
         try {
             DownMessageResponse downMessageResponse = stub.pushMessage(request);

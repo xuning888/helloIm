@@ -1,14 +1,14 @@
 package com.github.xuning888.helloim.gateway.core.session;
 
-import com.github.xuning888.helloim.contract.api.request.LogoutRequest;
-import com.github.xuning888.helloim.contract.api.response.LogoutResponse;
-import com.github.xuning888.helloim.contract.contant.GateSessionEvent;
-import com.github.xuning888.helloim.contract.contant.GateSessionState;
-import com.github.xuning888.helloim.contract.meta.GateUser;
-import com.github.xuning888.helloim.gateway.adapter.UpMsgServiceAdapter;
+import com.github.xuning888.helloim.api.protobuf.common.v1.GateSessionEvent;
+import com.github.xuning888.helloim.api.protobuf.common.v1.GateSessionState;
+import com.github.xuning888.helloim.api.protobuf.common.v1.GateUser;
+import com.github.xuning888.helloim.api.protobuf.gateway.v1.LogoutRequest;
+import com.github.xuning888.helloim.api.protobuf.gateway.v1.LogoutResponse;
 import com.github.xuning888.helloim.gateway.config.GateAddr;
 import com.github.xuning888.helloim.gateway.core.conn.Conn;
 import com.github.xuning888.helloim.gateway.core.conn.event.ConnStateEvent;
+import com.github.xuning888.helloim.gateway.rpc.UpMsgServiceRpc;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,12 +30,12 @@ public class DefaultSessionManager implements SessionManager {
 
     private final ScheduledExecutorService scheduled = Executors.newSingleThreadScheduledExecutor();
 
-    private final UpMsgServiceAdapter upMsgServiceAdapter;
+    private final UpMsgServiceRpc upMsgServiceRpc;
 
     private final GateAddr gateAddr;
 
-    public DefaultSessionManager(UpMsgServiceAdapter upMsgServiceAdapter, GateAddr gateAddr) {
-        this.upMsgServiceAdapter = upMsgServiceAdapter;
+    public DefaultSessionManager(UpMsgServiceRpc upMsgServiceRpc, GateAddr gateAddr) {
+        this.upMsgServiceRpc = upMsgServiceRpc;
         this.gateAddr = gateAddr;
         registerTask();
     }
@@ -126,7 +126,9 @@ public class DefaultSessionManager implements SessionManager {
                 logger.debug("closeSession, session: {}, state: {}, traceId: {}", session, sessionState, traceId);
             }
             GateUser user = session.getUser();
-            asyncCloseSession(session, new GateSessionEvent(sessionState, user, traceId));
+            GateSessionEvent sessionEvent = GateSessionEvent.newBuilder().setSessionState(sessionState)
+                    .setGateUser(user).setTraceId(traceId).build();
+            asyncCloseSession(session, sessionEvent);
         } else {
             if (logger.isDebugEnabled()) {
                 logger.debug("closeSession, session is null, sessionId: {}, traceId: {}", sessionId, traceId);
@@ -146,12 +148,14 @@ public class DefaultSessionManager implements SessionManager {
     private void checkAndDeleteOldDSession(Session session, Session oldSession, String traceId) {
         if (!Objects.equals(session.getUser(), oldSession.getUser())) {
             try {
-                LogoutRequest logoutRequest = new LogoutRequest();
-                logoutRequest.setGateUser(oldSession.getUser());
-                logoutRequest.setTraceId(traceId);
-                logoutRequest.setSessionEvent(new GateSessionEvent(GateSessionState.LOGOUT, oldSession.getUser(), traceId));
-                logoutRequest.setEndpoint(gateAddr.endpoint());
-                LogoutResponse logoutResponse = upMsgServiceAdapter.upMsgService().logout(logoutRequest);
+                LogoutRequest.Builder builder = LogoutRequest.newBuilder();
+                builder.setGateUser(oldSession.getUser());
+                builder.setTraceId(traceId);
+                GateSessionEvent sessionEvent = GateSessionEvent.newBuilder().setGateUser(oldSession.getUser())
+                        .setTraceId(traceId).setSessionState(GateSessionState.LOGOUT).build();
+                builder.setSessionEvent(sessionEvent);
+                builder.setEndpoint(gateAddr.endpoint());
+                LogoutResponse logoutResponse = upMsgServiceRpc.logout(builder.build());
                 logger.info("logoutResponse: {}, traceId: {}", logoutResponse, traceId);
             } catch (Exception ex) {
                 logger.error("checkAndDeleteOldDSession logout error, traceId: {}", traceId, ex);

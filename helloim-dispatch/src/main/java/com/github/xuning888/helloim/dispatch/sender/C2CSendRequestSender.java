@@ -8,7 +8,7 @@ import com.github.xuning888.helloim.contract.kafka.MsgKafkaProducer;
 import com.github.xuning888.helloim.contract.kafka.Topics;
 import com.github.xuning888.helloim.contract.protobuf.C2cMessage;
 import com.github.xuning888.helloim.contract.protobuf.MsgCmd;
-import com.github.xuning888.helloim.contract.util.GatewayUtils;
+import com.github.xuning888.helloim.contract.util.GatewayGrpcUtils;
 import com.github.xuning888.helloim.dispatch.rpc.ChatServiceRpc;
 import com.github.xuning888.helloim.dispatch.util.UpMessageUtils;
 import org.slf4j.Logger;
@@ -81,7 +81,7 @@ public class C2CSendRequestSender implements MessageSender {
         MsgKafkaProducer.getInstance().send(Topics.C2C.C2C_SEND_REQ, kafkaKey(msgContext), msgContext);
 
         // 回复ACK
-        GatewayUtils.pushResponse(msgContext, msgContext.getEndpoint(), traceId);
+        GatewayGrpcUtils.pushResponse(msgContext, msgContext.getEndpoint(), traceId);
     }
 
     private C2cMessage.C2cSendRequest extraC2cSendRequest(byte[] body, String traceId) {

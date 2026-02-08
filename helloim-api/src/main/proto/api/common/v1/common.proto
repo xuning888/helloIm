@@ -48,3 +48,9 @@ message GateSessionEvent {
     GateUser gateUser = 2;
     string traceId = 3;
 }
+
+message ImSession {
+  string sessionId = 1;
+  Endpoint endpoint = 2;
+  GateUser gateUser = 3;
+}

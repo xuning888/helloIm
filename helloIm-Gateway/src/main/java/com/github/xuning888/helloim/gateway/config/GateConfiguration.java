@@ -1,7 +1,6 @@
 package com.github.xuning888.helloim.gateway.config;
 
 import com.github.xuning888.helloim.contract.protobuf.MsgCmd;
-import com.github.xuning888.helloim.gateway.adapter.UpMsgServiceAdapter;
 import com.github.xuning888.helloim.gateway.core.ImChannelPipeFactory;
 import com.github.xuning888.helloim.gateway.core.ImChannelUpStreamHandler;
 import com.github.xuning888.helloim.gateway.core.TcpChannelUpStreamHandler;
@@ -15,6 +14,7 @@ import com.github.xuning888.helloim.gateway.core.processor.MessageProcessor;
 import com.github.xuning888.helloim.gateway.core.processor.Processor;
 import com.github.xuning888.helloim.gateway.core.session.DefaultSessionManager;
 import com.github.xuning888.helloim.gateway.core.session.SessionManager;
+import com.github.xuning888.helloim.gateway.rpc.UpMsgServiceRpc;
 import io.micrometer.prometheus.PrometheusMeterRegistry;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -46,18 +46,18 @@ public class GateConfiguration {
     }
 
     @Bean
-    public SessionManager sessionManager(UpMsgServiceAdapter upMsgServiceAdapter, GateAddr addr) {
-        return new DefaultSessionManager(upMsgServiceAdapter, addr);
+    public SessionManager sessionManager(UpMsgServiceRpc upMsgServiceRpc, GateAddr addr) {
+        return new DefaultSessionManager(upMsgServiceRpc, addr);
     }
 
     @Bean
-    public HandlerProxy handlerProxy(UpMsgServiceAdapter upMsgServiceAdapter, SessionManager sessionManager, GateAddr gateAddr) {
-        DefaultHandler defaultHandler = new DefaultHandler(upMsgServiceAdapter, sessionManager, gateAddr);
+    public HandlerProxy handlerProxy(UpMsgServiceRpc upMsgServiceRpc, SessionManager sessionManager, GateAddr gateAddr) {
+        DefaultHandler defaultHandler = new DefaultHandler(upMsgServiceRpc, sessionManager, gateAddr);
         HandlerProxy handlerProxy = new HandlerProxy(defaultHandler);
         // 注册Echo指令的处理器
         handlerProxy.register(MsgCmd.CmdId.CMD_ID_ECHO_VALUE, new EchoHandler());
         // 注册Auth指令
-        handlerProxy.register(MsgCmd.CmdId.CMD_ID_AUTH_VALUE, new AuthHandler(upMsgServiceAdapter, sessionManager, gateAddr));
+        handlerProxy.register(MsgCmd.CmdId.CMD_ID_AUTH_VALUE, new AuthHandler(upMsgServiceRpc, sessionManager, gateAddr));
         // 心跳处理
         handlerProxy.register(MsgCmd.CmdId.CMD_ID_HEARTBEAT_VALUE, new HeartbeatHandler(sessionManager));
         return handlerProxy;

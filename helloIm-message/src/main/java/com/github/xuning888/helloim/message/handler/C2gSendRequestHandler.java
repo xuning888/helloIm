@@ -2,6 +2,7 @@ package com.github.xuning888.helloim.message.handler;
 
 
 import com.github.xuning888.helloim.api.protobuf.common.v1.ChatMessage;
+import com.github.xuning888.helloim.api.protobuf.common.v1.GateUser;
 import com.github.xuning888.helloim.contract.convert.MessageConvert;
 import com.github.xuning888.helloim.contract.dto.MsgContext;
 import com.github.xuning888.helloim.contract.entity.ImGroup;
@@ -10,7 +11,6 @@ import com.github.xuning888.helloim.contract.frame.Frame;
 import com.github.xuning888.helloim.contract.frame.Header;
 import com.github.xuning888.helloim.contract.kafka.MsgKafkaProducer;
 import com.github.xuning888.helloim.contract.kafka.Topics;
-import com.github.xuning888.helloim.contract.meta.GateUser;
 import com.github.xuning888.helloim.contract.protobuf.C2gMessage;
 import com.github.xuning888.helloim.contract.protobuf.MsgCmd;
 import com.github.xuning888.helloim.message.rpc.MsgStoreRpc;
@@ -157,9 +157,8 @@ public class C2gSendRequestHandler implements MsgHandler {
     private List<GateUser> convertGateUsers(List<ImGroupUser> imGroupUsers) {
         List<GateUser> gateUsers = new ArrayList<>(imGroupUsers.size());
         for (ImGroupUser imGroupUser : imGroupUsers) {
-            GateUser gateUser = new GateUser();
-            gateUser.setUid(imGroupUser.getUserId());
-            gateUser.setUserType(imGroupUser.getUserType());
+            GateUser gateUser = GateUser.newBuilder().setUid(imGroupUser.getUserId())
+                    .setUserType(imGroupUser.getUserType()).build();
             gateUsers.add(gateUser);
         }
         return gateUsers;

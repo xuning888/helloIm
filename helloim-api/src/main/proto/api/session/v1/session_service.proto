@@ -1,0 +1,41 @@
+syntax = "proto3";
+
+option java_package = "com.github.xuning888.helloim.api.protobuf.session.v1";
+option java_multiple_files = true;
+option java_outer_classname = "SessionServiceProto";
+
+import "api/common/v1/common.proto";
+
+message SaveSessionRequest {
+    ImSession imSession = 1;
+    string traceId = 2;
+}
+
+message SaveSessionResponse {
+  bool success = 1;
+}
+
+message MultiGetImSessionRequest {
+  repeated GateUser users = 1;
+  GateType gateType = 2;
+  string traceId = 3;
+}
+
+message MultiGetImSessionResponse {
+  repeated ImSession imSessions = 1;
+}
+
+message RemoveImSessionRequest {
+  ImSession imSession = 1;
+  string traceId = 2;
+}
+
+message RemoveImSessionResponse {
+  bool success = 1;
+}
+
+service SessionService {
+  rpc SaveSession(SaveSessionRequest) returns (SaveSessionResponse);
+  rpc MultiGetSession(MultiGetImSessionRequest) returns (MultiGetImSessionResponse);
+  rpc RemoveImSession(RemoveImSessionRequest) returns (RemoveImSessionResponse);
+}

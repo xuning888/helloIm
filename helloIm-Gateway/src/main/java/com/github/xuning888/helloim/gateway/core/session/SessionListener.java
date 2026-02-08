@@ -1,6 +1,6 @@
 package com.github.xuning888.helloim.gateway.core.session;
 
-import com.github.xuning888.helloim.contract.contant.GateSessionEvent;
+import com.github.xuning888.helloim.api.protobuf.common.v1.GateSessionEvent;
 
 /**
  * session的观察者, 接口会被并发调用, 需要关注线程安全

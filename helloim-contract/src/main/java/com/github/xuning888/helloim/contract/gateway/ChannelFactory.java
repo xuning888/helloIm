@@ -3,18 +3,14 @@ package com.github.xuning888.helloim.contract.gateway;
 
 import com.github.xuning888.helloim.api.protobuf.common.v1.Endpoint;
 import io.grpc.ConnectivityState;
+import io.grpc.Grpc;
+import io.grpc.InsecureChannelCredentials;
 import io.grpc.ManagedChannel;
-import io.grpc.ManagedChannelBuilder;
-import org.apache.dubbo.common.utils.NamedThreadFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -85,8 +81,7 @@ public class ChannelFactory implements AutoCloseable {
     }
 
     private ManagedChannel createChannel(String target) {
-        return ManagedChannelBuilder
-                .forTarget(target)
+        return Grpc.newChannelBuilder(target, InsecureChannelCredentials.create())
                 .keepAliveTime(keepaliveTime, TimeUnit.SECONDS)
                 .keepAliveTimeout(keepaliveTimeout, TimeUnit.SECONDS)
                 .idleTimeout(idleTimeout, TimeUnit.SECONDS)

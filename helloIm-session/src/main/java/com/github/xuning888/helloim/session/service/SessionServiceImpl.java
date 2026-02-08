@@ -1,27 +1,29 @@
 package com.github.xuning888.helloim.session.service;
 
-import com.github.xuning888.helloim.contract.api.service.SessionService;
-import com.github.xuning888.helloim.contract.meta.Endpoint;
-import com.github.xuning888.helloim.contract.meta.GateType;
-import com.github.xuning888.helloim.contract.meta.GateUser;
-import com.github.xuning888.helloim.contract.meta.ImSession;
-import org.apache.commons.collections.CollectionUtils;
+
+import com.github.xuning888.helloim.api.protobuf.common.v1.Endpoint;
+import com.github.xuning888.helloim.api.protobuf.common.v1.GateType;
+import com.github.xuning888.helloim.api.protobuf.common.v1.GateUser;
+import com.github.xuning888.helloim.api.protobuf.common.v1.ImSession;
+import com.github.xuning888.helloim.api.protobuf.session.v1.*;
+import com.github.xuning888.helloim.api.utils.ProtobufUtils;
+import org.apache.dubbo.common.utils.CollectionUtils;
 import org.apache.dubbo.config.annotation.DubboService;
-import org.apache.dubbo.rpc.RpcContext;
-import org.apache.dubbo.rpc.RpcServiceContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 /**
  * @author xuning
- * @date 2025/8/21 1:51
+ * @date 2026/2/8 17:24
  */
 @DubboService
-public class SessionServiceImpl implements SessionService {
+public class SessionServiceImpl extends DubboSessionServiceTriple.SessionServiceImplBase {
 
     private static final Logger logger = LoggerFactory.getLogger(SessionServiceImpl.class);
 
@@ -36,83 +38,75 @@ public class SessionServiceImpl implements SessionService {
     }
 
     @Override
-    public void saveSession(ImSession imSession, String traceId) {
+    public SaveSessionResponse saveSession(SaveSessionRequest request) {
+        ImSession imSession = request.getImSession();
         GateUser gateUser = imSession.getGateUser();
         Endpoint endpoint = imSession.getEndpoint();
         GateType gateType = endpoint.getGateType();
         String key = sessionKey(gateUser, gateType);
-        logger.info("saveSession, key: {}", key);
-        this.redisTemplate.opsForValue().set(key, imSession, sessionTTL, TimeUnit.SECONDS);
+        String jsonStr = ProtobufUtils.toJson(imSession);
+        this.redisTemplate.opsForValue().set(key, jsonStr, sessionTTL, TimeUnit.SECONDS);
+        return SaveSessionResponse.newBuilder().setSuccess(true).build();
     }
 
     @Override
-    public ImSession getSession(GateUser user, GateType gateType, String traceId) {
-        RpcServiceContext serviceContext = RpcContext.getServiceContext();
-        String caller = serviceContext.getRemoteApplicationName();
-        String key = sessionKey(user, gateType);
-        Object value = redisTemplate.opsForValue().get(key);
-        if (value == null) {
-            logger.info("getSession session is null, caller:{} key: {}, traceId: {}", caller, key, traceId);
-            return null;
-        }
-        return (ImSession) value;
-    }
-
-    @Override
-    public List<ImSession> batchGetSession(List<GateUser> users, GateType gateType, String traceId) {
-        RpcServiceContext serviceContext = RpcContext.getServiceContext();
-        String caller = serviceContext.getRemoteApplicationName();
-        List<ImSession> sessions = new ArrayList<>();
+    public MultiGetImSessionResponse multiGetSession(MultiGetImSessionRequest request) {
+        List<GateUser> users = request.getUsersList();
+        GateType gateType = request.getGateType();
         List<String> keys = new ArrayList<>(users.size());
         for (GateUser user : users) {
             String key = sessionKey(user, gateType);
             keys.add(key);
         }
-        logger.info("batchGetSession caller: {}, keys: {}, traceId: {}", caller, keys, traceId);
-        List list = redisTemplate.opsForValue().multiGet(keys);
+        List list = this.redisTemplate.opsForValue().multiGet(keys);
         if (CollectionUtils.isEmpty(list)) {
-            return Collections.emptyList();
+            return MultiGetImSessionResponse.newBuilder().build();
         }
-        logger.info("batchGetSession, caller: {} keys: {}, result size: {}, traceId: {}", caller, keys, list.size(), traceId);
+        MultiGetImSessionResponse.Builder builder = MultiGetImSessionResponse.newBuilder();
         for (Object value : list) {
-            sessions.add((ImSession) value);
+            if (value == null) {
+                continue;
+            }
+            String jsonStr = String.valueOf(value);
+            ImSession imSession = ProtobufUtils.fromJson(jsonStr, ImSession.newBuilder());
+            builder.addImSessions(imSession);
         }
-        return sessions;
+        return builder.build();
     }
 
     @Override
-    public Map<GateUser, ImSession> batchGetSessionMap(List<GateUser> users, GateType gateType, String traceId) {
-        List<ImSession> imSessions = batchGetSession(users, gateType, traceId);
-        if (CollectionUtils.isEmpty(imSessions)) {
-            return Collections.emptyMap();
-        }
-        Map<GateUser, ImSession> userImSessionMap = new HashMap<>();
-        for (ImSession imSession : imSessions) {
-            GateUser gateUser = imSession.getGateUser();
-            userImSessionMap.put(gateUser, imSession);
-        }
-        return userImSessionMap;
-    }
-
-    @Override
-    public void removeSession(ImSession imSession, String traceId) {
+    public RemoveImSessionResponse removeImSession(RemoveImSessionRequest request) {
+        ImSession imSession = request.getImSession();
         GateUser gateUser = imSession.getGateUser();
         Endpoint endpoint = imSession.getEndpoint();
+        String traceId = request.getTraceId();
         String key = sessionKey(gateUser, endpoint.getGateType());
         // auth 和 logout 有概率出现并发调用
         // case: 长连接断开后, 立刻auth, auth先执行把老的session覆盖了，logout在线程池中排队，这时不能删除
         // TODO 用lua
-        ImSession oldSession = this.getSession(gateUser, endpoint.getGateType(), traceId);
+        ImSession oldSession = this.getSession(gateUser, endpoint.getGateType());
         if (oldSession != null) {
             // 校验一下，只有相等时才删除
             if (Objects.equals(oldSession, imSession)) {
                 this.redisTemplate.delete(key);
-                logger.info("removeSession success imSession: {}, traceId: {}", imSession, traceId);
+                logger.info("removeSession success imSession: {}, traceId: {}", ProtobufUtils.toJson(imSession), traceId);
             }
         }
+        return RemoveImSessionResponse.newBuilder().setSuccess(true).build();
+    }
+
+    private ImSession getSession(GateUser gateUser, GateType gateType) {
+        String key = sessionKey(gateUser, gateType);
+        Object value = this.redisTemplate.opsForValue().get(key);
+        if (value == null) {
+            return null;
+        }
+        String jsonStr = String.valueOf(value);
+        return ProtobufUtils.fromJson(jsonStr, ImSession.newBuilder());
     }
 
     private String sessionKey(GateUser gateUser, GateType gateType) {
-        return SESSION_KEY_PREFIX + gateUser + "_" + gateType;
+        String str = String.format("%d_%d", gateUser.getUid(), gateUser.getUserType());
+        return SESSION_KEY_PREFIX + str + "_" + gateType;
     }
 }

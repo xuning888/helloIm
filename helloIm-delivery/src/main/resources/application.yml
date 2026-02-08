@@ -37,6 +37,9 @@ im:
       group-id: helloim-delivery
       enable-autocommit: false
       auto-offset-reset: latest
+  downmsgsvc:
+    keepalive-time-second: 10 # keeplive的间隔时间
+    keepalive-timeout-second: 1 # keeplive的超时时间
 
 management:
   endpoints:

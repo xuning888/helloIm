@@ -1,15 +1,16 @@
 package com.github.xuning888.helloim.delivery.handler;
 
 
+import com.github.xuning888.helloim.api.protobuf.common.v1.Endpoint;
+import com.github.xuning888.helloim.api.protobuf.common.v1.GateType;
+import com.github.xuning888.helloim.api.protobuf.common.v1.GateUser;
+import com.github.xuning888.helloim.api.protobuf.common.v1.ImSession;
 import com.github.xuning888.helloim.contract.dto.MsgContext;
 import com.github.xuning888.helloim.contract.frame.Frame;
-import com.github.xuning888.helloim.contract.meta.Endpoint;
-import com.github.xuning888.helloim.contract.meta.GateType;
-import com.github.xuning888.helloim.contract.meta.GateUser;
-import com.github.xuning888.helloim.contract.meta.ImSession;
 import com.github.xuning888.helloim.contract.protobuf.MsgCmd;
-import com.github.xuning888.helloim.contract.util.GatewayUtils;
-import com.github.xuning888.helloim.delivery.rpc.SessionSvcClient;
+import com.github.xuning888.helloim.contract.util.FrameUtils;
+import com.github.xuning888.helloim.contract.util.GatewayGrpcUtils;
+import com.github.xuning888.helloim.delivery.rpc.SessionServiceRpc;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -28,7 +29,7 @@ public class C2gPushRequestHandler implements MsgDeliverHandler {
     private static final Logger logger = LoggerFactory.getLogger(C2gPushRequestHandler.class);
 
     @Resource
-    private SessionSvcClient sessionSvcClient;
+    private SessionServiceRpc sessionServiceRpc;
 
     @Override
     public int getCmdId() {
@@ -54,7 +55,7 @@ public class C2gPushRequestHandler implements MsgDeliverHandler {
         for (Map.Entry<Endpoint, Set<GateUser>> entry : onlineTcpUsers.entrySet()) {
             Endpoint endpoint = entry.getKey();
             List<GateUser> users = new ArrayList<>(entry.getValue());
-            GatewayUtils.pushMessageNeedAck(frame, users, endpoint, traceId);
+            GatewayGrpcUtils.pushMessageNeedAck(FrameUtils.convertToPb(frame), users, endpoint, traceId);
         }
     }
 
@@ -71,6 +72,6 @@ public class C2gPushRequestHandler implements MsgDeliverHandler {
     }
 
     private Map<GateUser, ImSession> getSessionTcp(List<GateUser> users, String traceId) {
-        return sessionSvcClient.batchGetSessionMap(users, GateType.TCP, traceId);
+        return sessionServiceRpc.batchGetSessionMap(users, GateType.TCP, traceId);
     }
 }
