@@ -4,7 +4,6 @@ import com.github.xuning888.helloim.api.protobuf.message.v1.DubboUserGroupServic
 import com.github.xuning888.helloim.api.protobuf.message.v1.GetUserJoinGroupTimeRequest;
 import com.github.xuning888.helloim.api.protobuf.message.v1.GetUserJoinGroupTimeResponse;
 import com.github.xuning888.helloim.api.utils.ProtobufUtils;
-import com.github.xuning888.helloim.contract.api.service.UserGroupService;
 import com.github.xuning888.helloim.message.mapper.ImGroupMapper;
 import com.github.xuning888.helloim.message.mapper.ImGroupUserMapper;
 import org.apache.dubbo.config.annotation.DubboService;
