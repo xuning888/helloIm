@@ -4,14 +4,13 @@ import com.github.xuning888.helloim.api.protobuf.common.v1.ChatMessage;
 import com.github.xuning888.helloim.api.protobuf.common.v1.ImChat;
 import com.github.xuning888.helloim.api.utils.ProtobufUtils;
 import com.github.xuning888.helloim.chat.rpc.ChatStoreRpc;
+import com.github.xuning888.helloim.chat.rpc.UserGroupSvcRpc;
 import com.github.xuning888.helloim.chat.utils.ThreadPoolUtils;
-import com.github.xuning888.helloim.contract.api.service.UserGroupService;
 import com.github.xuning888.helloim.contract.contant.ChatSubStatus;
 import com.github.xuning888.helloim.contract.contant.ChatType;
 import com.github.xuning888.helloim.contract.util.RedisKeyUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
-import org.apache.dubbo.config.annotation.DubboReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.redis.core.Cursor;
@@ -34,8 +33,9 @@ public class ChatComponent {
     private RedisTemplate redisTemplate;
     @Resource
     private ChatStoreRpc chatStoreRpc;
-    @DubboReference
-    private UserGroupService userGroupService;
+    @Resource
+    private UserGroupSvcRpc userGroupSvcRpc;
+
     @Resource
     private ChatMessageComponent chatMessageComponent;
 
@@ -50,7 +50,7 @@ public class ChatComponent {
         builder.setUpdateTimestamp(System.currentTimeMillis());
         builder.setDelTimestamp(System.currentTimeMillis());
         if (ChatType.C2G.match(chatType)) {
-            Date userJoinGroupTime = userGroupService.getUserJoinGroupTime(chatId, String.valueOf(userId), traceId);
+            Date userJoinGroupTime = userGroupSvcRpc.getUserJoinGroupTime(chatId, String.valueOf(userId), traceId);
             Long updateTimestamp = null;
             if (userJoinGroupTime == null) {
                 updateTimestamp = System.currentTimeMillis();

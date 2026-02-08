@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+option java_package = "com.github.xuning888.helloim.api.protobuf.message.v1";
+option java_multiple_files = true;
+option java_outer_classname = "UserGroupServiceProto";
+
+import "google/protobuf/timestamp.proto";
+
+
+message GetUserJoinGroupTimeRequest {
+  int64 groupId = 1;
+  string userId = 2;
+  string traceId = 3;
+}
+
+message GetUserJoinGroupTimeResponse {
+    google.protobuf.Timestamp joinGroupTime = 1;
+}
+
+service UserGroupService {
+
+  rpc getUserJoinGroupTime(GetUserJoinGroupTimeRequest) returns (GetUserJoinGroupTimeResponse);
+}
