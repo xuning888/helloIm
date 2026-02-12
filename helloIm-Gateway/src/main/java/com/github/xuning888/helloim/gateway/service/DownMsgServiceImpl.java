@@ -8,6 +8,8 @@ import com.github.xuning888.helloim.api.protobuf.gateway.v1.DubboDownMsgServiceT
 import com.github.xuning888.helloim.contract.frame.Frame;
 import com.github.xuning888.helloim.contract.util.FrameUtils;
 import com.github.xuning888.helloim.gateway.core.cmd.DownCmdEvent;
+import com.github.xuning888.helloim.gateway.core.pipeline.MsgPipeline;
+import com.github.xuning888.helloim.gateway.core.processor.Processor;
 import com.github.xuning888.helloim.gateway.core.session.Session;
 import com.github.xuning888.helloim.gateway.core.session.SessionManager;
 import org.apache.commons.lang3.StringUtils;
@@ -71,6 +73,9 @@ public class DownMsgServiceImpl extends DubboDownMsgServiceTriple.DownMsgService
      */
     private void sendMessage(Frame frame, Session session, boolean needAck, String traceId) {
         // 投递下行事件
-        session.getConn().getMsgPipeline().sendDown(new DownCmdEvent(frame, session.getConn(), needAck, traceId));
+        MsgPipeline msgPipeline = session.msgPipeline();
+        Processor processor = msgPipeline.processor();
+        // 提交到业务线程池执行，不阻塞dubbo线程
+        processor.run(() -> msgPipeline.sendDown(new DownCmdEvent(frame, session.getConn(), needAck, traceId)), traceId);
     }
 }

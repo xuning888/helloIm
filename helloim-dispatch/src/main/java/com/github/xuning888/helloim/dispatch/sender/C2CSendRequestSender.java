@@ -11,6 +11,8 @@ import com.github.xuning888.helloim.contract.protobuf.MsgCmd;
 import com.github.xuning888.helloim.contract.util.GatewayGrpcUtils;
 import com.github.xuning888.helloim.dispatch.rpc.ChatServiceRpc;
 import com.github.xuning888.helloim.dispatch.util.UpMessageUtils;
+import org.apache.kafka.clients.producer.Callback;
+import org.apache.kafka.clients.producer.RecordMetadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -78,10 +80,20 @@ public class C2CSendRequestSender implements MessageSender {
         }
 
         // 推送消息到kafka
-        MsgKafkaProducer.getInstance().send(Topics.C2C.C2C_SEND_REQ, kafkaKey(msgContext), msgContext);
-
-        // 回复ACK
-        GatewayGrpcUtils.pushResponse(msgContext, msgContext.getEndpoint(), traceId);
+        MsgKafkaProducer.getInstance().send(Topics.C2C.C2C_SEND_REQ, kafkaKey(msgContext), msgContext, new Callback() {
+            @Override
+            public void onCompletion(RecordMetadata metadata, Exception exception) {
+                String topic = metadata.topic();
+                int partition = metadata.partition();
+                if (exception != null) {
+                    logger.error("SendCallback error, topic: {}, partition: {}, traceId: {}", topic, partition, traceId);
+                    return;
+                }
+                logger.info("SendCallback success. topic: {}, partition: {}, traceId: {}", topic, partition, traceId);
+                // 回复ACK
+                GatewayGrpcUtils.pushResponse(msgContext, msgContext.getEndpoint(), traceId);
+            }
+        });
     }
 
     private C2cMessage.C2cSendRequest extraC2cSendRequest(byte[] body, String traceId) {

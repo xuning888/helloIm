@@ -11,10 +11,10 @@ import com.github.xuning888.helloim.contract.protobuf.MsgCmd;
 import com.github.xuning888.helloim.contract.util.FrameUtils;
 import com.github.xuning888.helloim.contract.util.GatewayGrpcUtils;
 import com.github.xuning888.helloim.delivery.rpc.SessionServiceRpc;
+import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
 import java.util.*;
@@ -55,8 +55,12 @@ public class C2gPushRequestHandler implements MsgDeliverHandler {
         for (Map.Entry<Endpoint, Set<GateUser>> entry : onlineTcpUsers.entrySet()) {
             Endpoint endpoint = entry.getKey();
             List<GateUser> users = new ArrayList<>(entry.getValue());
-            GatewayGrpcUtils.pushMessageNeedAck(FrameUtils.convertToPb(frame), users, endpoint, traceId);
+            List<GateUser> offlineUser = GatewayGrpcUtils.pushMessageNeedAck(FrameUtils.convertToPb(frame), users, endpoint, traceId);
+            if (CollectionUtils.isNotEmpty(offlineUser)) {
+                offlineUsers.addAll(offlineUser);
+            }
         }
+        // TODO 离线用户通过push网关进行进行消息推送
     }
 
     private void findOnlineUsers(List<GateUser> users, Map<GateUser, ImSession> sessionMap,

@@ -6,6 +6,7 @@ import com.github.xuning888.helloim.api.protobuf.common.v1.FramePb;
 import com.github.xuning888.helloim.api.protobuf.common.v1.GateUser;
 import com.github.xuning888.helloim.api.protobuf.common.v1.ImSession;
 import com.github.xuning888.helloim.api.protobuf.gateway.v1.*;
+import com.github.xuning888.helloim.api.utils.ProtobufUtils;
 import com.github.xuning888.helloim.contract.dto.MsgContext;
 import com.github.xuning888.helloim.contract.protobuf.MsgCmd;
 import com.github.xuning888.helloim.contract.util.FrameUtils;
@@ -96,10 +97,8 @@ public class UpMessageServiceImpl extends DubboUpMsgServiceTriple.UpMsgServiceIm
 
     @Override
     public LogoutResponse logout(LogoutRequest logoutRequest) {
-        logger.info("logout request: {}, traceId: {}", logoutRequest, logoutRequest.getTraceId());
-        LogoutResponse logoutResponse = doLogout(logoutRequest);
-        logger.info("logout response: {}, traceId: {}", logoutRequest, logoutRequest.getTraceId());
-        return logoutResponse;
+        logger.info("logout request: {}, traceId: {}", ProtobufUtils.toJson(logoutRequest), logoutRequest.getTraceId());
+        return doLogout(logoutRequest);
     }
 
     private Long getMsgId(MsgContext msgContext) {

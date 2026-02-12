@@ -80,7 +80,9 @@ public class GateConfiguration {
                 gateServerProperties.getCoreSize(), gateServerProperties.getMaxPoolSize(),
                 5, TimeUnit.MINUTES, new LinkedBlockingDeque<>(gateServerProperties.getQueueSize())
         );
-        return new MessageProcessor(sessionManager, msgPipeline, executorService);
+        MessageProcessor processor = new MessageProcessor(sessionManager, msgPipeline, executorService);
+        msgPipeline.setProcessor(processor);
+        return processor;
     }
 
     @Bean

@@ -3,6 +3,7 @@ package com.github.xuning888.helloim.gateway.core.pipeline;
 import com.github.xuning888.helloim.gateway.core.cmd.DownCmdEvent;
 import com.github.xuning888.helloim.gateway.core.cmd.UpCmdEvent;
 import com.github.xuning888.helloim.gateway.core.handler.MsgHandler;
+import com.github.xuning888.helloim.gateway.core.processor.Processor;
 
 /**
  * @author xuning
@@ -30,4 +31,14 @@ public interface MsgPipeline {
      * @param downCmdEvent cmd
      */
     void sendDown(DownCmdEvent downCmdEvent);
+
+    /**
+     * 获取业务处理器
+     */
+    Processor processor();
+
+    /**
+     * 设置业务处理器
+     */
+    void setProcessor(Processor processor);
 }

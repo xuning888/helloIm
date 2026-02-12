@@ -8,6 +8,7 @@ import com.github.xuning888.helloim.contract.dto.MsgContext;
 import com.github.xuning888.helloim.contract.frame.Frame;
 import com.github.xuning888.helloim.contract.frame.Header;
 import com.github.xuning888.helloim.contract.gateway.DownMsgSvcClient;
+import com.github.xuning888.helloim.contract.gateway.DownMsgSvcClientFactory;
 import com.github.xuning888.helloim.contract.protobuf.MsgCmd;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,12 +59,12 @@ public class GatewayGrpcUtils {
     }
 
     public static List<GateUser> pushMessage(FramePb frame, List<GateUser> users, Endpoint endpoint, String traceId) {
-        DownMsgSvcClient cli = DownMsgSvcClient.newBuilder().build(endpoint);
+        DownMsgSvcClient cli = DownMsgSvcClientFactory.getClient(endpoint);
         return cli.pushMessage(frame, users, false, traceId);
     }
 
     public static List<GateUser> pushMessageNeedAck(FramePb frame, List<GateUser> users, Endpoint endpoint, String traceId) {
-        DownMsgSvcClient cli = DownMsgSvcClient.newBuilder().build(endpoint);
+        DownMsgSvcClient cli = DownMsgSvcClientFactory.getClient(endpoint);
         return cli.pushMessage(frame, users, true, traceId);
     }
 }

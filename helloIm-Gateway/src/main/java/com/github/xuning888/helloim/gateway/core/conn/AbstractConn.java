@@ -4,6 +4,7 @@ package com.github.xuning888.helloim.gateway.core.conn;
 import com.github.xuning888.helloim.contract.frame.Frame;
 import com.github.xuning888.helloim.contract.frame.Header;
 import com.github.xuning888.helloim.gateway.core.pipeline.MsgPipeline;
+import com.github.xuning888.helloim.gateway.core.processor.Processor;
 import com.github.xuning888.helloim.gateway.utils.TimeWheelUtils;
 import org.jboss.netty.channel.Channel;
 import org.jboss.netty.util.Timeout;
@@ -11,6 +12,7 @@ import org.jboss.netty.util.TimerTask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -29,7 +31,7 @@ public abstract class AbstractConn implements Conn {
     private static final int MAX_RETRY_TIMES = 3;
 
     // 重试间隔时间
-    private static final int delayMills = 100;
+    private static final int delayMills = 200;
 
     private final Channel channel;
 
@@ -94,6 +96,18 @@ public abstract class AbstractConn implements Conn {
         }
     }
 
+    @Override
+    public void close() {
+        doClose();
+        for (Map.Entry<String, InFlightMessage> entry : inFlightMessages.entrySet()) {
+            InFlightMessage value = entry.getValue();
+            value.timeout.cancel();
+        }
+        inFlightMessages.clear();
+    }
+
+    public abstract void doClose();
+
     /**
      * 下行消息发送给到peer
      */
@@ -135,6 +149,21 @@ public abstract class AbstractConn implements Conn {
             return true;
         }
         return false;
+    }
+
+    private void writeAndTryAppendMessage(String key, Frame frame, int retryTimes, String traceId) {
+
+
+        try {
+            // 重发消息
+            this.write(frame, traceId);
+            logger.warn("MessageTask, retried, key: {}, retryTimes: {}, traceId: {}", key, retryTimes, traceId);
+            // 重新添加到充实队列
+            this.retryAppendMessage(frame, traceId, retryTimes);
+        } catch (Exception ex) {
+            logger.error("MessageTask, Failed to retry write message key: {}, traceId: {}", key, traceId, ex);
+            this.removeInFlight(key);
+        }
     }
 
 
@@ -180,15 +209,12 @@ public abstract class AbstractConn implements Conn {
                 return;
             }
 
-            try {
-                // 重发消息
-                AbstractConn.this.write(frame, traceId);
-                logger.warn("MessageTask, retried, key: {}, retryTimes: {}, traceId: {}", key, retryTimes, traceId);
-                // 重新添加到充实队列
-                AbstractConn.this.retryAppendMessage(frame, traceId, retryTimes);
-            } catch (Exception ex) {
-                logger.error("MessageTask, Failed to retry write message key: {}, traceId: {}", key, traceId, ex);
-                AbstractConn.this.removeInFlight(key);
+            // 提交到业务线程池执行, 不能因为网络调用阻塞timewheel
+            Processor processor = AbstractConn.this.msgPipeline.processor();
+            if (processor != null) {
+                processor.run(() -> AbstractConn.this.writeAndTryAppendMessage(key, frame, retryTimes, traceId), traceId);
+            } else {
+                AbstractConn.this.writeAndTryAppendMessage(key, frame, retryTimes, traceId);
             }
         }
     }

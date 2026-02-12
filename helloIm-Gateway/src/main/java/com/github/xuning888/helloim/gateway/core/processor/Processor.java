@@ -14,4 +14,6 @@ public interface Processor {
     void handleConnEvent(ConnEvent connEvent);
 
     MsgPipeline msgPipeline();
+
+    void run(Runnable runnable, String traceId);
 }

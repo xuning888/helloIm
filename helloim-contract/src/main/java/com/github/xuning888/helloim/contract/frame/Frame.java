@@ -53,11 +53,6 @@ public class Frame implements Serializable {
         return buffer.array();
     }
 
-    public static Frame create(ByteBuffer buffer) {
-        byte[] array = buffer.array();
-        return create(array);
-    }
-
     public static Frame create(byte[] bytes) {
         if (bytes == null || bytes.length < Header.DEFAULT_HEADER_LENGTH) {
             throw new IllegalArgumentException("bytes的长度小于20");

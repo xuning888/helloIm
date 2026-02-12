@@ -5,6 +5,7 @@ import com.github.xuning888.helloim.gateway.core.cmd.UpCmdEvent;
 import com.github.xuning888.helloim.gateway.core.handler.DownMsgHandler;
 import com.github.xuning888.helloim.gateway.core.handler.MsgHandler;
 import com.github.xuning888.helloim.gateway.core.handler.UpMsgHandler;
+import com.github.xuning888.helloim.gateway.core.processor.Processor;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -20,6 +21,7 @@ public class DefaultMsgPipeline implements MsgPipeline {
     private final Map<String,PipelineContext> ctxMap = new HashMap<>();
     private volatile PipelineContext head;
     private volatile PipelineContext tail;
+    private Processor processor;
 
     public DefaultMsgPipeline() {
     }
@@ -51,6 +53,16 @@ public class DefaultMsgPipeline implements MsgPipeline {
         if (ctx != null) {
             sendDown(ctx, downCmdEvent);
         }
+    }
+
+    @Override
+    public Processor processor() {
+        return this.processor;
+    }
+
+    @Override
+    public void setProcessor(Processor processor) {
+        this.processor = processor;
     }
 
     private void init(String name, MsgHandler msgHandler) {

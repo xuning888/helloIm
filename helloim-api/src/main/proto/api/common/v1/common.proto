@@ -37,10 +37,10 @@ message Endpoint {
 
 
 enum GateSessionState {
-  CLOSE = 0;
-  ERROR = 1;
-  TIMEOUT = 2;
-  LOGOUT = 3;
+  CLOSE = 0; // peer 主动断开
+  ERROR = 1; // 未知原因断开
+  TIMEOUT = 2; // 心跳超时
+  LOGOUT = 3; // 登出
 }
 
 message GateSessionEvent {

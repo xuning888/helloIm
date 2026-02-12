@@ -57,6 +57,20 @@ public class MessageProcessor implements Processor {
         return this.msgPipeline;
     }
 
+    @Override
+    public void run(Runnable runnable, String traceId) {
+        if (runnable == null) {
+            return;
+        }
+        this.executorService.execute(() -> {
+            try {
+                runnable.run();
+            } catch (Exception ex) {
+                logger.error("run task error, errMsg: {}, traceId: {}", ex.getMessage(), traceId, ex);
+            }
+        });
+    }
+
     private void sendUp(UpCmdEvent upCmdEvent) {
         String traceId = upCmdEvent.getTraceId();
         executorService.execute(() -> {

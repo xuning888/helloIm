@@ -31,7 +31,7 @@ public class TcpChannelUpStreamHandler extends ImChannelUpStreamHandler {
     }
 
     @Override
-    protected Conn createOrGetConn(Channel channel) {
+    public Conn createOrGetConn(Channel channel) {
         TcpConn conn = (TcpConn) channel.getAttachment();
         if (conn != null) {
             return conn;
