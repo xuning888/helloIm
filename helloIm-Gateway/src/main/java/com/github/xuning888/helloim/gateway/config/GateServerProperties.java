@@ -90,8 +90,8 @@ public class GateServerProperties {
         // 飞行消息的重试间隔时间
         private long intervalMs;
 
-        // 调度飞行消息的工作线程数, 其实就是timingwheel的数量
-        private int workerCount;
+        // 任务队列的数量
+        private int workerCount = 8;
 
         public int getMaxTimes() {
             return maxTimes;

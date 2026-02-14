@@ -8,6 +8,7 @@ import com.github.xuning888.helloim.gateway.core.pipeline.MsgPipeline;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * 关联用户信息和长连接
@@ -27,6 +28,11 @@ public class Session implements Serializable {
     private final GateUser user;
 
     /**
+     * 下行消息的发号器
+     */
+    private AtomicInteger seqs;
+
+    /**
      * session的观察者
      */
     private final List<SessionListener> listeners = new ArrayList<>();
@@ -39,6 +45,7 @@ public class Session implements Serializable {
     public Session(Conn conn, GateUser user) {
         this.conn = conn;
         this.user = user;
+        this.seqs = new AtomicInteger();
     }
 
     public String getId() {
@@ -77,6 +84,10 @@ public class Session implements Serializable {
 
     public MsgPipeline msgPipeline() {
         return this.conn.getMsgPipeline();
+    }
+
+    public int getSeq() {
+        return seqs.getAndIncrement();
     }
 
     @Override

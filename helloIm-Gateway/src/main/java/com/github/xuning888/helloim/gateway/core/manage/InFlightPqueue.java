@@ -84,13 +84,6 @@ public final class InFlightPqueue {
         return first;
     }
 
-    public RetryMessage peek() {
-        if (this.size == 0) {
-            return null;
-        }
-        return messages[0];
-    }
-
     public int size() {
         return this.size;
     }

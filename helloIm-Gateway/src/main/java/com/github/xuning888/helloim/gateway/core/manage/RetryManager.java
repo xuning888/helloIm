@@ -3,6 +3,7 @@ package com.github.xuning888.helloim.gateway.core.manage;
 
 import com.github.xuning888.helloim.contract.frame.Frame;
 import com.github.xuning888.helloim.contract.util.timer.SystemTimer;
+import com.github.xuning888.helloim.contract.util.timer.SystemTimerReaper;
 import com.github.xuning888.helloim.gateway.config.GateServerProperties;
 import com.github.xuning888.helloim.gateway.core.cmd.DownCmdEvent;
 import com.github.xuning888.helloim.gateway.core.conn.Conn;
@@ -10,11 +11,10 @@ import com.github.xuning888.helloim.gateway.core.pipeline.MsgPipeline;
 import com.github.xuning888.helloim.gateway.core.processor.Processor;
 import com.github.xuning888.helloim.gateway.core.session.Session;
 import com.github.xuning888.helloim.gateway.core.session.SessionManager;
-import org.apache.kafka.common.utils.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.nio.charset.StandardCharsets;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -28,7 +28,7 @@ public class RetryManager {
     private final RetryQueue[] retryQueues;
     private final long interval;
     private final int maxTimes;
-    private final SystemTimer systemTimer;
+    private final SystemTimerReaper timer;
     private final SessionManager sessionManager;
     private final AtomicBoolean stop;
 
@@ -37,11 +37,10 @@ public class RetryManager {
         this.sessionManager = sessionManager;
         this.interval = retry.getIntervalMs();
         this.maxTimes = retry.getMaxTimes();
-        this.systemTimer = new SystemTimer("RetryManager");
+        this.timer = new SystemTimerReaper("RetryManagerReaper", new SystemTimer("RetryManager"));
         retryQueues = new RetryQueue[retry.getWorkerCount()];
         for (int i = 0; i < retry.getWorkerCount(); i++) {
             RetryQueue retryQueue = new RetryQueue(this, retry.getScanIntervalMs());
-            retryQueue.start();
             retryQueues[i] = retryQueue;
         }
     }
@@ -54,24 +53,23 @@ public class RetryManager {
             return;
         }
         int times = msg.getTimes();
-        if (times >= maxTimes) {
+        if (times > maxTimes) {
             return;
         }
-        String connId = msg.getConnId();
-        int shard = getShard(connId);
+        int shard = getShard(msg.getUid());
         msg.setPri(getPri(msg.getTimes()));
-        retryQueues[shard].startInFlightTimeout(connId, msg);
+        retryQueues[shard].startInFlightTimeout(msg);
     }
 
     /**
      * 下行消息ACK,取消飞行队列中的重试消息
      */
-    public void ack(String connId, int seq, int cmdId) {
+    public void ack(String connId, long uid, int seq, int cmdId) {
         if (stop.get()) {
             return;
         }
-        int shard = getShard(connId);
-        retryQueues[shard].removeMessage(connId, seq, cmdId);
+        int shard = getShard(uid);
+        retryQueues[shard].removeMessage(connId, uid, seq, cmdId);
     }
 
     /**
@@ -84,6 +82,8 @@ public class RetryManager {
         if (msg == null) {
             return;
         }
+        int times = msg.getTimes();
+        logger.info("processRetry connId: {}, seq:{}, cmdId: {}, times: {}", msg.getConnId(), msg.getSeq(), msg.getCmdId(), times);
         String traceId = msg.getTraceId();
         String connId = msg.getConnId();
         // 获取用户session, 获取不到就直接return, 丢弃重试消息
@@ -92,6 +92,13 @@ public class RetryManager {
             logger.warn("processRetry, getSession is null, sessionId: {}, traceId: {}", connId, traceId);
             return;
         }
+
+        // 比较重试消息的uid和session的uid, 如果不同就不能发送.
+        if (!Objects.equals(msg.getUid(), session.getUser().getUid())) {
+            logger.warn("processRetry, uid not equals, msgUid: {}, sessionUid: {}, traceId:{}", msg.getUid(), session.getUser().getUid(), traceId);
+            return;
+        }
+
         Frame frame = msg.getFrame();
         Conn conn = session.getConn();
         // 检查连接是否还可用
@@ -103,12 +110,10 @@ public class RetryManager {
         Processor processor = msgPipeline.processor();
         if (processor != null) {
             // 提交到业务线程池执行, 不能因为网络调用阻塞timingwheel
-            processor.run(() -> new DownCmdEvent(frame, conn, false, traceId), traceId);
+            processor.run(() -> new DownCmdEvent(frame, conn, traceId), traceId);
         } else {
-            msgPipeline.sendDown(new DownCmdEvent(frame, conn, false, traceId));
+            msgPipeline.sendDown(new DownCmdEvent(frame, conn, traceId));
         }
-        // 获取重试次数
-        int times = msg.getTimes();
         msg.setTimes(++times);
         // 加入重试
         this.addRetry(msg);
@@ -118,7 +123,13 @@ public class RetryManager {
      * 执行定时任务
      */
     public void schedule(long interval, Runnable runnable) {
-        this.systemTimer.scheduler(interval, runnable);
+        this.timer.scheduler(interval, runnable);
+    }
+
+    public void start() {
+        for (RetryQueue retryQueue : retryQueues) {
+            retryQueue.start();
+        }
     }
 
     /**
@@ -126,6 +137,11 @@ public class RetryManager {
      */
     public void shutdown() {
         this.stop.compareAndSet(false, true);
+        try {
+            timer.close();
+        } catch (Exception ex) {
+            logger.error("close timer error, errMsg:{}", ex.getMessage(), ex);
+        }
     }
 
     /**
@@ -135,10 +151,8 @@ public class RetryManager {
         return this.stop.get();
     }
 
-    private int getShard(String connId) {
-        // 根据connId计算落在哪个飞行队列分片上
-        int positive = Utils.toPositive(Utils.murmur2(connId.getBytes(StandardCharsets.UTF_8)));
-        return positive % retryQueues.length;
+    private int getShard(long uid) {
+        return (int) (uid % retryQueues.length);
     }
 
     private long getPri(int times) {

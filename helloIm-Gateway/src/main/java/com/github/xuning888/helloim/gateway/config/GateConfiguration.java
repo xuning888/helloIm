@@ -8,6 +8,7 @@ import com.github.xuning888.helloim.gateway.core.cmd.handler.*;
 import com.github.xuning888.helloim.gateway.core.handler.impl.HeadMsgHandler;
 import com.github.xuning888.helloim.gateway.core.handler.impl.PrometheusHandler;
 import com.github.xuning888.helloim.gateway.core.handler.impl.TailMsgHandler;
+import com.github.xuning888.helloim.gateway.core.manage.RetryManager;
 import com.github.xuning888.helloim.gateway.core.pipeline.DefaultMsgPipeline;
 import com.github.xuning888.helloim.gateway.core.pipeline.MsgPipeline;
 import com.github.xuning888.helloim.gateway.core.processor.MessageProcessor;
@@ -51,8 +52,9 @@ public class GateConfiguration {
     }
 
     @Bean
-    public HandlerProxy handlerProxy(UpMsgServiceRpc upMsgServiceRpc, SessionManager sessionManager, GateAddr gateAddr) {
-        DefaultHandler defaultHandler = new DefaultHandler(upMsgServiceRpc, sessionManager, gateAddr);
+    public HandlerProxy handlerProxy(UpMsgServiceRpc upMsgServiceRpc, SessionManager sessionManager, GateAddr gateAddr,
+                                     RetryManager retryManager) {
+        DefaultHandler defaultHandler = new DefaultHandler(upMsgServiceRpc, sessionManager, retryManager, gateAddr);
         HandlerProxy handlerProxy = new HandlerProxy(defaultHandler);
         // 注册Echo指令的处理器
         handlerProxy.register(MsgCmd.CmdId.CMD_ID_ECHO_VALUE, new EchoHandler());
@@ -61,6 +63,13 @@ public class GateConfiguration {
         // 心跳处理
         handlerProxy.register(MsgCmd.CmdId.CMD_ID_HEARTBEAT_VALUE, new HeartbeatHandler(sessionManager));
         return handlerProxy;
+    }
+
+    @Bean(destroyMethod = "shutdown", initMethod = "start")
+    public RetryManager retryManager(GateServerProperties gateServerProperties,
+                                     SessionManager sessionManager) {
+        GateServerProperties.Retry retry = gateServerProperties.getRetry();
+        return new RetryManager(sessionManager, retry);
     }
 
     @Bean

@@ -6,8 +6,11 @@ import com.github.xuning888.helloim.api.protobuf.gateway.v1.DownMessageRequest;
 import com.github.xuning888.helloim.api.protobuf.gateway.v1.DownMessageResponse;
 import com.github.xuning888.helloim.api.protobuf.gateway.v1.DubboDownMsgServiceTriple;
 import com.github.xuning888.helloim.contract.frame.Frame;
+import com.github.xuning888.helloim.contract.frame.Header;
 import com.github.xuning888.helloim.contract.util.FrameUtils;
 import com.github.xuning888.helloim.gateway.core.cmd.DownCmdEvent;
+import com.github.xuning888.helloim.gateway.core.manage.RetryManager;
+import com.github.xuning888.helloim.gateway.core.manage.RetryMessage;
 import com.github.xuning888.helloim.gateway.core.pipeline.MsgPipeline;
 import com.github.xuning888.helloim.gateway.core.processor.Processor;
 import com.github.xuning888.helloim.gateway.core.session.Session;
@@ -31,9 +34,11 @@ public class DownMsgServiceImpl extends DubboDownMsgServiceTriple.DownMsgService
     private static final Logger logger = LoggerFactory.getLogger(DownMsgServiceImpl.class);
 
     private final SessionManager sessionManager;
+    private final RetryManager retryManager;
 
-    public DownMsgServiceImpl(SessionManager sessionManager) {
+    public DownMsgServiceImpl(SessionManager sessionManager, RetryManager retryManager) {
         this.sessionManager = sessionManager;
+        this.retryManager = retryManager;
     }
 
     @Override
@@ -72,10 +77,29 @@ public class DownMsgServiceImpl extends DubboDownMsgServiceTriple.DownMsgService
      * 将frame写出到peer, 因为conn的write方法是同步写出, 所以方法会阻塞, 可以考虑放到线程池中
      */
     private void sendMessage(Frame frame, Session session, boolean needAck, String traceId) {
+        if (needAck) {
+            int seq = session.getSeq(); // 重新分配客户端
+            frame.getHeader().setSeq(seq);
+            RetryMessage retryMessage = buildRetryMessage(frame, session, traceId);
+            retryManager.addRetry(retryMessage);
+        }
         // 投递下行事件
         MsgPipeline msgPipeline = session.msgPipeline();
         Processor processor = msgPipeline.processor();
         // 提交到业务线程池执行，不阻塞dubbo线程
-        processor.run(() -> msgPipeline.sendDown(new DownCmdEvent(frame, session.getConn(), needAck, traceId)), traceId);
+        processor.run(() -> msgPipeline.sendDown(new DownCmdEvent(frame, session.getConn(), traceId)), traceId);
+    }
+
+    private RetryMessage buildRetryMessage(Frame frame, Session session, String traceId) {
+        RetryMessage retryMessage = new RetryMessage();
+        retryMessage.setFrame(frame);
+        retryMessage.setConnId(session.getId());
+        retryMessage.setTimes(1);
+        Header header = frame.getHeader();
+        retryMessage.setSeq(header.getSeq());
+        GateUser user = session.getUser();
+        retryMessage.setUid(user.getUid());
+        retryMessage.setTraceId(traceId);
+        return retryMessage;
     }
 }

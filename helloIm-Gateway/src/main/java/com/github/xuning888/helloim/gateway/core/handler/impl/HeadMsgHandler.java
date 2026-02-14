@@ -29,7 +29,7 @@ public class HeadMsgHandler implements DownMsgHandler {
                 if (logger.isDebugEnabled()) {
                     logger.debug("发送下行消息, cmdId: {}, seq: {}, traceId: {}", cmdId, seq, event.getTraceId());
                 }
-                conn.writeMessage(frame, event.getNeedAck(), event.getTraceId());
+                conn.write(frame, event.getTraceId());
                 if (logger.isDebugEnabled()) {
                     logger.debug("发送下行消息成功, cmdId:{}, seq: {}, traceId:{}", cmdId, seq, event.getTraceId());
                 }

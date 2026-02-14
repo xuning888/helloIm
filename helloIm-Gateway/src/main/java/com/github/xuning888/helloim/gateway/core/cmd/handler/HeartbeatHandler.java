@@ -35,8 +35,6 @@ public class HeartbeatHandler implements CmdHandler {
             Conn conn = cmdEvent.getConn();
             // 关闭长连接
             conn.close();
-            // 清理下行待ACK的消息
-            conn.clearInFlightMessage();
             logger.error("HeartbeatHandler session not found, sessionId: {}, traceId: {}", sessionId, cmdEvent.getTraceId());
             return;
         }

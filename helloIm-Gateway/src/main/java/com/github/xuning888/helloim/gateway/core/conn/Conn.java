@@ -36,19 +36,9 @@ public interface Conn {
     void close();
 
     /**
-     * ack
-     */
-    boolean ack(Frame frame);
-
-    /**
-     * 清理待ack的消息
-     */
-    void clearInFlightMessage();
-
-    /**
      * 写出数据到peer, 并标记下行消息是否需要ACK
      */
-    void writeMessage(Frame frame, boolean needAck, String traceId);
+    void write(Frame frame, String traceId);
 
     /**
      * 获取channel关联的pipeline

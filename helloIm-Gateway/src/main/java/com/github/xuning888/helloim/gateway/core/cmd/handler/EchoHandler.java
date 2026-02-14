@@ -36,7 +36,7 @@ public class EchoHandler implements CmdHandler {
         MsgPipeline msgPipeline = cmdEvent.getConn().getMsgPipeline();
 
         // 构造下行事件
-        DownCmdEvent downCmdEvent = new DownCmdEvent(echoResponse, cmdEvent.getConn(), false, traceId);
+        DownCmdEvent downCmdEvent = new DownCmdEvent(echoResponse, cmdEvent.getConn(), traceId);
         try {
             msgPipeline.sendDown(downCmdEvent);
         } catch (Exception ex) {

@@ -10,3 +10,8 @@ im:
     core-size: 300
     max-pool-size: 300
     queue-size: 50000
+    retry:
+      max-times: 3 # 飞行消息最多重试3次
+      scan-interval-ms: 5000 # 每个5s扫描一次是否存在飞行消息需要重发
+      interval-ms: 200 # 飞行消息的间隔时间是200ms
+      worker-count: 8

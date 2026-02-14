@@ -12,12 +12,10 @@ public class DownCmdEvent implements CmdEvent {
     private final Frame frame;
     private final Conn conn;
     private final String traceId;
-    private final boolean needAck;
 
-    public DownCmdEvent(Frame frame, Conn conn,  boolean needAck, String traceId) {
+    public DownCmdEvent(Frame frame, Conn conn, String traceId) {
         this.frame = frame;
         this.conn = conn;
-        this.needAck = needAck;
         this.traceId = traceId;
     }
 
@@ -34,9 +32,5 @@ public class DownCmdEvent implements CmdEvent {
     @Override
     public String getTraceId() {
         return this.traceId;
-    }
-
-    public boolean getNeedAck() {
-        return needAck;
     }
 }

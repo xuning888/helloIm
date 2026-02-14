@@ -26,7 +26,7 @@ public class TcpConn extends AbstractConn {
     }
 
     @Override
-    public void doClose() {
+    public void close() {
         ChannelFuture closeFuture = channel.close();
         closeFuture.syncUninterruptibly();
     }

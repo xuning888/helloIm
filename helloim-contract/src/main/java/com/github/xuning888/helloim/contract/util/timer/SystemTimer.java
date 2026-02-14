@@ -111,12 +111,7 @@ public class SystemTimer implements Timer {
 
     @Override
     public void scheduler(long intervalMs, Runnable runnable) {
-        long now = System.currentTimeMillis();
-        long delayMs = now + intervalMs;
-        if (delayMs <= 0) {
-            return;
-        }
-        SchedulerTask task = new SchedulerTask(delayMs, runnable);
+        SchedulerTask task = new SchedulerTask(intervalMs, runnable);
         this.add(task);
     }
 

@@ -27,24 +27,24 @@ public class RetryQueue {
         this.inFlightMessages = new HashMap<>(128);
     }
 
-    public void startInFlightTimeout(String connId, RetryMessage msg) {
+    public void startInFlightTimeout(RetryMessage msg) {
         if (msg == null) {
             return;
         }
         lock.lock();
         try {
-            pushToInFlightMessages(connId, msg);
+            pushToInFlightMessages(msg);
             addInFlightPqueue(msg);
         } finally {
             lock.unlock();
         }
     }
 
-    public boolean removeMessage(String connId, int seq, int cmdId) {
-        String key = msgKey(connId, seq, cmdId);
+    public boolean removeMessage(String connId, long uid, int seq, int cmdId) {
+        String key = msgKey(connId, uid, seq, cmdId);
         lock.lock();
         try {
-            RetryMessage retryMessage = inFlightMessages.get(key);
+            RetryMessage retryMessage = inFlightMessages.remove(key);
             if (retryMessage == null) {
                 return false;
             }
@@ -71,7 +71,7 @@ public class RetryQueue {
                 // 从小根堆里找一个到期的消息
                 msg = this.inFlightPqueue.peekAndShift(time);
                 if (msg != null) {
-                    String key = msgKey(msg.getConnId(), msg.getSeq(), msg.getCmdId());
+                    String key = msgKey(msg.getConnId(), msg.getUid(), msg.getSeq(), msg.getCmdId());
                     inFlightMessages.remove(key);
                 }
             } finally {
@@ -85,11 +85,11 @@ public class RetryQueue {
         }
     }
 
-    private void pushToInFlightMessages(String connId, RetryMessage msg) {
+    private void pushToInFlightMessages(RetryMessage msg) {
         lock.lock();
         try {
             Header header = msg.getFrame().getHeader();
-            String key = msgKey(connId, header.getSeq(), header.getCmdId());
+            String key = msgKey(msg.getConnId(), msg.getUid(), header.getSeq(), header.getCmdId());
             RetryMessage retryMessage = inFlightMessages.get(key);
             if (retryMessage != null) {
                 return;
@@ -109,7 +109,7 @@ public class RetryQueue {
         }
     }
 
-    private String msgKey(String connId, int seq, int cmdId) {
-        return connId + "_" + seq + "_" + cmdId;
+    private String msgKey(String connId, long uid, int seq, int cmdId) {
+        return connId + "_" + uid + "_" + seq + "_" + cmdId;
     }
 }
