@@ -38,4 +38,8 @@ public interface Timer extends AutoCloseable {
      */
     int size();
 
+    /**
+     * 调度定时任务
+     */
+    void scheduler(long intervalMs, Runnable task);
 }

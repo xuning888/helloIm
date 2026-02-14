@@ -110,6 +110,34 @@ public class SystemTimer implements Timer {
     }
 
     @Override
+    public void scheduler(long intervalMs, Runnable runnable) {
+        long now = System.currentTimeMillis();
+        long delayMs = now + intervalMs;
+        if (delayMs <= 0) {
+            return;
+        }
+        SchedulerTask task = new SchedulerTask(delayMs, runnable);
+        this.add(task);
+    }
+
+    private class SchedulerTask extends TimerTask {
+
+        private final Runnable runnable;
+
+        public SchedulerTask(long delayMs, Runnable runnable) {
+            super(delayMs);
+            this.runnable = runnable;
+        }
+
+        @Override
+        public void run() {
+            SchedulerTask task = new SchedulerTask(delayMs, this.runnable);
+            SystemTimer.this.add(task);
+            this.runnable.run();
+        }
+    }
+
+    @Override
     public void close() {
         ThreadUtils.shutdownExecutorServiceQuietly(taskExecutor, 5, TimeUnit.SECONDS);
     }
